@@ -35,54 +35,36 @@ function get_main_action_buttons() {
     air_fill_button.id = 'air_fill_button';
     air_fill_button.style.backgroundColor = '#99CC99';
     air_fill_button.innerHTML = 'Air fill';
-    air_fill_button.addEventListener('click', get_show_airfill_ref());
+    air_fill_button.addEventListener('click', get_show_fill_ref('air'));
     button_div.appendChild(air_fill_button);
 
     var nitrox_fill_button = document.createElement('button');
     nitrox_fill_button.style.backgroundColor = '#9999CC';
     nitrox_fill_button.id = 'nitrox_fill_button';
     nitrox_fill_button.innerHTML = 'Nitrox fill';
-    nitrox_fill_button.addEventListener('click', get_show_nitroxfill_ref());
+    nitrox_fill_button.addEventListener('click', get_show_fill_ref('nx'));
     button_div.appendChild(nitrox_fill_button);
 
     var trimix_fill_button = document.createElement('button');
     trimix_fill_button.style.backgroundColor = '#CC99CC';
     trimix_fill_button.id = 'trimix_fill_button';
     trimix_fill_button.innerHTML = 'Trimix fill';
-    trimix_fill_button.addEventListener('click', get_show_trimixfill_ref());
+    trimix_fill_button.addEventListener('click', get_show_fill_ref('tx'));
     button_div.appendChild(trimix_fill_button);
 
     var o2_fill_button = document.createElement('button');
     o2_fill_button.style.backgroundColor = '#9999FF';
     o2_fill_button.id = 'o2_fill_button';
     o2_fill_button.innerHTML = 'O2 fill';
-    o2_fill_button.addEventListener('click', get_show_o2fill_ref());
+    o2_fill_button.addEventListener('click', get_show_fill_ref('o2'));
     button_div.appendChild(o2_fill_button);
 
     return (button_div);
 }
 
-function get_show_airfill_ref() {
+function get_show_fill_ref(type) {
     return (function () {
-        show_gasfill('air')
-    })
-}
-
-function get_show_nitroxfill_ref() {
-    return (function () {
-        show_gasfill('nx')
-    })
-}
-
-function get_show_trimixfill_ref() {
-    return (function () {
-        show_gasfill('tx')
-    })
-}
-
-function get_show_o2fill_ref() {
-    return (function () {
-        show_gasfill('o2')
+        show_gasfill(type)
     })
 }
 
