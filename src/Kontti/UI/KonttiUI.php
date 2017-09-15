@@ -32,20 +32,21 @@ namespace Kontti\UI;
 class KonttiUI
 {
 
-    /**
-     * KonttiUI constructor.
-     */
-    public function __construct()
-    {
-    }
+	/**
+	 * KonttiUI constructor.
+	 */
+	public function __construct()
+	{
+	}
 
-    /**
-     * show: Display the frontend
-     *
-     * @return void
-     */
+	/**
+	 * show: Display the frontend
+	 *
+	 * @return void
+	 */
 
-    public function show() {
-        readfile("resources/base_page.html");
-    }
+	public function show()
+	{
+		readfile("resources/base_page.html");
+	}
 }

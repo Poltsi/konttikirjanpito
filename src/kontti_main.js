@@ -28,44 +28,63 @@ function display_action_buttons(mode) {
 }
 
 function get_main_action_buttons() {
-    var button_div = document.createElement( 'div' );
+    var button_div = document.createElement('div');
     button_div.id = 'main_action';
 
     var air_fill_button = document.createElement('button');
     air_fill_button.id = 'air_fill_button';
     air_fill_button.style.backgroundColor = '#99CC99';
     air_fill_button.innerHTML = 'Air fill';
-    air_fill_button.addEventListener ('click', get_show_airfill_ref());
+    air_fill_button.addEventListener('click', get_show_airfill_ref());
     button_div.appendChild(air_fill_button);
 
     var nitrox_fill_button = document.createElement('button');
     nitrox_fill_button.style.backgroundColor = '#9999CC';
     nitrox_fill_button.id = 'nitrox_fill_button';
     nitrox_fill_button.innerHTML = 'Nitrox fill';
-    nitrox_fill_button.addEventListener ('click', get_show_nitroxfill_ref());
+    nitrox_fill_button.addEventListener('click', get_show_nitroxfill_ref());
     button_div.appendChild(nitrox_fill_button);
 
     var trimix_fill_button = document.createElement('button');
     trimix_fill_button.style.backgroundColor = '#CC99CC';
     trimix_fill_button.id = 'trimix_fill_button';
     trimix_fill_button.innerHTML = 'Trimix fill';
-    trimix_fill_button.addEventListener ('click', get_show_trimixfill_ref());
+    trimix_fill_button.addEventListener('click', get_show_trimixfill_ref());
     button_div.appendChild(trimix_fill_button);
 
     var o2_fill_button = document.createElement('button');
     o2_fill_button.style.backgroundColor = '#9999FF';
     o2_fill_button.id = 'o2_fill_button';
     o2_fill_button.innerHTML = 'O2 fill';
-    o2_fill_button.addEventListener ('click', get_show_o2fill_ref());
+    o2_fill_button.addEventListener('click', get_show_o2fill_ref());
     button_div.appendChild(o2_fill_button);
 
     return (button_div);
 }
 
-function get_show_airfill_ref() { return (function() {show_gasfill('air')})}
-function get_show_nitroxfill_ref() { return (function() {show_gasfill('nx')})}
-function get_show_trimixfill_ref() { return (function() {show_gasfill('tx')})}
-function get_show_o2fill_ref() { return (function() {show_gasfill('o2')})}
+function get_show_airfill_ref() {
+    return (function () {
+        show_gasfill('air')
+    })
+}
+
+function get_show_nitroxfill_ref() {
+    return (function () {
+        show_gasfill('nx')
+    })
+}
+
+function get_show_trimixfill_ref() {
+    return (function () {
+        show_gasfill('tx')
+    })
+}
+
+function get_show_o2fill_ref() {
+    return (function () {
+        show_gasfill('o2')
+    })
+}
 
 function show_gasfill(type) {
     var fill_form = document.createElement('form');
@@ -74,18 +93,18 @@ function show_gasfill(type) {
     response_div.innerHTML = '';
     var gas_div = document.createElement('div');
     gas_div.appendChild(get_cylinder_select());
-    gas_div.appendChild(get_amount_select(1,15, 'Number of cylinders', '', ''));
+    gas_div.appendChild(get_amount_select(1, 15, 'Number of cylinders', '', ''));
 
     switch (type) {
         case 'tx':
-            gas_div.appendChild(get_amount_select(1,100, 'He % before fill', '', ' %'));
-            gas_div.appendChild(get_amount_select(1,100, 'He % after fill', '', ' %'));
+            gas_div.appendChild(get_amount_select(1, 100, 'He % before fill', '', ' %'));
+            gas_div.appendChild(get_amount_select(1, 100, 'He % after fill', '', ' %'));
         case 'nx':
-            gas_div.appendChild(get_amount_select(1,100, 'Oxygen % before fill', '', ' %'));
-            gas_div.appendChild(get_amount_select(1,100, 'Oxygen % after fill', '', ' %'));
+            gas_div.appendChild(get_amount_select(1, 100, 'Oxygen % before fill', '', ' %'));
+            gas_div.appendChild(get_amount_select(1, 100, 'Oxygen % after fill', '', ' %'));
         case 'o2':
-            gas_div.appendChild(get_amount_select(0,350, 'Pressure before fill', '', ' bar'));
-            gas_div.appendChild(get_amount_select(1,350, 'Pressure after fill', '', ' bar'));
+            gas_div.appendChild(get_amount_select(0, 350, 'Pressure before fill', '', ' bar'));
+            gas_div.appendChild(get_amount_select(1, 350, 'Pressure after fill', '', ' bar'));
             break;
     }
 
@@ -139,7 +158,9 @@ function get_add_button() {
 function get_clear_button() {
     var clear_button = document.createElement('button');
     clear_button.innerHTML = 'Clear form';
-    clear_button.onclick = function() {document.getElementById('fill_form').reset()};
+    clear_button.onclick = function () {
+        document.getElementById('fill_form').reset()
+    };
     clear_button.style.backgroundColor = '#CC9999';
     return (clear_button);
 }
