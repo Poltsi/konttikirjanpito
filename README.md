@@ -1,6 +1,6 @@
 # konttikirjanpito
 
-Bookkeeping for a gas fill station to track fills supporting Nx and Tx bookkeeping.
+Bookkeeping for a gas fill station to track fills supporting air, oxygen, Nx and Tx bookkeeping.
 
 To run this you need to have a docker server. You can run it locally if you eg. have a laptop running Linux, or remotely on a server or cloud.
 
