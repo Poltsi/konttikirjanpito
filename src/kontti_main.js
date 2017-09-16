@@ -13,6 +13,25 @@
  *
  */
 
+/* Global variables for strings */
+const FILLTYPEID      = 'fill_type';
+const FILLLISTID      = 'fill_list';
+const FILLLISTTABLEID = 'fill_list_table';
+const ACTIONID        = 'action';
+const FILLLISTFORMID  = 'fill_form';
+const FILLROWPREFIX   = 'fill_tr_';
+var next_id         = 0;
+/* Types of fills, fields are:
+ *  0. key
+ *  1. Name
+ *  2. Button color
+ */
+const TYPELIST   = [    ['air', 'Air fill', '#99CC99'],
+                        ['nx',  'Nitrox fill', '#9999CC'],
+                        ['tx',  'Trimix fill', '#CC99CC'],
+                        ['o2',  'Oxygen fill', '#9999FF']];
+
+
 /**
  * display_action_buttons: Shows the action buttons depending of the mode, default is to show the main action buttons
  * @param  mode
@@ -22,15 +41,76 @@
 function display_action_buttons(mode) {
     /* TODO: Check that mode is set */
 
-    var my_action_div = document.getElementById('action');
-    my_action_div.innerHTML = '';
+    /* Clear the divs first */
+    var my_filltype_elem = document.getElementById(FILLTYPEID);
+    my_filltype_elem.innerHTML = '';
+    var my_filllist_elem = document.querySelector('#' + FILLLISTID);
+    my_filllist_elem.innerHTML = '';
+    var my_action_elem = document.querySelector('#' + ACTIONID);
+    my_action_elem.innerHTML = '';
 
     switch (mode) {
+        case 'login':
+            break;
         case 'main':
-            my_action_div.appendChild(get_main_action_buttons());
+            my_filltype_elem.appendChild(get_main_action_buttons());
+            /* Add the fill form to the main field div */
+            var fill_form = document.createElement('form');
+            fill_form.id = FILLLISTFORMID;
+            var fill_form_table = document.createElement('table');
+            fill_form_table.appendChild(get_fill_table_header());
+            fill_form_table.id = FILLLISTTABLEID;
+            fill_form_table.setAttribute('border', '1');
+            fill_form.appendChild(fill_form_table);
+            my_filllist_elem.appendChild(fill_form);
+            my_action_elem.appendChild(get_add_button());
+            my_action_elem.appendChild(get_clear_button(FILLLISTFORMID));
+            break;
+        case 'logout':
             break;
         default:
     }
+}
+
+/**
+ * get_fill_table_header: Adds the header row to the fill table
+ * @return void
+ */
+
+function get_fill_table_header() {
+    var header_tr = document.createElement('tr');
+    header_tr.id = 'tr_header';
+    var header_td1 = document.createElement('td');
+    header_td1.innerHTML = '# and type';
+    header_tr.appendChild(header_td1);
+    var header_td2 = document.createElement('td');
+    header_td2.innerHTML = 'Cylinder size';
+    header_tr.appendChild(header_td2);
+    var header_td3 = document.createElement('td');
+    header_td3.innerHTML = 'Amount';
+    header_tr.appendChild(header_td3);
+    var header_td4 = document.createElement('td');
+    header_td4.innerHTML = 'Start pressure';
+    header_tr.appendChild(header_td4);
+    var header_td5 = document.createElement('td');
+    header_td5.innerHTML = 'End pressure';
+    header_tr.appendChild(header_td5);
+    var header_td6 = document.createElement('td');
+    header_td6.innerHTML = 'Oxygen % at start';
+    header_tr.appendChild(header_td6);
+    var header_td7 = document.createElement('td');
+    header_td7.innerHTML = 'Oxygen % at end';
+    header_tr.appendChild(header_td7);
+    var header_td8 = document.createElement('td');
+    header_td8.innerHTML = 'Helium % at start';
+    header_tr.appendChild(header_td8);
+    var header_td9 = document.createElement('td');
+    header_td9.innerHTML = 'Helium at end';
+    header_tr.appendChild(header_td9);
+    var header_td10 = document.createElement('td');
+    header_td10.innerHTML = 'Remove';
+    header_tr.appendChild(header_td10);
+    return (header_tr);
 }
 
 /**
@@ -42,82 +122,109 @@ function get_main_action_buttons() {
     var button_div = document.createElement('div');
     button_div.id = 'main_action';
 
-    var air_fill_button = document.createElement('button');
-    air_fill_button.id = 'air_fill_button';
-    air_fill_button.style.backgroundColor = '#99CC99';
-    air_fill_button.innerHTML = 'Air fill';
-    air_fill_button.addEventListener('click', get_show_fill_ref('air'));
-    button_div.appendChild(air_fill_button);
-
-    var nitrox_fill_button = document.createElement('button');
-    nitrox_fill_button.style.backgroundColor = '#9999CC';
-    nitrox_fill_button.id = 'nitrox_fill_button';
-    nitrox_fill_button.innerHTML = 'Nitrox fill';
-    nitrox_fill_button.addEventListener('click', get_show_fill_ref('nx'));
-    button_div.appendChild(nitrox_fill_button);
-
-    var trimix_fill_button = document.createElement('button');
-    trimix_fill_button.style.backgroundColor = '#CC99CC';
-    trimix_fill_button.id = 'trimix_fill_button';
-    trimix_fill_button.innerHTML = 'Trimix fill';
-    trimix_fill_button.addEventListener('click', get_show_fill_ref('tx'));
-    button_div.appendChild(trimix_fill_button);
-
-    var o2_fill_button = document.createElement('button');
-    o2_fill_button.style.backgroundColor = '#9999FF';
-    o2_fill_button.id = 'o2_fill_button';
-    o2_fill_button.innerHTML = 'O2 fill';
-    o2_fill_button.addEventListener('click', get_show_fill_ref('o2'));
-    button_div.appendChild(o2_fill_button);
+    for (var i = 0; i < TYPELIST.length; i++)
+    {
+        var fill_button = document.createElement('button');
+        fill_button.id = TYPELIST[i][0] + '_fill_button';
+        fill_button.style.backgroundColor = TYPELIST[i][2];
+        fill_button.innerHTML = TYPELIST[i][1];
+        fill_button.addEventListener('click', get_show_fill_ref(TYPELIST[i][0]));
+        button_div.appendChild(fill_button);
+    }
 
     return (button_div);
 }
 
 /**
- * get_show_fill_ref: Helper function to attach the show_gasfill-function to an action
+ * get_show_fill_ref: Helper function to attach the add_gas_fill_row-function to an action
  * @param type
  * @return {Function}
  */
 
 function get_show_fill_ref(type) {
     return (function () {
-        show_gasfill(type)
+        add_gas_fill_row(type)
     })
 }
 
 /**
- * show_gasfill: Adds the necessary gasfill fields depending of the type of fill
- * @param type
+ * add_gas_fill_row: Adds the necessary gasfill fields depending of the type of fill
+ * @param type What type of fill is it, see TYPELIST first field
+ * @param id running id of the fill, used to individualize the fills
  * @return void
  */
 
-function show_gasfill(type) {
-    var fill_form = document.createElement('form');
-    var form_id = 'fill_form';
-    fill_form.id = form_id;
-    var response_div = document.getElementById('response');
-    response_div.innerHTML = '';
-    var gas_div = document.createElement('div');
-    gas_div.appendChild(get_cylinder_select());
-    gas_div.appendChild(get_amount_select(1, 15, 'Number of cylinders', '', ''));
+function add_gas_fill_row(type) {
+    var id = get_next_fill_id();
+    var my_filllist_elem = document.querySelector('#' + FILLLISTTABLEID);
+    var gas_tr = document.createElement('tr');
+    gas_tr.id = FILLROWPREFIX + id;
 
-    switch (type) {
-        case 'tx':
-            gas_div.appendChild(get_amount_select(1, 100, 'He % before fill', '', ' %'));
-            gas_div.appendChild(get_amount_select(1, 100, 'He % after fill', '', ' %'));
-        case 'nx':
-            gas_div.appendChild(get_amount_select(1, 100, 'Oxygen % before fill', '', ' %'));
-            gas_div.appendChild(get_amount_select(1, 100, 'Oxygen % after fill', '', ' %'));
-        case 'o2':
-            gas_div.appendChild(get_amount_select(0, 350, 'Pressure before fill', '', ' bar'));
-            gas_div.appendChild(get_amount_select(1, 350, 'Pressure after fill', '', ' bar'));
-            break;
+    var gas_td_type = document.createElement('td');
+    gas_td_type.innerHTML = id + ': ' + type + ' fill';
+    gas_tr.appendChild(gas_td_type);
+
+    var gas_td_cyl =  document.createElement('td');
+    gas_td_cyl.appendChild(get_cylinder_select());
+    gas_tr.appendChild(gas_td_cyl);
+
+    var gas_td_num =  document.createElement('td');
+    gas_td_num.appendChild(get_amount_select(1, 15, 'Number of cylinders', '', ''));
+    gas_tr.appendChild(gas_td_num);
+
+    if (type !== 'air') {
+        var gas_td_bar_start =  document.createElement('td');
+        gas_td_bar_start.appendChild(get_amount_select(0, 350, 'Pressure before fill', '', ' bar'));
+        gas_tr.appendChild(gas_td_bar_start);
+
+        var gas_td_bar_end =  document.createElement('td');
+        gas_td_bar_end.appendChild(get_amount_select(1, 350, 'Pressure after fill', '', ' bar'));
+        gas_tr.appendChild(gas_td_bar_end);
+
+        if (type === 'nx') {
+            var gas_td_o2_start =  document.createElement('td');
+            gas_td_o2_start.appendChild(get_amount_select(1, 350, 'O2 percentage before fill', '', ' %'));
+            gas_tr.appendChild(gas_td_o2_start);
+
+            var gas_td_o2_end =  document.createElement('td');
+            gas_td_o2_end.appendChild(get_amount_select(1, 350, 'O2 percentage after fill', '', ' %'));
+            gas_tr.appendChild(gas_td_o2_end);
+
+            for (var i = 0; i < 2; i++) {
+                gas_tr.appendChild(document.createElement('td'));
+            }
+
+        } else if (type === 'tx') {
+            var gas_td_o2_start =  document.createElement('td');
+            gas_td_o2_start.appendChild(get_amount_select(1, 350, 'O2 percentage before fill', '', ' %'));
+            gas_tr.appendChild(gas_td_o2_start);
+
+            var gas_td_o2_end =  document.createElement('td');
+            gas_td_o2_end.appendChild(get_amount_select(1, 350, 'O2 percentage after fill', '', ' %'));
+            gas_tr.appendChild(gas_td_o2_end);
+
+            var gas_td_he_start =  document.createElement('td');
+            gas_td_he_start.appendChild(get_amount_select(1, 350, 'He percentage before fill', '', ' %'));
+            gas_tr.appendChild(gas_td_he_start);
+
+            var gas_td_he_end =  document.createElement('td');
+            gas_td_he_end.appendChild(get_amount_select(1, 350, 'He percentage after fill', '', ' %'));
+            gas_tr.appendChild(gas_td_he_end);
+        } else if (type === 'o2') {
+            for (var i = 0; i < 4; i++) {
+                gas_tr.appendChild(document.createElement('td'));
+            }
+        }
+    } else {
+        /* Add empty cells */
+        for (var i = 0; i < 6; i++) {
+            gas_tr.appendChild(document.createElement('td'));
+        }
     }
 
-    gas_div.appendChild(get_add_button());
-    gas_div.appendChild(get_clear_button(form_id));
-    fill_form.appendChild(gas_div);
-    response_div.appendChild(fill_form);
+    /* Finally add the row removal button */
+    gas_tr.appendChild(get_removal_cell(id));
+    my_filllist_elem.appendChild(gas_tr);
 }
 
 /**
@@ -189,10 +296,46 @@ function get_add_button() {
 
 function get_clear_button(form_id) {
     var clear_button = document.createElement('button');
-    clear_button.innerHTML = 'Clear form';
+    clear_button.innerHTML = 'Reset fields';
     clear_button.onclick = function () {
         document.getElementById(form_id).reset()
     };
     clear_button.style.backgroundColor = '#CC9999';
     return (clear_button);
+}
+
+function get_next_fill_id() {
+    next_id++;
+    console.log('Next id: ' + next_id);
+    return(next_id);
+}
+
+/**
+ *
+ * @param id identification number of the row
+ */
+function get_removal_cell(id) {
+    var td_cell = document.createElement('td');
+    var removal_button = document.createElement('button');
+    removal_button.backgroundColor = '#CC6060';
+    removal_button.innerHTML = 'Remove fill';
+    removal_button.onclick = get_remove_fill_row_function(id);
+    td_cell.appendChild(removal_button);
+    return (td_cell);
+}
+
+function get_remove_fill_row_function(id) {
+    return (function() {remove_fill_row(id)});
+}
+
+/**
+ * remove_fill_row: Remove the row from the fill table by the given id. Please note that the id may be different from
+ *                  the row number, as other rows may have been removed previously
+ * @param id identification number of the row
+ * @return void
+ */
+function remove_fill_row(id) {
+    console.log('Removing id: ' + id);
+    var row_elem = document.querySelector('#' + FILLROWPREFIX + id);
+    row_elem.parentNode.removeChild(row_elem);
 }
