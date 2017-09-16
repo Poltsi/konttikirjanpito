@@ -285,6 +285,7 @@ function get_add_button() {
     var add_button = document.createElement('button');
     add_button.innerHTML = 'Add fill(s)';
     add_button.style.backgroundColor = '#99CC99';
+    add_button.onclick = get_submit_fill_data_function();
     return (add_button);
 }
 
@@ -305,9 +306,10 @@ function get_clear_button(form_id) {
 }
 
 function get_next_fill_id() {
+    var my_id = next_id;
     next_id++;
     console.log('Next id: ' + next_id);
-    return(next_id);
+    return(my_id);
 }
 
 /**
@@ -338,4 +340,46 @@ function remove_fill_row(id) {
     console.log('Removing id: ' + id);
     var row_elem = document.querySelector('#' + FILLROWPREFIX + id);
     row_elem.parentNode.removeChild(row_elem);
+}
+
+function get_submit_fill_data_function() {
+    return (function() {submit_fill_data()});
+}
+
+function submit_fill_data() {
+    var fill_array = [];
+
+    var table = document.querySelector('#' + FILLLISTTABLEID);
+    var num_rows =  table.childElementCount;
+
+    /* There is the header row*/
+    if (num_rows < 2) {
+        alert('No fills added');
+        return;
+    }
+
+    /* Try to fetch any id from 0 to max value */
+    for (i = 0; i < next_id; i++) {
+        var row = document.querySelector('#' + FILLROWPREFIX + i);
+        if (row != null) {
+            console.log('Get the data for row: ' + i)
+            fill_array.push(get_fill_data(row));
+        }
+    }
+
+    // var myJsonString = JSON.stringify(fill_array);
+}
+
+function get_fill_data(row) {
+    var data_array = [];
+    /* The first cell is the # and the last is the remove button*/
+    for (var i = 1; i < (row.childNodes.length - 1); i++) {
+        var td_cell = row.childNodes.item(i);
+        var cell_elem = td_cell.childNodes.item(0);
+        if (cell_elem != null) {
+            console.log('field_value' + cell_elem.id)
+        }
+    }
+
+    return (data_array);
 }
