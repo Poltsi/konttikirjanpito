@@ -13,6 +13,12 @@
  *
  */
 
+/**
+ * display_action_buttons: Shows the action buttons depending of the mode, default is to show the main action buttons
+ * @param  mode
+ * @return void
+ */
+
 function display_action_buttons(mode) {
     /* TODO: Check that mode is set */
 
@@ -26,6 +32,11 @@ function display_action_buttons(mode) {
         default:
     }
 }
+
+/**
+ * get_main_action_buttons: Shows the button block for different fills addition
+ * @return {Element}
+ */
 
 function get_main_action_buttons() {
     var button_div = document.createElement('div');
@@ -62,15 +73,28 @@ function get_main_action_buttons() {
     return (button_div);
 }
 
+/**
+ * get_show_fill_ref: Helper function to attach the show_gasfill-function to an action
+ * @param type
+ * @return {Function}
+ */
+
 function get_show_fill_ref(type) {
     return (function () {
         show_gasfill(type)
     })
 }
 
+/**
+ * show_gasfill: Adds the necessary gasfill fields depending of the type of fill
+ * @param type
+ * @return void
+ */
+
 function show_gasfill(type) {
     var fill_form = document.createElement('form');
-    fill_form.id = 'fill_form';
+    var form_id = 'fill_form';
+    fill_form.id = form_id;
     var response_div = document.getElementById('response');
     response_div.innerHTML = '';
     var gas_div = document.createElement('div');
@@ -91,10 +115,15 @@ function show_gasfill(type) {
     }
 
     gas_div.appendChild(get_add_button());
-    gas_div.appendChild(get_clear_button());
+    gas_div.appendChild(get_clear_button(form_id));
     fill_form.appendChild(gas_div);
     response_div.appendChild(fill_form);
 }
+
+/**
+ * get_cylinder_select: Returns an select element with the most common cylinder sizes
+ * @return {Element}
+ */
 
 function get_cylinder_select() {
     var cylinder_select = document.createElement('select');
@@ -119,6 +148,16 @@ function get_cylinder_select() {
     return (cylinder_select);
 }
 
+/**
+ * get_amount_select: Generic select-element is returned which has a running number as value
+ * @param from
+ * @param to
+ * @param title
+ * @param prefix
+ * @param suffix
+ * @return {Element}
+ */
+
 function get_amount_select(from, to, title, prefix, suffix) {
     var amount_select = document.createElement('select');
     amount_select.title = title;
@@ -130,6 +169,11 @@ function get_amount_select(from, to, title, prefix, suffix) {
     return (amount_select);
 }
 
+/**
+ * get_add_button: Returns an add-button for the gas fill block
+ * @return {Element}
+ */
+
 function get_add_button() {
     var add_button = document.createElement('button');
     add_button.innerHTML = 'Add fill(s)';
@@ -137,11 +181,17 @@ function get_add_button() {
     return (add_button);
 }
 
-function get_clear_button() {
+/**
+ * get_clear_button: Returns a clear button for the form
+ * @param form_id
+ * @return {Element}
+ */
+
+function get_clear_button(form_id) {
     var clear_button = document.createElement('button');
     clear_button.innerHTML = 'Clear form';
     clear_button.onclick = function () {
-        document.getElementById('fill_form').reset()
+        document.getElementById(form_id).reset()
     };
     clear_button.style.backgroundColor = '#CC9999';
     return (clear_button);
