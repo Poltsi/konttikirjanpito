@@ -14,12 +14,22 @@
  */
 
 /* Global variables for strings */
-const FILLTYPEID      = 'fill_type';
-const FILLLISTID      = 'fill_list';
-const FILLLISTTABLEID = 'fill_list_table';
-const ACTIONID        = 'action';
-const FILLLISTFORMID  = 'fill_form';
-const FILLROWPREFIX   = 'fill_tr_';
+const FILLTYPEID                   = 'fill_type';
+const FILLLISTID                   = 'fill_list';
+const FILLLISTTABLEID              = 'fill_list_table';
+const ACTIONID                     = 'action';
+const FILLLISTFORMID               = 'fill_form';
+const FILLROWPREFIX                = 'fill_tr_';
+const FILLCYLTYPEPREFIX            = 'cyl_type_';
+const FILLCYLSIZEPREFIX            = 'cyl_size_';
+const FILLCYLNUMPREFIX             = 'cyl_num_';
+const FILLCYLPRESSSTARTPREFIX      = 'cyl_start_pressure_';
+const FILLCYLPRESSENDPREFIX        = 'cyl_end_pressure_';
+const FILLCYLO2PCNTSTARTPREFIX     = 'cyl_o2_start_';
+const FILLCYLO2PCNTENDPREFIX       = 'cyl_o2_end_';
+const FILLCYLHEPCNTSTARTPREFIX     = 'cyl_he_start_';
+const FILLCYLHEPCNTENDPREFIX       = 'cyl_he_end_';
+
 var next_id         = 0;
 /* Types of fills, fields are:
  *  0. key
@@ -162,64 +172,59 @@ function add_gas_fill_row(type) {
 
     var gas_td_type = document.createElement('td');
     gas_td_type.innerHTML = id + ': ' + type + ' fill';
+    var gas_type_input = document.createElement('input');
+    gas_type_input.setAttribute('type', 'hidden');
+    gas_type_input.setAttribute('value', type);
+    gas_type_input.id = FILLCYLTYPEPREFIX + id;
+    gas_td_type.appendChild(gas_type_input);
     gas_tr.appendChild(gas_td_type);
 
     var gas_td_cyl =  document.createElement('td');
-    gas_td_cyl.appendChild(get_cylinder_select());
+    gas_td_cyl.appendChild(get_cylinder_select(id));
     gas_tr.appendChild(gas_td_cyl);
 
     var gas_td_num =  document.createElement('td');
-    gas_td_num.appendChild(get_amount_select(1, 15, 'Number of cylinders', '', ''));
+    gas_td_num.appendChild(get_amount_select(1, 15, 'Number of cylinders', FILLCYLNUMPREFIX + id, '', ''));
     gas_tr.appendChild(gas_td_num);
+
+    var n = 6;
 
     if (type !== 'air') {
         var gas_td_bar_start =  document.createElement('td');
-        gas_td_bar_start.appendChild(get_amount_select(0, 350, 'Pressure before fill', '', ' bar'));
+        gas_td_bar_start.appendChild(get_amount_select(0, 350, 'Pressure before fill', FILLCYLPRESSSTARTPREFIX + id, '', ' bar'));
         gas_tr.appendChild(gas_td_bar_start);
 
         var gas_td_bar_end =  document.createElement('td');
-        gas_td_bar_end.appendChild(get_amount_select(1, 350, 'Pressure after fill', '', ' bar'));
+        gas_td_bar_end.appendChild(get_amount_select(1, 350, 'Pressure after fill', FILLCYLPRESSENDPREFIX + id, '', ' bar'));
         gas_tr.appendChild(gas_td_bar_end);
+        n = 4;
 
-        if (type === 'nx') {
-            var gas_td_o2_start =  document.createElement('td');
-            gas_td_o2_start.appendChild(get_amount_select(1, 350, 'O2 percentage before fill', '', ' %'));
+        if (type !== 'o2') {
+            var gas_td_o2_start = document.createElement('td');
+            gas_td_o2_start.appendChild(get_amount_select(0, 100, 'O2 percentage before fill', FILLCYLO2PCNTSTARTPREFIX + id, '', ' %'));
             gas_tr.appendChild(gas_td_o2_start);
 
-            var gas_td_o2_end =  document.createElement('td');
-            gas_td_o2_end.appendChild(get_amount_select(1, 350, 'O2 percentage after fill', '', ' %'));
+            var gas_td_o2_end = document.createElement('td');
+            gas_td_o2_end.appendChild(get_amount_select(1, 100, 'O2 percentage after fill', FILLCYLO2PCNTENDPREFIX + id, '', ' %'));
             gas_tr.appendChild(gas_td_o2_end);
+            n = 2;
 
-            for (var i = 0; i < 2; i++) {
-                gas_tr.appendChild(document.createElement('td'));
-            }
+            if (type !== 'nx') {
+                var gas_td_he_start = document.createElement('td');
+                gas_td_he_start.appendChild(get_amount_select(0, 100, 'He percentage before fill', FILLCYLHEPCNTSTARTPREFIX + id, '', ' %'));
+                gas_tr.appendChild(gas_td_he_start);
 
-        } else if (type === 'tx') {
-            var gas_td_o2_start =  document.createElement('td');
-            gas_td_o2_start.appendChild(get_amount_select(1, 350, 'O2 percentage before fill', '', ' %'));
-            gas_tr.appendChild(gas_td_o2_start);
-
-            var gas_td_o2_end =  document.createElement('td');
-            gas_td_o2_end.appendChild(get_amount_select(1, 350, 'O2 percentage after fill', '', ' %'));
-            gas_tr.appendChild(gas_td_o2_end);
-
-            var gas_td_he_start =  document.createElement('td');
-            gas_td_he_start.appendChild(get_amount_select(1, 350, 'He percentage before fill', '', ' %'));
-            gas_tr.appendChild(gas_td_he_start);
-
-            var gas_td_he_end =  document.createElement('td');
-            gas_td_he_end.appendChild(get_amount_select(1, 350, 'He percentage after fill', '', ' %'));
-            gas_tr.appendChild(gas_td_he_end);
-        } else if (type === 'o2') {
-            for (var i = 0; i < 4; i++) {
-                gas_tr.appendChild(document.createElement('td'));
+                var gas_td_he_end = document.createElement('td');
+                gas_td_he_end.appendChild(get_amount_select(1, 100, 'He percentage after fill', FILLCYLHEPCNTENDPREFIX + id, '', ' %'));
+                gas_tr.appendChild(gas_td_he_end);
+                n = 0;
             }
         }
-    } else {
-        /* Add empty cells */
-        for (var i = 0; i < 6; i++) {
-            gas_tr.appendChild(document.createElement('td'));
-        }
+    }
+
+    /* Add empty cells */
+    for (var i = 0; i < n; i++) {
+        gas_tr.appendChild(document.createElement('td'));
     }
 
     /* Finally add the row removal button */
@@ -232,8 +237,9 @@ function add_gas_fill_row(type) {
  * @return {Element}
  */
 
-function get_cylinder_select() {
+function get_cylinder_select(id) {
     var cylinder_select = document.createElement('select');
+    cylinder_select.id = FILLCYLSIZEPREFIX + id;
     cylinder_select.title = 'Select type of cylinder';
     cylinder_select.options.add(new Option('40cf/5.7l', '40cf'));
     cylinder_select.options.add(new Option('80cf/11.1l', '80cf'));
@@ -265,8 +271,9 @@ function get_cylinder_select() {
  * @return {Element}
  */
 
-function get_amount_select(from, to, title, prefix, suffix) {
+function get_amount_select(from, to, title, id, prefix, suffix) {
     var amount_select = document.createElement('select');
+    amount_select.id = id;
     amount_select.title = title;
 
     for (var i = from; i <= to; i++) {
@@ -358,28 +365,69 @@ function submit_fill_data() {
         return;
     }
 
+    if (!verify_fill_data()) {
+        return;
+    }
+
     /* Try to fetch any id from 0 to max value */
-    for (i = 0; i < next_id; i++) {
+    for (var i = 0; i < next_id; i++) {
         var row = document.querySelector('#' + FILLROWPREFIX + i);
         if (row != null) {
-            console.log('Get the data for row: ' + i)
-            fill_array.push(get_fill_data(row));
+            fill_array.push(get_fill_data(i));
         }
     }
 
     // var myJsonString = JSON.stringify(fill_array);
 }
 
-function get_fill_data(row) {
-    var data_array = [];
-    /* The first cell is the # and the last is the remove button*/
-    for (var i = 1; i < (row.childNodes.length - 1); i++) {
-        var td_cell = row.childNodes.item(i);
-        var cell_elem = td_cell.childNodes.item(0);
-        if (cell_elem != null) {
-            console.log('field_value' + cell_elem.id)
+function get_fill_data(id) {
+    var data_array = [null,null,null,null,null,null,null,null,null];
+
+    console.log('Looking for id: ' + FILLCYLTYPEPREFIX + id);
+    data_array[0] = document.querySelector('#' + FILLCYLTYPEPREFIX + id).value;
+    data_array[1] = document.querySelector('#' + FILLCYLSIZEPREFIX + id).options[document.querySelector('#' + FILLCYLSIZEPREFIX + id).selectedIndex].value;
+    data_array[2] = document.querySelector('#' + FILLCYLNUMPREFIX + id).options[document.querySelector('#' + FILLCYLNUMPREFIX + id).selectedIndex].value;
+
+    if (data_array[0] !== 'air') {
+        data_array[3] = document.querySelector('#' + FILLCYLPRESSSTARTPREFIX + id).options[document.querySelector('#' + FILLCYLPRESSSTARTPREFIX + id).selectedIndex].value;
+        data_array[4] = document.querySelector('#' + FILLCYLPRESSENDPREFIX + id).options[document.querySelector('#' + FILLCYLPRESSENDPREFIX + id).selectedIndex].value;
+
+        if (data_array[0] !== 'o2') {
+            data_array[5] = document.querySelector('#' + FILLCYLO2PCNTSTARTPREFIX + id).options[document.querySelector('#' + FILLCYLO2PCNTSTARTPREFIX + id).selectedIndex].value;
+            data_array[6] = document.querySelector('#' + FILLCYLO2PCNTENDPREFIX + id).options[document.querySelector('#' + FILLCYLO2PCNTENDPREFIX + id).selectedIndex].value;
+
+            if (data_array[0] !== 'nx') {
+                data_array[7] = document.querySelector('#' + FILLCYLHEPCNTSTARTPREFIX + id).options[document.querySelector('#' + FILLCYLHEPCNTSTARTPREFIX + id).selectedIndex].value;
+                data_array[8] = document.querySelector('#' + FILLCYLHEPCNTENDPREFIX + id).options[document.querySelector('#' + FILLCYLHEPCNTENDPREFIX + id).selectedIndex].value;
+            }
         }
     }
 
+    console.log(data_array);
     return (data_array);
+}
+
+/**
+ * verify_fill_data: Goes through each fill row and calls the row verification for each id
+ * @return {boolean}
+ */
+function verify_fill_data() {
+    /* Try to fetch any id from 0 to max value */
+    for (var i = 0; i < next_id; i++) {
+        var row = document.querySelector('#' + FILLROWPREFIX + i);
+        if (row != null) {
+            if (!verify_row_data(i)) return (false);
+        }
+    }
+
+    return (true);
+}
+
+function verify_row_data(id) {
+    // TODO: Make sure the end pressure is not lower than the start pressure
+    // TODO: Make sure the sum of start O2 and He is not over 100
+    // TODO: Make sure the sum of end O2 and He is not over 100
+    // TODO: Make sure the fill did not require more than 100% o2
+    // TODO: Make sure the fill did not require more than 100% he
+    return (true);
 }
