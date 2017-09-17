@@ -320,7 +320,6 @@ function get_clear_button(form_id) {
 function get_next_fill_id() {
     var my_id = next_id;
     next_id++;
-    console.log('Next id: ' + next_id);
     return(my_id);
 }
 
@@ -351,7 +350,6 @@ function get_remove_fill_row_function(id) {
  * @return {void}
  */
 function remove_fill_row(id) {
-    console.log('Removing id: ' + id);
     var row_elem = document.querySelector('#' + FILLROWPREFIX + id);
     row_elem.parentNode.removeChild(row_elem);
 }
@@ -401,7 +399,6 @@ function submit_fill_data() {
 function get_fill_data(id) {
     var data_array = [null,null,null,null,null,null,null,null,null];
 
-    console.log('Looking for id: ' + FILLCYLTYPEPREFIX + id);
     data_array[0] = document.querySelector('#' + FILLCYLTYPEPREFIX + id).value;
     data_array[1] = document.querySelector('#' + FILLCYLSIZEPREFIX + id).options[document.querySelector('#' + FILLCYLSIZEPREFIX + id).selectedIndex].value;
     data_array[2] = document.querySelector('#' + FILLCYLNUMPREFIX + id).options[document.querySelector('#' + FILLCYLNUMPREFIX + id).selectedIndex].value;
@@ -422,7 +419,6 @@ function get_fill_data(id) {
     }
 
     // TODO: Verify the data
-    console.log(data_array);
     return (data_array);
 }
 
