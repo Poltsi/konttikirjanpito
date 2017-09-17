@@ -399,8 +399,8 @@ function submit_fill_data() {
 function get_fill_data(id) {
     var data_array = [null,null,null,null,null,null,null,null,null];
 
-    data_array[0] = document.querySelector('#' + FILLCYLTYPEPREFIX + id).value;
-    data_array[1] = document.querySelector('#' + FILLCYLSIZEPREFIX + id).options[document.querySelector('#' + FILLCYLSIZEPREFIX + id).selectedIndex].value;
+    data_array[0] = get_cylinder_type(id);
+    data_array[1] = get_cylinder_size();
     data_array[2] = document.querySelector('#' + FILLCYLNUMPREFIX + id).options[document.querySelector('#' + FILLCYLNUMPREFIX + id).selectedIndex].value;
 
     if (data_array[0] !== 'air') {
@@ -422,6 +422,13 @@ function get_fill_data(id) {
     return (data_array);
 }
 
+function get_cylinder_type(id) {return (document.querySelector('#' + FILLCYLTYPEPREFIX + id).value);}
+
+function get_cylinder_size(id) {return (document.querySelector('#' + FILLCYLSIZEPREFIX + id).options[document.querySelector('#' + FILLCYLSIZEPREFIX + id).selectedIndex].value);}
+
+function get_cylinder_siza(id) {return (document.querySelector('#' + FILLCYLSIZEPREFIX + id).options[document.querySelector('#' + FILLCYLSIZEPREFIX + id).selectedIndex].value);}
+
+}
 /**
  * verify_fill_data: Goes through each fill row and calls the row verification for each id
  * @return {boolean}
