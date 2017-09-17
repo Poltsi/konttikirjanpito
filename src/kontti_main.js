@@ -312,6 +312,11 @@ function get_clear_button(form_id) {
     return (clear_button);
 }
 
+/**
+ * get_next_fill_id: Get's the next free id and bumps the counter up
+ * @return {number}
+ */
+
 function get_next_fill_id() {
     var my_id = next_id;
     next_id++;
@@ -320,9 +325,11 @@ function get_next_fill_id() {
 }
 
 /**
- *
+ * get_removal_cell: Creates and returns a cell with the remove-button
  * @param id identification number of the row
+ * @return {Element}
  */
+
 function get_removal_cell(id) {
     var td_cell = document.createElement('td');
     var removal_button = document.createElement('button');
@@ -341,7 +348,7 @@ function get_remove_fill_row_function(id) {
  * remove_fill_row: Remove the row from the fill table by the given id. Please note that the id may be different from
  *                  the row number, as other rows may have been removed previously
  * @param id identification number of the row
- * @return void
+ * @return {void}
  */
 function remove_fill_row(id) {
     console.log('Removing id: ' + id);
@@ -352,6 +359,11 @@ function remove_fill_row(id) {
 function get_submit_fill_data_function() {
     return (function() {submit_fill_data()});
 }
+
+/**
+ * submit_fill_data: Verifies and sends the given data to the server
+ * @return {void}
+ */
 
 function submit_fill_data() {
     var fill_array = [];
@@ -380,6 +392,12 @@ function submit_fill_data() {
     // var myJsonString = JSON.stringify(fill_array);
 }
 
+/**
+ * get_fill_data: Collects the fed data from the form and verifies it
+ * @param id
+ * @return {[null,null,null,null,null,null,null,null,null]}
+ */
+
 function get_fill_data(id) {
     var data_array = [null,null,null,null,null,null,null,null,null];
 
@@ -403,6 +421,7 @@ function get_fill_data(id) {
         }
     }
 
+    // TODO: Verify the data
     console.log(data_array);
     return (data_array);
 }
@@ -422,6 +441,12 @@ function verify_fill_data() {
 
     return (true);
 }
+
+/**
+ * verify_row_data: Checks that the fed information is consistent
+ * @param id
+ * @return {boolean}
+ */
 
 function verify_row_data(id) {
     // TODO: Make sure the end pressure is not lower than the start pressure
