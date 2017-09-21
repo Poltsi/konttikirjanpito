@@ -455,15 +455,16 @@ function verify_fill_data() {
  */
 
 function verify_row_data(id) {
-    // TODO: Make sure the end pressure is not lower than the start pressure
+    // TODO: These checks are dependent of the type of fill
+    // Make sure the end pressure is not lower than the start pressure
     if (get_cylinder_end_pressure(id) < get_cylinder_start_pressure(id)) return (false);
-    // TODO: Make sure the sum of start O2 and He is not over 100
+    // Make sure the sum of start O2 and He is not over 100
     if (get_cylinder_o2_start_percentage(id) +  get_cylinder_he_start_percentage(id) > 100) return (false);
-    // TODO: Make sure the sum of end O2 and He is not over 100
+    // Make sure the sum of end O2 and He is not over 100
     if (get_cylinder_o2_end_percentage(id) +  get_cylinder_he_end_percentage(id) > 100) return (false);
-    // TODO: Make sure the fill did not require more than 100% o2
+    // Make sure the fill did not require more than 100% o2
     if (is_overfill_gas(get_cylinder_start_pressure(id), get_cylinder_end_pressure(id), get_cylinder_o2_start_percentage(id), get_cylinder_o2_end_percentage(id))) return (false);
-    // TODO: Make sure the fill did not require more than 100% he
+    // Make sure the fill did not require more than 100% he
     if (is_overfill_gas(get_cylinder_start_pressure(id), get_cylinder_end_pressure(id), get_cylinder_he_start_percentage(id), get_cylinder_he_end_percentage(id))) return (false);
     return (true);
 }
@@ -477,14 +478,13 @@ function verify_row_data(id) {
  * @return {Boolean}
  */
 
-is_overfill_gas(press_start, press_end, fraction_start, fraction_end) {
+function is_overfill_gas(press_start, press_end, fraction_start, fraction_end) {
     var gas_press_start = fraction_start * press_start;
     var gas_press_end = fraction_end * press_end;
     var abs_gas_diff = press_end - press_start;
     var abs_partial_gas_diff = gas_press_end - gas_press_start;
 
-    if ((abs_partial_gas_diff < 0) ||
-        (abs_partial_gas_diff > abs_gas_diff)) return (false);
+    if ((abs_partial_gas_diff < 0) || (abs_partial_gas_diff > abs_gas_diff)) return (false);
 
     return (true);
 }
