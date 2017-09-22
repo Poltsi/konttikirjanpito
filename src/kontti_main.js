@@ -43,6 +43,21 @@ const TYPELIST   = [    ['air', 'Air fill', '#99CC99'],
                         ['o2',  'Oxygen fill', '#9999FF']];
 
 
+const CYLLIST = {   '40cf': ['40cf/5.7l', 5.7],
+                    '80cf': ['80cf/11.1l', 11.1],
+                    '7l': ['7l', 7.0],
+                    '12l': ['12l', 12.0],
+                    '15l': ['15l', 15.0],
+                    '18l': ['18l', 18.0],
+                    '20l': ['20l', 20.0],
+                    'D7': ['D7', 14.0],
+                    'D10': ['D10', 20.0],
+                    'D12': ['D12', 24.0],
+                    'D15': ['D15', 30.0],
+                    'D18': ['D18', 36.0],
+                    'D20': ['D20', 40.0],
+                    '50l': ['50l', 50.0]};
+
 /**
  * display_action_buttons: Shows the action buttons depending of the mode, default is to show the main action buttons
  * @param  mode
@@ -85,7 +100,7 @@ function display_action_buttons(mode) {
 
 /**
  * get_fill_table_header: Adds the header row to the fill table
- * @return void
+ * @return Element
  */
 
 function get_fill_table_header() {
@@ -250,21 +265,10 @@ function get_cylinder_select(id) {
     var cylinder_select = document.createElement('select');
     cylinder_select.id = FILLCYLSIZEPREFIX + id;
     cylinder_select.title = 'Select type of cylinder';
-    cylinder_select.options.add(new Option('40cf/5.7l', '40cf'));
-    cylinder_select.options.add(new Option('80cf/11.1l', '80cf'));
-    cylinder_select.options.add(new Option('7l', '7l'));
-    cylinder_select.options.add(new Option('12l', '12l'), true, true);
-    cylinder_select.options.add(new Option('15l', '15l'));
-    cylinder_select.options.add(new Option('18l', '18l'));
-    cylinder_select.options.add(new Option('20l', '20l'));
-    cylinder_select.options.add(new Option('D7', 'D7'));
-    cylinder_select.options.add(new Option('D10', 'D10'));
-    cylinder_select.options.add(new Option('D12', 'D12'));
-    cylinder_select.options.add(new Option('D15', 'D15'));
-    cylinder_select.options.add(new Option('D18', 'D18'));
-    cylinder_select.options.add(new Option('D20', 'D20'));
-    cylinder_select.options.add(new Option('50l', '50l'));
-    cylinder_select.options.add(new Option('Other', 'Other'));
+
+    for (var key in CYLLIST) {
+        cylinder_select.options.add(new Option(CYLLIST[key][0], key));
+    }
 
     /* TODO: Handle the other. Show an additional field where the user may input the volume */
     return (cylinder_select);
@@ -324,9 +328,6 @@ function get_save_data_function() {
     return (function () {save_data()});
 }
 
-function save_data() {
-    alert('Sending data as JSON to server');
-}
 /**
  * get_next_fill_id: Get's the next free id and bumps the counter up
  * @return {number}
@@ -370,15 +371,15 @@ function remove_fill_row(id) {
 }
 
 function get_check_data_function() {
-    return (function() {submit_fill_data()});
+    return (function() {check_data()});
 }
 
 /**
- * submit_fill_data: Verifies and sends the given data to the server
+ * save_data: Verifies and sends the given data to the server
  * @return {void}
  */
 
-function submit_fill_data() {
+function save_data() {
     var fill_array = [];
 
     var table = document.querySelector('#' + FILLLISTTABLEID);
@@ -390,10 +391,6 @@ function submit_fill_data() {
         return;
     }
 
-    if (!verify_fill_data()) {
-        return;
-    }
-
     /* Try to fetch any id from 0 to max value */
     for (var i = 0; i < next_id; i++) {
         var row = document.querySelector('#' + FILLROWPREFIX + i);
@@ -402,7 +399,9 @@ function submit_fill_data() {
         }
     }
 
-    // var myJsonString = JSON.stringify(fill_array);
+    var json = JSON.stringify(fill_array);
+    add_info(json);
+
 }
 
 /**
@@ -415,7 +414,7 @@ function get_fill_data(id) {
     var data_array = [null,null,null,null,null,null,null,null,null];
 
     data_array[0] = get_fill_type(id);
-    data_array[1] = get_cylinder_size(id);
+    data_array[1] = CYLLIST[get_cylinder_size(id)][1];
     data_array[2] = get_cylinder_number(id);
 
     if (data_array[0] !== 'air') {
@@ -448,10 +447,10 @@ function get_cylinder_he_start_percentage(id) {return (document.querySelector('#
 function get_cylinder_he_end_percentage(id) { return (document.querySelector('#' + FILLCYLHEPCNTENDPREFIX + id).options[document.querySelector('#' + FILLCYLHEPCNTENDPREFIX + id).selectedIndex].value);}
 
 /**
- * verify_fill_data: Goes through each fill row and calls the row verification for each id
+ * check_data: Goes through each fill row and calls the row verification for each id
  * @return {boolean}
  */
-function verify_fill_data() {
+function check_data() {
     /* Try to fetch any id from 0 to max value */
     var ret_val = true;
 
