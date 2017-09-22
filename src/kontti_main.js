@@ -456,7 +456,6 @@ function verify_fill_data() {
         var row = document.querySelector(selector);
         if (row != null) {
             if (!verify_row_data(i)) {
-                console.log('Failed to verify ' +  selector);
                 ret_val = false;
             }
         }
@@ -537,10 +536,8 @@ function is_overfill_gas(press_start, press_end, fraction_start, fraction_end) {
     var total_gas_diff = press_end - press_start;
     var partial_gas_diff = gas_press_end - gas_press_start;
     var gas_diff = total_gas_diff - partial_gas_diff;
-    console.log('Partial gas diff: ' +  partial_gas_diff + ' gas diff: ' + gas_diff);
 
     if ((partial_gas_diff < 0) || (gas_diff < total_gas_diff)) {
-            console.log('Gas diff is equal or more than total gas diff: ' + gas_diff);
             return (true);
     }
 
