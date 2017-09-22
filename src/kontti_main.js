@@ -399,10 +399,21 @@ function save_data() {
         }
     }
 
-    var json = JSON.stringify(fill_array);
-    add_info(json);
+    var json_data = JSON.stringify(fill_array);
+    add_info(json_data);
 
-}
+    /* Send the JSON to the server */
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", 'http://kontti.lappari/add_data.php', true);
+    xhr.setRequestHeader("Content-type", "application/json");
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+            var json = JSON.parse(xhr.responseText);
+            /* TODO: Handle the response */
+        }
+    };
+
+    xhr.send(json_data);}
 
 /**
  * get_fill_data: Collects the fed data from the form and verifies it
