@@ -74,8 +74,8 @@ function display_action_buttons(mode) {
             fill_form_table.setAttribute('border', '1');
             fill_form.appendChild(fill_form_table);
             my_filllist_elem.appendChild(fill_form);
-            my_action_elem.appendChild(get_add_button());
-            my_action_elem.appendChild(get_clear_button(FILLLISTFORMID));
+            my_action_elem.appendChild(get_check_button());
+            my_action_elem.appendChild(get_save_data_button(FILLLISTFORMID));
             break;
         case 'logout':
             break;
@@ -294,34 +294,39 @@ function get_amount_select(from, to, title, id, prefix, suffix) {
 }
 
 /**
- * get_add_button: Returns an add-button for the gas fill block
+ * get_check_button: Returns an check-button for the gas fill block
  * @return {Element}
  */
 
-function get_add_button() {
+function get_check_button() {
     var add_button = document.createElement('button');
-    add_button.innerHTML = 'Add fill(s)';
+    add_button.innerHTML = 'Check fill(s)';
     add_button.style.backgroundColor = '#99CC99';
-    add_button.onclick = get_submit_fill_data_function();
+    add_button.onclick = get_check_data_function();
     return (add_button);
 }
 
 /**
- * get_clear_button: Returns a clear button for the form
+ * get_save_data_button: Returns a clear button for the form
  * @param form_id
  * @return {Element}
  */
 
-function get_clear_button(form_id) {
+function get_save_data_button(form_id) {
     var clear_button = document.createElement('button');
-    clear_button.innerHTML = 'Reset fields';
-    clear_button.onclick = function () {
-        document.getElementById(form_id).reset()
-    };
+    clear_button.innerHTML = 'Save fill(s)';
+    clear_button.onclick = get_save_data_function();
     clear_button.style.backgroundColor = '#CC9999';
     return (clear_button);
 }
 
+function get_save_data_function() {
+    return (function () {save_data()});
+}
+
+function save_data() {
+    alert('Sending data as JSON to server');
+}
 /**
  * get_next_fill_id: Get's the next free id and bumps the counter up
  * @return {number}
@@ -364,7 +369,7 @@ function remove_fill_row(id) {
     row_elem.parentNode.removeChild(row_elem);
 }
 
-function get_submit_fill_data_function() {
+function get_check_data_function() {
     return (function() {submit_fill_data()});
 }
 
