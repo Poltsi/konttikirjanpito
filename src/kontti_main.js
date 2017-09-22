@@ -480,6 +480,7 @@ function verify_row_data(id) {
         if (get_cylinder_end_pressure(id) < get_cylinder_start_pressure(id)) {
             mark_red('td_' + FILLCYLPRESSSTARTPREFIX + id);
             mark_red('td_' + FILLCYLPRESSENDPREFIX + id);
+            add_info('The end pressure is lower than the start pressure');
             ret_val = false;
         }
 
@@ -488,6 +489,7 @@ function verify_row_data(id) {
             if (is_overfill_gas(get_cylinder_start_pressure(id), get_cylinder_end_pressure(id), get_cylinder_o2_start_percentage(id), get_cylinder_o2_end_percentage(id))) {
                 mark_red('td_' + FILLCYLO2PCNTSTARTPREFIX + id);
                 mark_red('td_' + FILLCYLO2PCNTENDPREFIX + id);
+                add_info('The fill requires that you used over 100% oxygen (you can not get to the given end O2% even if you used 100% oxygen');
                 ret_val = false;
             }
 
@@ -496,18 +498,21 @@ function verify_row_data(id) {
                 if (get_cylinder_o2_start_percentage(id) + get_cylinder_he_start_percentage(id) > 100) {
                     mark_red('td_' + FILLCYLO2PCNTSTARTPREFIX + id);
                     mark_red('td_' + FILLCYLHEPCNTSTARTPREFIX + id);
+                    add_info('The sum of O2 and He partial pressure add is larger than the whole fill at beginning');
                     ret_val = false;
                 }
                 // Make sure the sum of end O2 and He is not over 100
                 if (get_cylinder_o2_end_percentage(id) + get_cylinder_he_end_percentage(id) > 100) {
                     mark_red('td_' + FILLCYLO2PCNTENDPREFIX + id);
                     mark_red('td_' + FILLCYLHEPCNTENDPREFIX + id);
+                    add_info('The sum of O2 and He partial pressure add is larger than the whole fill at the end');
                     ret_val = false;
                 }
                 // Make sure the fill did not require more than 100% he
                 if (is_overfill_gas(get_cylinder_start_pressure(id), get_cylinder_end_pressure(id), get_cylinder_he_start_percentage(id), get_cylinder_he_end_percentage(id))){
                     mark_red('td_' + FILLCYLHEPCNTSTARTPREFIX + id);
                     mark_red('td_' + FILLCYLHEPCNTENDPREFIX + id);
+                    add_info('The fill requires that you used over 100% helium (you can not get to the given end He% even if you used 100% helium');
                     ret_val = false;
                 }
             }
@@ -542,7 +547,25 @@ function is_overfill_gas(press_start, press_end, fraction_start, fraction_end) {
     return (false);
 }
 
+/**
+ * mark_red: With the given id (which is full ID, not just the number), set the background color red
+ * @param id
+ * @return {void}
+ */
+
 function mark_red(id) {
     var entity = document.querySelector('#' + id);
     entity.style.backgroundColor = '#FF3030';
+}
+
+/**
+ * add_info: Add a paragraph of info to the info-div
+ * @param message
+ */
+
+function add_info(message) {
+    var info_div = document.querySelector('#info');
+    var new_par = document.createElement('p');
+    new_par.innerHTML = message;
+    info_div.appendChild(new_par);
 }
