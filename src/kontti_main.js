@@ -20,6 +20,7 @@ const FILLLISTTABLEID              = 'fill_list_table';
 const ACTIONID                     = 'action';
 const FILLLISTFORMID               = 'fill_form';
 const FILLROWPREFIX                = 'fill_tr_';
+const FILLTYPEPREFIX               = 'fill_type_';
 const FILLCYLTYPEPREFIX            = 'cyl_type_';
 const FILLCYLSIZEPREFIX            = 'cyl_size_';
 const FILLCYLNUMPREFIX             = 'cyl_num_';
@@ -160,7 +161,6 @@ function get_show_fill_ref(type) {
 /**
  * add_gas_fill_row: Adds the necessary gasfill fields depending of the type of fill
  * @param type What type of fill is it, see TYPELIST first field
- * @param id running id of the fill, used to individualize the fills
  * @return void
  */
 
@@ -175,16 +175,19 @@ function add_gas_fill_row(type) {
     var gas_type_input = document.createElement('input');
     gas_type_input.setAttribute('type', 'hidden');
     gas_type_input.setAttribute('value', type);
-    gas_type_input.id = FILLCYLTYPEPREFIX + id;
+    gas_type_input.id = FILLTYPEPREFIX + id;
     gas_td_type.appendChild(gas_type_input);
+    gas_td_type.id = 'td_' + FILLTYPEPREFIX + id;
     gas_tr.appendChild(gas_td_type);
 
     var gas_td_cyl =  document.createElement('td');
     gas_td_cyl.appendChild(get_cylinder_select(id));
+    gas_td_cyl.id = 'td_' + FILLCYLSIZEPREFIX + id;
     gas_tr.appendChild(gas_td_cyl);
 
     var gas_td_num =  document.createElement('td');
     gas_td_num.appendChild(get_amount_select(1, 15, 'Number of cylinders', FILLCYLNUMPREFIX + id, '', ''));
+    gas_td_num.id = 'td_' + FILLCYLNUMPREFIX + id;
     gas_tr.appendChild(gas_td_num);
 
     var n = 6;
@@ -192,30 +195,36 @@ function add_gas_fill_row(type) {
     if (type !== 'air') {
         var gas_td_bar_start =  document.createElement('td');
         gas_td_bar_start.appendChild(get_amount_select(0, 350, 'Pressure before fill', FILLCYLPRESSSTARTPREFIX + id, '', ' bar'));
+        gas_td_bar_start.id = 'td_' + FILLCYLPRESSSTARTPREFIX + id;
         gas_tr.appendChild(gas_td_bar_start);
 
         var gas_td_bar_end =  document.createElement('td');
         gas_td_bar_end.appendChild(get_amount_select(1, 350, 'Pressure after fill', FILLCYLPRESSENDPREFIX + id, '', ' bar'));
+        gas_td_bar_end.id = 'td_' + FILLCYLPRESSENDPREFIX + id;
         gas_tr.appendChild(gas_td_bar_end);
         n = 4;
 
         if (type !== 'o2') {
             var gas_td_o2_start = document.createElement('td');
             gas_td_o2_start.appendChild(get_amount_select(0, 100, 'O2 percentage before fill', FILLCYLO2PCNTSTARTPREFIX + id, '', ' %'));
+            gas_td_o2_start.id = 'td_' + FILLCYLO2PCNTSTARTPREFIX + id;
             gas_tr.appendChild(gas_td_o2_start);
 
             var gas_td_o2_end = document.createElement('td');
             gas_td_o2_end.appendChild(get_amount_select(1, 100, 'O2 percentage after fill', FILLCYLO2PCNTENDPREFIX + id, '', ' %'));
+            gas_td_o2_end.id = 'td_' + FILLCYLO2PCNTENDPREFIX + id;
             gas_tr.appendChild(gas_td_o2_end);
             n = 2;
 
             if (type !== 'nx') {
                 var gas_td_he_start = document.createElement('td');
                 gas_td_he_start.appendChild(get_amount_select(0, 100, 'He percentage before fill', FILLCYLHEPCNTSTARTPREFIX + id, '', ' %'));
+                gas_td_he_start.id = 'td_' + FILLCYLHEPCNTSTARTPREFIX + id;
                 gas_tr.appendChild(gas_td_he_start);
 
                 var gas_td_he_end = document.createElement('td');
                 gas_td_he_end.appendChild(get_amount_select(1, 100, 'He percentage after fill', FILLCYLHEPCNTENDPREFIX + id, '', ' %'));
+                gas_td_he_end.id = 'td_' + FILLCYLHEPCNTENDPREFIX + id;
                 gas_tr.appendChild(gas_td_he_end);
                 n = 0;
             }
@@ -266,6 +275,7 @@ function get_cylinder_select(id) {
  * @param from
  * @param to
  * @param title
+ * @param id
  * @param prefix
  * @param suffix
  * @return {Element}
@@ -399,7 +409,7 @@ function submit_fill_data() {
 function get_fill_data(id) {
     var data_array = [null,null,null,null,null,null,null,null,null];
 
-    data_array[0] = get_cylinder_type(id);
+    data_array[0] = get_fill_type(id);
     data_array[1] = get_cylinder_size(id);
     data_array[2] = get_cylinder_number(id);
 
@@ -422,7 +432,7 @@ function get_fill_data(id) {
     return (data_array);
 }
 
-function get_cylinder_type(id) {return (document.querySelector('#' + FILLCYLTYPEPREFIX + id).value);}
+function get_fill_type(id) {return (document.querySelector('#' + FILLTYPEPREFIX + id).value);}
 function get_cylinder_size(id) {return (document.querySelector('#' + FILLCYLSIZEPREFIX + id).options[document.querySelector('#' + FILLCYLSIZEPREFIX + id).selectedIndex].value);}
 function get_cylinder_number(id) {return (document.querySelector('#' + FILLCYLNUMPREFIX + id).options[document.querySelector('#' + FILLCYLNUMPREFIX + id).selectedIndex].value);}
 function get_cylinder_start_pressure(id) {return (document.querySelector('#' + FILLCYLPRESSSTARTPREFIX + id).options[document.querySelector('#' + FILLCYLPRESSSTARTPREFIX + id).selectedIndex].value);}
@@ -438,14 +448,21 @@ function get_cylinder_he_end_percentage(id) { return (document.querySelector('#'
  */
 function verify_fill_data() {
     /* Try to fetch any id from 0 to max value */
+    var ret_val = true;
+
     for (var i = 0; i < next_id; i++) {
-        var row = document.querySelector('#' + FILLROWPREFIX + i);
+        var selector = '#' + FILLROWPREFIX + i;
+
+        var row = document.querySelector(selector);
         if (row != null) {
-            if (!verify_row_data(i)) return (false);
+            if (!verify_row_data(i)) {
+                console.log('Failed to verify ' +  selector);
+                ret_val = false;
+            }
         }
     }
 
-    return (true);
+    return (ret_val);
 }
 
 /**
@@ -455,18 +472,49 @@ function verify_fill_data() {
  */
 
 function verify_row_data(id) {
-    // TODO: These checks are dependent of the type of fill
-    // Make sure the end pressure is not lower than the start pressure
-    if (get_cylinder_end_pressure(id) < get_cylinder_start_pressure(id)) return (false);
-    // Make sure the sum of start O2 and He is not over 100
-    if (get_cylinder_o2_start_percentage(id) +  get_cylinder_he_start_percentage(id) > 100) return (false);
-    // Make sure the sum of end O2 and He is not over 100
-    if (get_cylinder_o2_end_percentage(id) +  get_cylinder_he_end_percentage(id) > 100) return (false);
-    // Make sure the fill did not require more than 100% o2
-    if (is_overfill_gas(get_cylinder_start_pressure(id), get_cylinder_end_pressure(id), get_cylinder_o2_start_percentage(id), get_cylinder_o2_end_percentage(id))) return (false);
-    // Make sure the fill did not require more than 100% he
-    if (is_overfill_gas(get_cylinder_start_pressure(id), get_cylinder_end_pressure(id), get_cylinder_he_start_percentage(id), get_cylinder_he_end_percentage(id))) return (false);
-    return (true);
+    var type = get_fill_type(id);
+    var ret_val = true;
+
+    if (type !== 'air') {
+        // Make sure the end pressure is not lower than the start pressure
+        if (get_cylinder_end_pressure(id) < get_cylinder_start_pressure(id)) {
+            mark_red('td_' + FILLCYLPRESSSTARTPREFIX + id);
+            mark_red('td_' + FILLCYLPRESSENDPREFIX + id);
+            ret_val = false;
+        }
+
+        if (type !== 'o2') {
+            // Make sure the fill did not require more than 100% o2
+            if (is_overfill_gas(get_cylinder_start_pressure(id), get_cylinder_end_pressure(id), get_cylinder_o2_start_percentage(id), get_cylinder_o2_end_percentage(id))) {
+                mark_red('td_' + FILLCYLO2PCNTSTARTPREFIX + id);
+                mark_red('td_' + FILLCYLO2PCNTENDPREFIX + id);
+                ret_val = false;
+            }
+
+            if (type !== 'nx') {
+                // Make sure the sum of start O2 and He is not over 100
+                if (get_cylinder_o2_start_percentage(id) + get_cylinder_he_start_percentage(id) > 100) {
+                    mark_red('td_' + FILLCYLO2PCNTSTARTPREFIX + id);
+                    mark_red('td_' + FILLCYLHEPCNTSTARTPREFIX + id);
+                    ret_val = false;
+                }
+                // Make sure the sum of end O2 and He is not over 100
+                if (get_cylinder_o2_end_percentage(id) + get_cylinder_he_end_percentage(id) > 100) {
+                    mark_red('td_' + FILLCYLO2PCNTENDPREFIX + id);
+                    mark_red('td_' + FILLCYLHEPCNTENDPREFIX + id);
+                    ret_val = false;
+                }
+                // Make sure the fill did not require more than 100% he
+                if (is_overfill_gas(get_cylinder_start_pressure(id), get_cylinder_end_pressure(id), get_cylinder_he_start_percentage(id), get_cylinder_he_end_percentage(id))){
+                    mark_red('td_' + FILLCYLHEPCNTSTARTPREFIX + id);
+                    mark_red('td_' + FILLCYLHEPCNTENDPREFIX + id);
+                    ret_val = false;
+                }
+            }
+        }
+    }
+
+    return (ret_val);
 }
 
 /**
@@ -479,12 +527,22 @@ function verify_row_data(id) {
  */
 
 function is_overfill_gas(press_start, press_end, fraction_start, fraction_end) {
-    var gas_press_start = fraction_start * press_start;
-    var gas_press_end = fraction_end * press_end;
-    var abs_gas_diff = press_end - press_start;
-    var abs_partial_gas_diff = gas_press_end - gas_press_start;
+    var gas_press_start = fraction_start * press_start / 100.0;
+    var gas_press_end = fraction_end * press_end / 100.0;
+    var total_gas_diff = press_end - press_start;
+    var partial_gas_diff = gas_press_end - gas_press_start;
+    var gas_diff = total_gas_diff - partial_gas_diff;
+    console.log('Partial gas diff: ' +  partial_gas_diff + ' gas diff: ' + gas_diff);
 
-    if ((abs_partial_gas_diff < 0) || (abs_partial_gas_diff > abs_gas_diff)) return (false);
+    if ((partial_gas_diff < 0) || (gas_diff < total_gas_diff)) {
+            console.log('Gas diff is equal or more than total gas diff: ' + gas_diff);
+            return (true);
+    }
 
-    return (true);
+    return (false);
+}
+
+function mark_red(id) {
+    var entity = document.querySelector('#' + id);
+    entity.style.backgroundColor = '#FF3030';
 }
