@@ -447,15 +447,15 @@ function get_fill_data(id) {
     return (data_array);
 }
 
-function get_fill_type(id) {return (document.querySelector('#' + FILLTYPEPREFIX + id).value);}
-function get_cylinder_size(id) {return (document.querySelector('#' + FILLCYLSIZEPREFIX + id).options[document.querySelector('#' + FILLCYLSIZEPREFIX + id).selectedIndex].value);}
-function get_cylinder_number(id) {return (document.querySelector('#' + FILLCYLNUMPREFIX + id).options[document.querySelector('#' + FILLCYLNUMPREFIX + id).selectedIndex].value);}
-function get_cylinder_start_pressure(id) {return (document.querySelector('#' + FILLCYLPRESSSTARTPREFIX + id).options[document.querySelector('#' + FILLCYLPRESSSTARTPREFIX + id).selectedIndex].value);}
-function get_cylinder_end_pressure(id) {return (document.querySelector('#' + FILLCYLPRESSENDPREFIX + id).options[document.querySelector('#' + FILLCYLPRESSENDPREFIX + id).selectedIndex].value);}
-function get_cylinder_o2_start_percentage(id) {return (document.querySelector('#' + FILLCYLO2PCNTSTARTPREFIX + id).options[document.querySelector('#' + FILLCYLO2PCNTSTARTPREFIX + id).selectedIndex].value);}
-function get_cylinder_o2_end_percentage(id) {return (document.querySelector('#' + FILLCYLO2PCNTENDPREFIX + id).options[document.querySelector('#' + FILLCYLO2PCNTENDPREFIX + id).selectedIndex].value);}
-function get_cylinder_he_start_percentage(id) {return (document.querySelector('#' + FILLCYLHEPCNTSTARTPREFIX + id).options[document.querySelector('#' + FILLCYLHEPCNTSTARTPREFIX + id).selectedIndex].value);}
-function get_cylinder_he_end_percentage(id) { return (document.querySelector('#' + FILLCYLHEPCNTENDPREFIX + id).options[document.querySelector('#' + FILLCYLHEPCNTENDPREFIX + id).selectedIndex].value);}
+function get_fill_type(id) {return (parseInt(document.querySelector('#' + FILLTYPEPREFIX + id).value));}
+function get_cylinder_size(id) {return (parseInt(document.querySelector('#' + FILLCYLSIZEPREFIX + id).options[document.querySelector('#' + FILLCYLSIZEPREFIX + id).selectedIndex].value));}
+function get_cylinder_number(id) {return (parseInt(document.querySelector('#' + FILLCYLNUMPREFIX + id).options[document.querySelector('#' + FILLCYLNUMPREFIX + id).selectedIndex].value));}
+function get_cylinder_start_pressure(id) {return (parseInt(document.querySelector('#' + FILLCYLPRESSSTARTPREFIX + id).options[document.querySelector('#' + FILLCYLPRESSSTARTPREFIX + id).selectedIndex].value));}
+function get_cylinder_end_pressure(id) {return (parseInt(document.querySelector('#' + FILLCYLPRESSENDPREFIX + id).options[document.querySelector('#' + FILLCYLPRESSENDPREFIX + id).selectedIndex].value));}
+function get_cylinder_o2_start_percentage(id) {return (parseInt(document.querySelector('#' + FILLCYLO2PCNTSTARTPREFIX + id).options[document.querySelector('#' + FILLCYLO2PCNTSTARTPREFIX + id).selectedIndex].value));}
+function get_cylinder_o2_end_percentage(id) {return (parseInt(document.querySelector('#' + FILLCYLO2PCNTENDPREFIX + id).options[document.querySelector('#' + FILLCYLO2PCNTENDPREFIX + id).selectedIndex].value));}
+function get_cylinder_he_start_percentage(id) {return (parseInt(document.querySelector('#' + FILLCYLHEPCNTSTARTPREFIX + id).options[document.querySelector('#' + FILLCYLHEPCNTSTARTPREFIX + id).selectedIndex].value));}
+function get_cylinder_he_end_percentage(id) { return (parseInt(document.querySelector('#' + FILLCYLHEPCNTENDPREFIX + id).options[document.querySelector('#' + FILLCYLHEPCNTENDPREFIX + id).selectedIndex].value));}
 
 /**
  * check_data: Goes through each fill row and calls the row verification for each id
@@ -503,7 +503,12 @@ function verify_row_data(id) {
             if (is_overfill_gas(get_cylinder_start_pressure(id), get_cylinder_end_pressure(id), get_cylinder_o2_start_percentage(id), get_cylinder_o2_end_percentage(id))) {
                 mark_red('td_' + FILLCYLO2PCNTSTARTPREFIX + id);
                 mark_red('td_' + FILLCYLO2PCNTENDPREFIX + id);
-                add_info('The fill requires that you used over 100% oxygen (you can not get to the given end O2% even if you used 100% oxygen');
+                add_info('The fill would require you to use over 100% oxygen (you can not get to the given end O2% even if you used 100% oxygen');
+                ret_val = false;
+            } else if (is_negative_gas(get_cylinder_start_pressure(id), get_cylinder_end_pressure(id), get_cylinder_o2_start_percentage(id), get_cylinder_o2_end_percentage(id))) {
+                mark_red('td_' + FILLCYLO2PCNTSTARTPREFIX + id);
+                mark_red('td_' + FILLCYLO2PCNTENDPREFIX + id);
+                add_info('The amount of oxygen in the cylinder is less after the fill than what it contained in the beginning');
                 ret_val = false;
             }
 
@@ -512,7 +517,8 @@ function verify_row_data(id) {
                 if (get_cylinder_o2_start_percentage(id) + get_cylinder_he_start_percentage(id) > 100) {
                     mark_red('td_' + FILLCYLO2PCNTSTARTPREFIX + id);
                     mark_red('td_' + FILLCYLHEPCNTSTARTPREFIX + id);
-                    add_info('The sum of O2 and He partial pressure add is larger than the whole fill at beginning');
+                    add_info('The sum of O2% (' + get_cylinder_o2_start_percentage(id) + ') and He% (' + get_cylinder_he_start_percentage(id) + ') is more (' +
+                        (get_cylinder_o2_start_percentage(id) + get_cylinder_he_start_percentage(id)) +') than 100% at beginning');
                     ret_val = false;
                 }
                 // Make sure the sum of end O2 and He is not over 100
@@ -526,7 +532,12 @@ function verify_row_data(id) {
                 if (is_overfill_gas(get_cylinder_start_pressure(id), get_cylinder_end_pressure(id), get_cylinder_he_start_percentage(id), get_cylinder_he_end_percentage(id))){
                     mark_red('td_' + FILLCYLHEPCNTSTARTPREFIX + id);
                     mark_red('td_' + FILLCYLHEPCNTENDPREFIX + id);
-                    add_info('The fill requires that you used over 100% helium (you can not get to the given end He% even if you used 100% helium');
+                    add_info('The fill would require you to use over 100% helium (you can not get to the given end He% even if you used 100% helium');
+                    ret_val = false;
+                } else if (is_negative_gas(get_cylinder_start_pressure(id), get_cylinder_end_pressure(id), get_cylinder_he_start_percentage(id), get_cylinder_he_end_percentage(id))) {
+                    mark_red('td_' + FILLCYLHEPCNTSTARTPREFIX + id);
+                    mark_red('td_' + FILLCYLHEPCNTENDPREFIX + id);
+                    add_info('The amount of helium in the cylinder is less after the fill than what it contained in the beginning');
                     ret_val = false;
                 }
             }
@@ -537,26 +548,35 @@ function verify_row_data(id) {
 }
 
 /**
- * is_overfill_gas: See if the numbers violate physics
+ * is_overfill_gas: Tells whether the change in the fraction is larger than the total change
  * @param press_start
  * @param press_end
  * @param fraction_start
  * @param fraction_end
- * @return {Boolean}
+ * @return {boolean}
  */
 
 function is_overfill_gas(press_start, press_end, fraction_start, fraction_end) {
-    var gas_press_start = fraction_start * press_start / 100.0;
-    var gas_press_end = fraction_end * press_end / 100.0;
+    var fraction_press_start = fraction_start * press_start / 100.0;
+    var fraction_press_end = fraction_end * press_end / 100.0;
     var total_gas_diff = press_end - press_start;
-    var partial_gas_diff = gas_press_end - gas_press_start;
-    var gas_diff = total_gas_diff - partial_gas_diff;
+    var fraction_gas_diff = fraction_press_end - fraction_press_start;
+    return (total_gas_diff < fraction_gas_diff);
+}
 
-    if ((partial_gas_diff < 0) || (gas_diff < total_gas_diff)) {
-            return (true);
-    }
+/**
+ * is_negative_gas: Tells whether there is less gas in the end than in the beginning
+ * @param press_start
+ * @param press_end
+ * @param fraction_start
+ * @param fraction_end
+ * @returns {boolean}
+ */
 
-    return (false);
+function is_negative_gas(press_start, press_end, fraction_start, fraction_end) {
+    var fraction_press_start = fraction_start * press_start / 100.0;
+    var fraction_press_end   = fraction_end   * press_end / 100.0;
+    return (fraction_press_end < fraction_press_start);
 }
 
 /**
