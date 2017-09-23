@@ -447,8 +447,8 @@ function get_fill_data(id) {
     return (data_array);
 }
 
-function get_fill_type(id) {return (parseInt(document.querySelector('#' + FILLTYPEPREFIX + id).value));}
-function get_cylinder_size(id) {return (parseInt(document.querySelector('#' + FILLCYLSIZEPREFIX + id).options[document.querySelector('#' + FILLCYLSIZEPREFIX + id).selectedIndex].value));}
+function get_fill_type(id) {return (document.querySelector('#' + FILLTYPEPREFIX + id).value);}
+function get_cylinder_size(id) {return (document.querySelector('#' + FILLCYLSIZEPREFIX + id).options[document.querySelector('#' + FILLCYLSIZEPREFIX + id).selectedIndex].value);}
 function get_cylinder_number(id) {return (parseInt(document.querySelector('#' + FILLCYLNUMPREFIX + id).options[document.querySelector('#' + FILLCYLNUMPREFIX + id).selectedIndex].value));}
 function get_cylinder_start_pressure(id) {return (parseInt(document.querySelector('#' + FILLCYLPRESSSTARTPREFIX + id).options[document.querySelector('#' + FILLCYLPRESSSTARTPREFIX + id).selectedIndex].value));}
 function get_cylinder_end_pressure(id) {return (parseInt(document.querySelector('#' + FILLCYLPRESSENDPREFIX + id).options[document.querySelector('#' + FILLCYLPRESSENDPREFIX + id).selectedIndex].value));}
