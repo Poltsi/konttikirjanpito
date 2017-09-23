@@ -280,20 +280,16 @@ function get_cylinder_select(id) {
  * @param to
  * @param title
  * @param id
- * @param prefix
- * @param suffix
  * @return {Element}
  */
 
-function get_amount_select(from, to, title, id, prefix, suffix) {
-    var amount_select = document.createElement('select');
+function get_amount_select(from, to, title, id {
+    var amount_select = document.createElement('input');
+    amount_select.type = 'number';
     amount_select.id = id;
     amount_select.title = title;
-
-    for (var i = from; i <= to; i++) {
-        amount_select.options.add(new Option(prefix + i + suffix, i));
-    }
-
+    amount_select.setAttribute('min', from);
+    amount_select.setAttribute('max', to);
     return (amount_select);
 }
 
@@ -449,13 +445,13 @@ function get_fill_data(id) {
 
 function get_fill_type(id) {return (document.querySelector('#' + FILLTYPEPREFIX + id).value);}
 function get_cylinder_size(id) {return (document.querySelector('#' + FILLCYLSIZEPREFIX + id).options[document.querySelector('#' + FILLCYLSIZEPREFIX + id).selectedIndex].value);}
-function get_cylinder_number(id) {return (parseInt(document.querySelector('#' + FILLCYLNUMPREFIX + id).options[document.querySelector('#' + FILLCYLNUMPREFIX + id).selectedIndex].value));}
-function get_cylinder_start_pressure(id) {return (parseInt(document.querySelector('#' + FILLCYLPRESSSTARTPREFIX + id).options[document.querySelector('#' + FILLCYLPRESSSTARTPREFIX + id).selectedIndex].value));}
-function get_cylinder_end_pressure(id) {return (parseInt(document.querySelector('#' + FILLCYLPRESSENDPREFIX + id).options[document.querySelector('#' + FILLCYLPRESSENDPREFIX + id).selectedIndex].value));}
-function get_cylinder_o2_start_percentage(id) {return (parseInt(document.querySelector('#' + FILLCYLO2PCNTSTARTPREFIX + id).options[document.querySelector('#' + FILLCYLO2PCNTSTARTPREFIX + id).selectedIndex].value));}
-function get_cylinder_o2_end_percentage(id) {return (parseInt(document.querySelector('#' + FILLCYLO2PCNTENDPREFIX + id).options[document.querySelector('#' + FILLCYLO2PCNTENDPREFIX + id).selectedIndex].value));}
-function get_cylinder_he_start_percentage(id) {return (parseInt(document.querySelector('#' + FILLCYLHEPCNTSTARTPREFIX + id).options[document.querySelector('#' + FILLCYLHEPCNTSTARTPREFIX + id).selectedIndex].value));}
-function get_cylinder_he_end_percentage(id) { return (parseInt(document.querySelector('#' + FILLCYLHEPCNTENDPREFIX + id).options[document.querySelector('#' + FILLCYLHEPCNTENDPREFIX + id).selectedIndex].value));}
+function get_cylinder_number(id) {return (parseInt(document.querySelector('#' + FILLCYLNUMPREFIX + id).value));}
+function get_cylinder_start_pressure(id) {return (parseInt(document.querySelector('#' + FILLCYLPRESSSTARTPREFIX + id).value));}
+function get_cylinder_end_pressure(id) {return (parseInt(document.querySelector('#' + FILLCYLPRESSENDPREFIX + id).value));}
+function get_cylinder_o2_start_percentage(id) {return (parseInt(document.querySelector('#' + FILLCYLO2PCNTSTARTPREFIX + id).value));}
+function get_cylinder_o2_end_percentage(id) {return (parseInt(document.querySelector('#' + FILLCYLO2PCNTENDPREFIX + id).value));}
+function get_cylinder_he_start_percentage(id) {return (parseInt(document.querySelector('#' + FILLCYLHEPCNTSTARTPREFIX + id).value));}
+function get_cylinder_he_end_percentage(id) { return (parseInt(document.querySelector('#' + FILLCYLHEPCNTENDPREFIX + id).value));}
 
 /**
  * check_data: Goes through each fill row and calls the row verification for each id
