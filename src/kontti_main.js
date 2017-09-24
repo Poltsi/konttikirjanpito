@@ -45,7 +45,10 @@ const TYPELIST   = [    ['air', 'Air fill', '#99CC99'],
 
 const CYLLIST = {   '40cf': ['40cf/5.7l', 5.7],
                     '80cf': ['80cf/11.1l', 11.1],
+                    '2l': ['2l', 2.0],
+                    '3l': ['3l', 3.0],
                     '7l': ['7l', 7.0],
+                    '10l': ['10l', 10.0],
                     '12l': ['12l', 12.0],
                     '15l': ['15l', 15.0],
                     '18l': ['18l', 18.0],
@@ -131,7 +134,7 @@ function get_fill_table_header() {
     header_td8.innerHTML = 'Helium % at start';
     header_tr.appendChild(header_td8);
     var header_td9 = document.createElement('td');
-    header_td9.innerHTML = 'Helium at end';
+    header_td9.innerHTML = 'Helium % at end';
     header_tr.appendChild(header_td9);
     var header_td10 = document.createElement('td');
     header_td10.innerHTML = 'Remove';
@@ -283,7 +286,7 @@ function get_cylinder_select(id) {
  * @return {Element}
  */
 
-function get_amount_select(from, to, title, id {
+function get_amount_select(from, to, title, id) {
     var amount_select = document.createElement('input');
     amount_select.type = 'number';
     amount_select.id = id;
@@ -405,7 +408,8 @@ function save_data() {
     xhr.onreadystatechange = function () {
         if (xhr.readyState === 4 && xhr.status === 200) {
             var json = JSON.parse(xhr.responseText);
-            /* TODO: Handle the response */
+            add_info('Return value: ' + json)
+             /* TODO: Handle the response */
         }
     };
 
@@ -418,23 +422,28 @@ function save_data() {
  */
 
 function get_fill_data(id) {
-    var data_array = [null,null,null,null,null,null,null,null,null];
+    var data_array = [null,null,null,null,null,null,null,null,null,null,null,null,null];
 
     data_array[0] = get_fill_type(id);
-    data_array[1] = CYLLIST[get_cylinder_size(id)][1];
-    data_array[2] = get_cylinder_number(id);
+    data_array[1] = 'VID';
+    data_array[2] = get_cylinder_size(id);
+    data_array[3] = get_cylinder_number(id);
+    data_array[4] = CYLLIST[get_cylinder_size(id)][1];
 
     if (data_array[0] !== 'air') {
-        data_array[3] = get_cylinder_start_pressure(id);
-        data_array[4] = get_cylinder_end_pressure(id);
+        data_array[5] = get_cylinder_start_pressure(id);
+        data_array[6] = get_cylinder_end_pressure(id);
+        data_array[11] = data_array[3] * data_array[4] * (data_array[6] - data_array[5]);
 
         if (data_array[0] !== 'o2') {
-            data_array[5] = get_cylinder_o2_start_percentage(id);
-            data_array[6] = get_cylinder_o2_end_percentage(id);
+            data_array[7] = get_cylinder_o2_start_percentage(id);
+            data_array[8] = get_cylinder_o2_end_percentage(id);
+            data_array[11] = data_array[3] * data_array[4] * (data_array[6] * data_array[8] -  data_array[5] * data_array[7]) / 100;
 
             if (data_array[0] !== 'nx') {
-                data_array[7] = get_cylinder_he_start_percentage(id);
-                data_array[8] = get_cylinder_he_end_percentage(id);
+                data_array[9] = get_cylinder_he_start_percentage(id);
+                data_array[10] = get_cylinder_he_end_percentage(id);
+                data_array[12] = data_array[3] * data_array[4] * (data_array[6] * data_array[10] -  data_array[5] * data_array[9]) / 100;
             }
         }
     }

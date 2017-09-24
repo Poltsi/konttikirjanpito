@@ -84,6 +84,7 @@ CREATE TABLE fills (
   gas_type character varying(12),
   fill_type character varying(12),
   cyl_type character varying(12),
+  cyl_count integer,
   cyl_size float,
   start_pressure integer,
   end_pressure integer,
