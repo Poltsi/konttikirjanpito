@@ -77,3 +77,20 @@ ALTER TABLE ONLY users ADD CONSTRAINT users_login_key UNIQUE (login);
 ALTER TABLE ONLY users ADD CONSTRAINT users_password_key UNIQUE (password);
 ALTER TABLE ONLY users ADD CONSTRAINT users_pkey PRIMARY KEY (uid);
 ALTER TABLE ONLY users ADD CONSTRAINT users_salt_key UNIQUE (salt);
+
+CREATE TABLE fills (
+  uid integer NOT NULL,
+  fill_datetime timestamp with time zone,
+  gas_type character varying(12),
+  fill_type character varying(12),
+  cyl_type character varying(12),
+  cyl_size float,
+  start_pressure integer,
+  end_pressure integer,
+  o2_start integer,
+  o2_end integer,
+  he_start integer,
+  he_end integer,
+  o2_vol integer,
+  he_vol integer
+  );
