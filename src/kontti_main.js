@@ -409,7 +409,13 @@ function save_data() {
         if (xhr.readyState === 4 && xhr.status === 200) {
             var json = JSON.parse(xhr.responseText);
             add_info('Return value: ' + json)
-             /* TODO: Handle the response */
+
+            if (json['status'] === 'OK') {
+                empty_info();
+                add_info('Fill data store successfully');
+            } else {
+                add_info('Failed to store the data. Return value: ' + json['status']);
+            }
         }
     };
 
@@ -595,6 +601,14 @@ function mark_red(id) {
     entity.style.backgroundColor = '#FF3030';
 }
 
+/**
+ * empty_info: Empty the info-area
+ */
+
+function empty_info() {
+    var info_div = document.querySelector('#info');
+    info_div.innerHTML = '';
+}
 /**
  * add_info: Add a paragraph of info to the info-div
  * @param message

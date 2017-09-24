@@ -58,7 +58,6 @@ while (array_key_exists($i, $data)) {
 $sql_string .= implode(',', $sql_parts);
 
 pg_query($db_conn, $sql_string);
-$response['sql'] = $sql_string;
 pg_close($db_conn);
 // print_r($response);
 print(json_encode($response));
