@@ -33,7 +33,7 @@ $db_conn = pg_connect("host=localhost port=5432 dbname=kontti user=kontti passwo
 
 $i = 0;
 
-$sql_string = 'INSERT INTO fills (uid, fill_datetime, gas_type, fill_type, cyl_type, cyl_count, cyl_size, start_pressure, end_pressure, o2_start, o2_end, he_start, he_end, o2_vol, he_vol) VALUES ';
+$sql_string = 'INSERT INTO fills (uid, fill_datetime, gas_type, fill_type, cyl_type, cyl_count, cyl_size, start_pressure, end_pressure, o2_start, o2_end, he_start, he_end, o2_vol, he_vol, counted) VALUES ';
 $sql_parts = array();
 
 while (array_key_exists($i, $data)) {
@@ -51,7 +51,7 @@ while (array_key_exists($i, $data)) {
             intval($data[$i][9]) . ", " .
             intval($data[$i][10]) . ", " .
             intval($data[$i][11]) . ", " .
-            intval($data[$i][12]) . ")";
+            intval($data[$i][12]) . ", false)";
     $i++;
 }
 

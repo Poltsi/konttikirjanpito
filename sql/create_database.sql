@@ -93,5 +93,7 @@ CREATE TABLE fills (
   he_start integer,
   he_end integer,
   o2_vol integer,
-  he_vol integer
+  he_vol integer,
+  counted BOOLEAN,
+  counted_date timestamp with time zone
   );
