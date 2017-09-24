@@ -1,5 +1,5 @@
 CREATE EXTENSION IF NOT EXISTS chkpass;
-
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 CREATE EXTENSION IF NOT EXISTS pgcrypto;
 
 CREATE USER kontti WITH PASSWORD 'konttipassu';
@@ -60,20 +60,17 @@ ALTER TABLE ONLY groups ALTER COLUMN gid SET DEFAULT nextval('groups_gid_seq'::r
 
 ALTER TABLE ONLY users ALTER COLUMN uid SET DEFAULT nextval('users_uid_seq'::regclass);
 
-COPY groups (gid, name, description) FROM stdin;
-1       admin   Administrators
-\.
+INSERT INTO groups (gid, name, description) VALUES (1,'admin', 'Administrators');
 
 SELECT pg_catalog.setval('groups_gid_seq', 1, true);
 
 
-COPY users (uid, gid, login, salt, password, name, enabled) FROM stdin;
-\.
+INSERT INTO users (uid, gid, login, salt, password, name, enabled)
+VALUES (1, 1, 'admin', gen_random_uuid(), '', 'Administrator', TRUE);
 
 SELECT pg_catalog.setval('users_uid_seq', 1, false);
 
 ALTER TABLE ONLY groups ADD CONSTRAINT groups_name_key UNIQUE (name);
-ALTER TABLE ONLY groups ADD CONSTRAINT groups_pkey PRIMARY KEY (gid);
 ALTER TABLE ONLY groups ADD CONSTRAINT groups_pkey PRIMARY KEY (gid);
 
 ALTER TABLE ONLY users ADD CONSTRAINT users_login_key UNIQUE (login);
