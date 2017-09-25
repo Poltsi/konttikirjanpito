@@ -67,7 +67,11 @@ const CYLLIST = {   '40cf': ['40cf/5.7l', 5.7],
  * @return void
  */
 
-function display_action_buttons(mode) {
+function display_action_buttons() {
+    /* TODO: Retrieve the session data */
+    var mode = sessionStorage.getItem('kontti_mode');
+
+    if (mode == null) mode = 'login';
     /* TODO: Check that mode is set */
 
     /* Clear the divs first */
@@ -80,6 +84,7 @@ function display_action_buttons(mode) {
 
     switch (mode) {
         case 'login':
+            show_login();
             break;
         case 'main':
             my_filltype_elem.appendChild(get_main_action_buttons());
@@ -619,4 +624,46 @@ function add_info(message) {
     var new_par = document.createElement('p');
     new_par.innerHTML = message;
     info_div.appendChild(new_par);
+}
+
+function show_login() {
+    /* Clear the action div */
+    var action_div = document.querySelector('#fill_type');
+    action_div.innerHTML = '';
+    /* Clear the data div */
+    var data_div = document.querySelector('#fill_list');
+    data_div.innerHTML = '';
+    /* Clear the info div */
+    var info_div = document.querySelector('#info');
+    info_div.innerHTML = '';
+    /* TODO: Create the login form */
+    action_div.appendChild(get_login_form());
+    /* TODO: Create function triggered by the login button to authenticate user */
+}
+
+function get_login_form() {
+    var login_form = document.createElement('form');
+    login_form.id = 'login_form';
+    var login_username = document.createElement('input');
+    login_username.setAttribute('placeholder', 'Username');
+    var login_password = document.createElement('input');
+    login_password.setAttribute('placeholder', 'Password');
+    var login_button = document.createElement('button')
+    login_button.innerHTML = 'Login';
+    login_button.onclick = get_verify_login_function();
+    login_password.setAttribute('type', 'password');
+    login_form.appendChild(login_username);
+    login_form.appendChild(login_password);
+    login_form.appendChild(login_button);
+
+    return (login_form);
+}
+
+function get_verify_login_function() {
+    return (function() {verify_login();});
+}
+
+function verify_login() {
+    /* TODO: Connect to server and verify the login credentials */
+    alert('Access denied');
 }
