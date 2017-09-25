@@ -472,6 +472,8 @@ function get_cylinder_o2_start_percentage(id) {return (parseInt(document.querySe
 function get_cylinder_o2_end_percentage(id) {return (parseInt(document.querySelector('#' + FILLCYLO2PCNTENDPREFIX + id).value));}
 function get_cylinder_he_start_percentage(id) {return (parseInt(document.querySelector('#' + FILLCYLHEPCNTSTARTPREFIX + id).value));}
 function get_cylinder_he_end_percentage(id) { return (parseInt(document.querySelector('#' + FILLCYLHEPCNTENDPREFIX + id).value));}
+function get_login() {return (document.querySelector('#login').value);}
+function get_password() {return (document.querySelector('#password').value);}
 
 /**
  * check_data: Goes through each fill row and calls the row verification for each id
@@ -644,10 +646,13 @@ function show_login() {
 function get_login_form() {
     var login_form = document.createElement('form');
     login_form.id = 'login_form';
+    login_form.setAttribute('onsubmit', 'return false');
     var login_username = document.createElement('input');
     login_username.setAttribute('placeholder', 'Username');
+    login_username.id = 'login';
     var login_password = document.createElement('input');
     login_password.setAttribute('placeholder', 'Password');
+    login_password.id = 'password';
     var login_button = document.createElement('button')
     login_button.innerHTML = 'Login';
     login_button.onclick = get_verify_login_function();
@@ -665,5 +670,34 @@ function get_verify_login_function() {
 
 function verify_login() {
     /* TODO: Connect to server and verify the login credentials */
-    alert('Access denied');
+    var login_data = {  'type': 'login',
+                        'login': get_login(),
+                        'password': get_password()};
+
+    var json_data = JSON.stringify(login_data);
+    /* Send the JSON to the server */
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", 'http://kontti.lappari/login.php', true);
+    xhr.setRequestHeader("Content-type", "application/json");
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+            var json = JSON.parse(xhr.responseText);
+            add_info('Return value: ' + json)
+
+            if (json['status'] === 'OK') {
+                empty_info();
+                add_info('User logged in successfully');
+                sessionStorage.setItem('kontti_mode', 'main');
+                display_action_buttons();
+            } else {
+                add_info('User not logged in');
+
+                if (json['reason'] != null) {
+                    add_info(json['reason']);
+                }
+            }
+        }
+    };
+
+    xhr.send(json_data);
 }

@@ -36,8 +36,8 @@ CREATE TABLE users (
   uid integer NOT NULL,
   gid integer,
   login character varying(16),
-  salt uuid,
-  password character(65),
+  salt character(29),
+  password character(60),
   name text,
   enabled boolean
 );
@@ -66,7 +66,9 @@ SELECT pg_catalog.setval('groups_gid_seq', 1, true);
 
 
 INSERT INTO users (uid, gid, login, salt, password, name, enabled)
-VALUES (1, 1, 'admin', gen_random_uuid(), '', 'Administrator', TRUE);
+VALUES (1, 1, 'admin', gen_salt('bf', 8), '', 'Administrator', TRUE);
+
+UPDATE users SET password = crypt('US_admin_passu', salt) WHERE uid = 1;
 
 SELECT pg_catalog.setval('users_uid_seq', 1, false);
 
