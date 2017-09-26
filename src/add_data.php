@@ -25,7 +25,7 @@ header("Content-Type: application/json");
 /* Default response is only plain ok */
 $response['status'] = 'OK';
 // build a PHP variable from JSON sent using POST method
-$data = json_decode(stripslashes(file_get_contents("php://input")));
+$data = json_decode(stripslashes(file_get_contents("php://input")), true);
 $db_conn = pg_connect("host=localhost port=5432 dbname=kontti user=kontti password=konttipassu");
 
 // TODO: Get the user uid
