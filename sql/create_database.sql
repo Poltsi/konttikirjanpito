@@ -36,6 +36,7 @@ CREATE TABLE users (
   uid integer NOT NULL,
   gid integer,
   login character varying(16),
+  level integer,
   salt character(29),
   password character(60),
   name text,
@@ -81,3 +82,32 @@ CREATE TABLE fills (
   counted BOOLEAN,
   counted_date timestamp with time zone
   );
+
+-- Fill levels
+
+CREATE TABLE fill_level (
+  level_id integer NOT NULL,
+  description text
+);
+
+ALTER TABLE ONLY fill_level ADD CONSTRAINT fill_level_id_key UNIQUE (level_id);
+
+INSERT INTO fill_level VALUES (10,'air fill');
+INSERT INTO fill_level VALUES (20,'Nitrox fill');
+INSERT INTO fill_level VALUES (30,'O2 fill');
+INSERT INTO fill_level VALUES (40,'Trimix fill');
+
+-- Gas level
+
+CREATE TABLE gas_level (
+  gas_id integer NOT NULL,
+  min_fill_level integer NOT NULL,
+  gas_key character varying(12)
+);
+
+ALTER TABLE ONLY gas_level ADD CONSTRAINT gas_level_id_key UNIQUE (gas_id);
+
+INSERT INTO gas_level VALUES (10, 10, 'air');
+INSERT INTO gas_level VALUES (20, 20, 'nx');
+INSERT INTO gas_level VALUES (30, 30, 'o2');
+INSERT INTO gas_level VALUES (40, 40, 'tx');
