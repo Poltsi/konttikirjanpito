@@ -155,6 +155,7 @@ function get_fill_table_header() {
 function get_main_action_buttons() {
     var button_div = document.createElement('div');
     button_div.id = 'main_action';
+    button_div.width = '100%';
 
     for (var i = 0; i < TYPELIST.length; i++)
     {
@@ -166,6 +167,13 @@ function get_main_action_buttons() {
         button_div.appendChild(fill_button);
     }
 
+    var logout_button = document.createElement('button');
+    logout_button.id = 'logout';
+    logout_button.innerHTML = 'Logout';
+    logout_button.addEventListener('click', get_logout_function());
+    logout_button.style = 'float: right';
+
+    button_div.appendChild(logout_button);
     return (button_div);
 }
 
@@ -628,6 +636,10 @@ function add_info(message) {
     info_div.appendChild(new_par);
 }
 
+/**
+ * show_login: Prepare for showing the login
+ */
+
 function show_login() {
     /* Clear the action div */
     var action_div = document.querySelector('#fill_type');
@@ -638,10 +650,14 @@ function show_login() {
     /* Clear the info div */
     var info_div = document.querySelector('#info');
     info_div.innerHTML = '';
-    /* TODO: Create the login form */
+    /* Create the login form */
     action_div.appendChild(get_login_form());
-    /* TODO: Create function triggered by the login button to authenticate user */
 }
+
+/**
+ * get_login_form: Constructs and returns the login form
+ * @returns {Element}
+ */
 
 function get_login_form() {
     var login_form = document.createElement('form');
@@ -664,9 +680,18 @@ function get_login_form() {
     return (login_form);
 }
 
+/**
+ * get_verify_login_function: Return a reference to the login verification function
+ * @returns {Function}
+ */
+
 function get_verify_login_function() {
     return (function() {verify_login();});
 }
+
+/**
+ * verify_login: Send the credentials to server for verification
+ */
 
 function verify_login() {
     /* TODO: Connect to server and verify the login credentials */
@@ -679,6 +704,7 @@ function verify_login() {
     var xhr = new XMLHttpRequest();
     xhr.open("POST", 'http://kontti.lappari/login.php', true);
     xhr.setRequestHeader("Content-type", "application/json");
+
     xhr.onreadystatechange = function () {
         if (xhr.readyState === 4 && xhr.status === 200) {
             var json = JSON.parse(xhr.responseText);
@@ -700,4 +726,51 @@ function verify_login() {
     };
 
     xhr.send(json_data);
+}
+
+/**
+ * get_logout_function: Return a reference to the logout function
+ * @returns {Function}
+ */
+
+function get_logout_function() {
+    return (function() {logout();});
+}
+
+/**
+ * logout: Close the session
+ */
+
+function logout() {
+    /* TODO: Connect to server and verify the login credentials */
+    var logout_data = {'type': 'logout'};
+
+    var json_data = JSON.stringify(logout_data);
+    /* Send the JSON to the server */
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", 'http://kontti.lappari/login.php', true);
+    xhr.setRequestHeader("Content-type", "application/json");
+
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+            var json = JSON.parse(xhr.responseText);
+            add_info('Return value: ' + json)
+
+            if (json['status'] === 'OK') {
+                empty_info();
+                add_info('User logged in successfully');
+                sessionStorage.clear();
+                display_action_buttons();
+            } else {
+                add_info('Failed to log out, please contact maintainers');
+
+                if (json['reason'] != null) {
+                    add_info(json['reason']);
+                }
+            }
+        }
+    };
+
+    xhr.send(json_data);
+
 }
