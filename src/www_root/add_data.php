@@ -37,22 +37,22 @@ $sql_string = 'INSERT INTO fills (uid, fill_datetime, gas_type, fill_type, cyl_t
 $sql_parts = array();
 
 while (array_key_exists($i, $data)) {
-    $sql_parts[] = "(1, " .
-            "now(), " .
-            "'" . pg_escape_string( $db_conn, $data[$i][0]) . "'," .
-            "'" . pg_escape_string( $db_conn, $data[$i][1]) . "'," .
-            "'" . pg_escape_string( $db_conn, $data[$i][2]) . "', " .
-            intval($data[$i][3]) . ", " .
-            floatval($data[$i][4]) . ", " .
-            intval($data[$i][5]) . ", " .
-            intval($data[$i][6]) . ", " .
-            intval($data[$i][7]) . ", " .
-            intval($data[$i][8]) . ", " .
-            intval($data[$i][9]) . ", " .
-            intval($data[$i][10]) . ", " .
-            intval($data[$i][11]) . ", " .
-            intval($data[$i][12]) . ", false)";
-    $i++;
+	$sql_parts[] = "(1, " .
+		"now(), " .
+		"'" . pg_escape_string($db_conn, $data[$i][0]) . "'," .
+		"'" . pg_escape_string($db_conn, $data[$i][1]) . "'," .
+		"'" . pg_escape_string($db_conn, $data[$i][2]) . "', " .
+		intval($data[$i][3]) . ", " .
+		floatval($data[$i][4]) . ", " .
+		intval($data[$i][5]) . ", " .
+		intval($data[$i][6]) . ", " .
+		intval($data[$i][7]) . ", " .
+		intval($data[$i][8]) . ", " .
+		intval($data[$i][9]) . ", " .
+		intval($data[$i][10]) . ", " .
+		intval($data[$i][11]) . ", " .
+		intval($data[$i][12]) . ", false)";
+	$i++;
 }
 
 $sql_string .= implode(',', $sql_parts);

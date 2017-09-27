@@ -47,6 +47,6 @@ class KonttiUI
 
 	public function show()
 	{
-		readfile("resources/base_page.html");
+		readfile("../resources/base_page.html");
 	}
 }

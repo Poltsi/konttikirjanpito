@@ -14,52 +14,54 @@
  */
 
 /* Global variables for strings */
-const FILLTYPEID                   = 'fill_type';
-const FILLLISTID                   = 'fill_list';
-const FILLLISTTABLEID              = 'fill_list_table';
-const ACTIONID                     = 'action';
-const FILLLISTFORMID               = 'fill_form';
-const FILLROWPREFIX                = 'fill_tr_';
-const FILLTYPEPREFIX               = 'fill_type_';
-const FILLCYLTYPEPREFIX            = 'cyl_type_';
-const FILLCYLSIZEPREFIX            = 'cyl_size_';
-const FILLCYLNUMPREFIX             = 'cyl_num_';
-const FILLCYLPRESSSTARTPREFIX      = 'cyl_start_pressure_';
-const FILLCYLPRESSENDPREFIX        = 'cyl_end_pressure_';
-const FILLCYLO2PCNTSTARTPREFIX     = 'cyl_o2_start_';
-const FILLCYLO2PCNTENDPREFIX       = 'cyl_o2_end_';
-const FILLCYLHEPCNTSTARTPREFIX     = 'cyl_he_start_';
-const FILLCYLHEPCNTENDPREFIX       = 'cyl_he_end_';
+const FILLTYPEID = 'fill_type';
+const FILLLISTID = 'fill_list';
+const FILLLISTTABLEID = 'fill_list_table';
+const ACTIONID = 'action';
+const FILLLISTFORMID = 'fill_form';
+const FILLROWPREFIX = 'fill_tr_';
+const FILLTYPEPREFIX = 'fill_type_';
+const FILLCYLTYPEPREFIX = 'cyl_type_';
+const FILLCYLSIZEPREFIX = 'cyl_size_';
+const FILLCYLNUMPREFIX = 'cyl_num_';
+const FILLCYLPRESSSTARTPREFIX = 'cyl_start_pressure_';
+const FILLCYLPRESSENDPREFIX = 'cyl_end_pressure_';
+const FILLCYLO2PCNTSTARTPREFIX = 'cyl_o2_start_';
+const FILLCYLO2PCNTENDPREFIX = 'cyl_o2_end_';
+const FILLCYLHEPCNTSTARTPREFIX = 'cyl_he_start_';
+const FILLCYLHEPCNTENDPREFIX = 'cyl_he_end_';
 
-var next_id         = 0;
+var next_id = 0;
 /* Types of fills, fields are:
  *  0. key
  *  1. Name
  *  2. Button color
  */
-const TYPELIST   = [    ['air', 'Air fill', '#99CC99'],
-                        ['nx',  'Nitrox fill', '#9999CC'],
-                        ['tx',  'Trimix fill', '#CC99CC'],
-                        ['o2',  'Oxygen fill', '#9999FF']];
+const TYPELIST = [['air', 'Air fill', '#99CC99'],
+    ['nx', 'Nitrox fill', '#9999CC'],
+    ['tx', 'Trimix fill', '#CC99CC'],
+    ['o2', 'Oxygen fill', '#9999FF']];
 
 
-const CYLLIST = {   '40cf': ['40cf/5.7l', 5.7],
-                    '80cf': ['80cf/11.1l', 11.1],
-                    '2l': ['2l', 2.0],
-                    '3l': ['3l', 3.0],
-                    '7l': ['7l', 7.0],
-                    '10l': ['10l', 10.0],
-                    '12l': ['12l', 12.0],
-                    '15l': ['15l', 15.0],
-                    '18l': ['18l', 18.0],
-                    '20l': ['20l', 20.0],
-                    'D7': ['D7', 14.0],
-                    'D10': ['D10', 20.0],
-                    'D12': ['D12', 24.0],
-                    'D15': ['D15', 30.0],
-                    'D18': ['D18', 36.0],
-                    'D20': ['D20', 40.0],
-                    '50l': ['50l', 50.0]};
+const CYLLIST = {
+    '40cf': ['40cf/5.7l', 5.7],
+    '80cf': ['80cf/11.1l', 11.1],
+    '2l': ['2l', 2.0],
+    '3l': ['3l', 3.0],
+    '7l': ['7l', 7.0],
+    '10l': ['10l', 10.0],
+    '12l': ['12l', 12.0],
+    '15l': ['15l', 15.0],
+    '18l': ['18l', 18.0],
+    '20l': ['20l', 20.0],
+    'D7': ['D7', 14.0],
+    'D10': ['D10', 20.0],
+    'D12': ['D12', 24.0],
+    'D15': ['D15', 30.0],
+    'D18': ['D18', 36.0],
+    'D20': ['D20', 40.0],
+    '50l': ['50l', 50.0]
+};
 
 /**
  * display_action_buttons: Shows the action buttons depending of the mode, default is to show the main action buttons
@@ -157,8 +159,7 @@ function get_main_action_buttons() {
     button_div.id = 'main_action';
     button_div.width = '100%';
 
-    for (var i = 0; i < TYPELIST.length; i++)
-    {
+    for (var i = 0; i < TYPELIST.length; i++) {
         var fill_button = document.createElement('button');
         fill_button.id = TYPELIST[i][0] + '_fill_button';
         fill_button.style.backgroundColor = TYPELIST[i][2];
@@ -211,12 +212,12 @@ function add_gas_fill_row(type) {
     gas_td_type.id = 'td_' + FILLTYPEPREFIX + id;
     gas_tr.appendChild(gas_td_type);
 
-    var gas_td_cyl =  document.createElement('td');
+    var gas_td_cyl = document.createElement('td');
     gas_td_cyl.appendChild(get_cylinder_select(id));
     gas_td_cyl.id = 'td_' + FILLCYLSIZEPREFIX + id;
     gas_tr.appendChild(gas_td_cyl);
 
-    var gas_td_num =  document.createElement('td');
+    var gas_td_num = document.createElement('td');
     gas_td_num.appendChild(get_amount_select(1, 15, 'Number of cylinders', FILLCYLNUMPREFIX + id, '', ''));
     gas_td_num.id = 'td_' + FILLCYLNUMPREFIX + id;
     gas_tr.appendChild(gas_td_num);
@@ -224,12 +225,12 @@ function add_gas_fill_row(type) {
     var n = 6;
 
     if (type !== 'air') {
-        var gas_td_bar_start =  document.createElement('td');
+        var gas_td_bar_start = document.createElement('td');
         gas_td_bar_start.appendChild(get_amount_select(0, 350, 'Pressure before fill', FILLCYLPRESSSTARTPREFIX + id, '', ' bar'));
         gas_td_bar_start.id = 'td_' + FILLCYLPRESSSTARTPREFIX + id;
         gas_tr.appendChild(gas_td_bar_start);
 
-        var gas_td_bar_end =  document.createElement('td');
+        var gas_td_bar_end = document.createElement('td');
         gas_td_bar_end.appendChild(get_amount_select(1, 350, 'Pressure after fill', FILLCYLPRESSENDPREFIX + id, '', ' bar'));
         gas_td_bar_end.id = 'td_' + FILLCYLPRESSENDPREFIX + id;
         gas_tr.appendChild(gas_td_bar_end);
@@ -337,7 +338,9 @@ function get_save_data_button(form_id) {
 }
 
 function get_save_data_function() {
-    return (function () {save_data()});
+    return (function () {
+        save_data()
+    });
 }
 
 /**
@@ -348,7 +351,7 @@ function get_save_data_function() {
 function get_next_fill_id() {
     var my_id = next_id;
     next_id++;
-    return(my_id);
+    return (my_id);
 }
 
 /**
@@ -368,7 +371,9 @@ function get_removal_cell(id) {
 }
 
 function get_remove_fill_row_function(id) {
-    return (function() {remove_fill_row(id)});
+    return (function () {
+        remove_fill_row(id)
+    });
 }
 
 /**
@@ -383,7 +388,9 @@ function remove_fill_row(id) {
 }
 
 function get_check_data_function() {
-    return (function() {check_data()});
+    return (function () {
+        check_data()
+    });
 }
 
 /**
@@ -395,7 +402,7 @@ function save_data() {
     var fill_array = [];
 
     var table = document.querySelector('#' + FILLLISTTABLEID);
-    var num_rows =  table.childElementCount;
+    var num_rows = table.childElementCount;
 
     /* There is the header row*/
     if (num_rows < 2) {
@@ -432,7 +439,8 @@ function save_data() {
         }
     };
 
-    xhr.send(json_data);}
+    xhr.send(json_data);
+}
 
 /**
  * get_fill_data: Collects the fed data from the form and verifies it
@@ -441,7 +449,7 @@ function save_data() {
  */
 
 function get_fill_data(id) {
-    var data_array = [null,null,null,null,null,null,null,null,null,null,null,null,null];
+    var data_array = [null, null, null, null, null, null, null, null, null, null, null, null, null];
 
     data_array[0] = get_fill_type(id);
     data_array[1] = 'VID';
@@ -457,12 +465,12 @@ function get_fill_data(id) {
         if (data_array[0] !== 'o2') {
             data_array[7] = get_cylinder_o2_start_percentage(id);
             data_array[8] = get_cylinder_o2_end_percentage(id);
-            data_array[11] = data_array[3] * data_array[4] * (data_array[6] * data_array[8] -  data_array[5] * data_array[7]) / 100;
+            data_array[11] = data_array[3] * data_array[4] * (data_array[6] * data_array[8] - data_array[5] * data_array[7]) / 100;
 
             if (data_array[0] !== 'nx') {
                 data_array[9] = get_cylinder_he_start_percentage(id);
                 data_array[10] = get_cylinder_he_end_percentage(id);
-                data_array[12] = data_array[3] * data_array[4] * (data_array[6] * data_array[10] -  data_array[5] * data_array[9]) / 100;
+                data_array[12] = data_array[3] * data_array[4] * (data_array[6] * data_array[10] - data_array[5] * data_array[9]) / 100;
             }
         }
     }
@@ -471,17 +479,49 @@ function get_fill_data(id) {
     return (data_array);
 }
 
-function get_fill_type(id) {return (document.querySelector('#' + FILLTYPEPREFIX + id).value);}
-function get_cylinder_size(id) {return (document.querySelector('#' + FILLCYLSIZEPREFIX + id).options[document.querySelector('#' + FILLCYLSIZEPREFIX + id).selectedIndex].value);}
-function get_cylinder_number(id) {return (parseInt(document.querySelector('#' + FILLCYLNUMPREFIX + id).value));}
-function get_cylinder_start_pressure(id) {return (parseInt(document.querySelector('#' + FILLCYLPRESSSTARTPREFIX + id).value));}
-function get_cylinder_end_pressure(id) {return (parseInt(document.querySelector('#' + FILLCYLPRESSENDPREFIX + id).value));}
-function get_cylinder_o2_start_percentage(id) {return (parseInt(document.querySelector('#' + FILLCYLO2PCNTSTARTPREFIX + id).value));}
-function get_cylinder_o2_end_percentage(id) {return (parseInt(document.querySelector('#' + FILLCYLO2PCNTENDPREFIX + id).value));}
-function get_cylinder_he_start_percentage(id) {return (parseInt(document.querySelector('#' + FILLCYLHEPCNTSTARTPREFIX + id).value));}
-function get_cylinder_he_end_percentage(id) { return (parseInt(document.querySelector('#' + FILLCYLHEPCNTENDPREFIX + id).value));}
-function get_login() {return (document.querySelector('#login').value);}
-function get_password() {return (document.querySelector('#password').value);}
+function get_fill_type(id) {
+    return (document.querySelector('#' + FILLTYPEPREFIX + id).value);
+}
+
+function get_cylinder_size(id) {
+    return (document.querySelector('#' + FILLCYLSIZEPREFIX + id).options[document.querySelector('#' + FILLCYLSIZEPREFIX + id).selectedIndex].value);
+}
+
+function get_cylinder_number(id) {
+    return (parseInt(document.querySelector('#' + FILLCYLNUMPREFIX + id).value));
+}
+
+function get_cylinder_start_pressure(id) {
+    return (parseInt(document.querySelector('#' + FILLCYLPRESSSTARTPREFIX + id).value));
+}
+
+function get_cylinder_end_pressure(id) {
+    return (parseInt(document.querySelector('#' + FILLCYLPRESSENDPREFIX + id).value));
+}
+
+function get_cylinder_o2_start_percentage(id) {
+    return (parseInt(document.querySelector('#' + FILLCYLO2PCNTSTARTPREFIX + id).value));
+}
+
+function get_cylinder_o2_end_percentage(id) {
+    return (parseInt(document.querySelector('#' + FILLCYLO2PCNTENDPREFIX + id).value));
+}
+
+function get_cylinder_he_start_percentage(id) {
+    return (parseInt(document.querySelector('#' + FILLCYLHEPCNTSTARTPREFIX + id).value));
+}
+
+function get_cylinder_he_end_percentage(id) {
+    return (parseInt(document.querySelector('#' + FILLCYLHEPCNTENDPREFIX + id).value));
+}
+
+function get_login() {
+    return (document.querySelector('#login').value);
+}
+
+function get_password() {
+    return (document.querySelector('#password').value);
+}
 
 /**
  * check_data: Goes through each fill row and calls the row verification for each id
@@ -544,7 +584,7 @@ function verify_row_data(id) {
                     mark_red('td_' + FILLCYLO2PCNTSTARTPREFIX + id);
                     mark_red('td_' + FILLCYLHEPCNTSTARTPREFIX + id);
                     add_info('The sum of O2% (' + get_cylinder_o2_start_percentage(id) + ') and He% (' + get_cylinder_he_start_percentage(id) + ') is more (' +
-                        (get_cylinder_o2_start_percentage(id) + get_cylinder_he_start_percentage(id)) +') than 100% at beginning');
+                        (get_cylinder_o2_start_percentage(id) + get_cylinder_he_start_percentage(id)) + ') than 100% at beginning');
                     ret_val = false;
                 }
                 // Make sure the sum of end O2 and He is not over 100
@@ -555,7 +595,7 @@ function verify_row_data(id) {
                     ret_val = false;
                 }
                 // Make sure the fill did not require more than 100% he
-                if (is_overfill_gas(get_cylinder_start_pressure(id), get_cylinder_end_pressure(id), get_cylinder_he_start_percentage(id), get_cylinder_he_end_percentage(id))){
+                if (is_overfill_gas(get_cylinder_start_pressure(id), get_cylinder_end_pressure(id), get_cylinder_he_start_percentage(id), get_cylinder_he_end_percentage(id))) {
                     mark_red('td_' + FILLCYLHEPCNTSTARTPREFIX + id);
                     mark_red('td_' + FILLCYLHEPCNTENDPREFIX + id);
                     add_info('The fill would require you to use over 100% helium (you can not get to the given end He% even if you used 100% helium');
@@ -601,7 +641,7 @@ function is_overfill_gas(press_start, press_end, fraction_start, fraction_end) {
 
 function is_negative_gas(press_start, press_end, fraction_start, fraction_end) {
     var fraction_press_start = fraction_start * press_start / 100.0;
-    var fraction_press_end   = fraction_end   * press_end / 100.0;
+    var fraction_press_end = fraction_end * press_end / 100.0;
     return (fraction_press_end < fraction_press_start);
 }
 
@@ -624,6 +664,7 @@ function empty_info() {
     var info_div = document.querySelector('#info');
     info_div.innerHTML = '';
 }
+
 /**
  * add_info: Add a paragraph of info to the info-div
  * @param message
@@ -686,7 +727,9 @@ function get_login_form() {
  */
 
 function get_verify_login_function() {
-    return (function() {verify_login();});
+    return (function () {
+        verify_login();
+    });
 }
 
 /**
@@ -695,9 +738,11 @@ function get_verify_login_function() {
 
 function verify_login() {
     /* TODO: Connect to server and verify the login credentials */
-    var login_data = {  'type': 'login',
-                        'login': get_login(),
-                        'password': get_password()};
+    var login_data = {
+        'type': 'login',
+        'login': get_login(),
+        'password': get_password()
+    };
 
     var json_data = JSON.stringify(login_data);
     /* Send the JSON to the server */
@@ -734,7 +779,9 @@ function verify_login() {
  */
 
 function get_logout_function() {
-    return (function() {logout();});
+    return (function () {
+        logout();
+    });
 }
 
 /**

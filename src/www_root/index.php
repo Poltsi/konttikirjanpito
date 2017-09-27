@@ -21,7 +21,7 @@
  * Time: 6:37 PM
  */
 
-require_once "Kontti/UI/KonttiUI.php";
+require_once "../lib/Kontti/UI/KonttiUI.php";
 
 $ui = new \Kontti\UI\KonttiUI();
 
