@@ -66,7 +66,7 @@ ALTER TABLE ONLY users ADD CONSTRAINT users_salt_key UNIQUE (salt);
 CREATE TABLE fills (
   uid integer NOT NULL,
   fill_datetime timestamp with time zone,
-  gas_type character varying(12),
+  gas_level_id integer,
   fill_type character varying(12),
   cyl_type character varying(12),
   cyl_count integer,
