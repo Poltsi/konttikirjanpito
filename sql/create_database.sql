@@ -111,3 +111,13 @@ INSERT INTO gas_level VALUES (10, 10, 'air');
 INSERT INTO gas_level VALUES (20, 20, 'nx');
 INSERT INTO gas_level VALUES (30, 30, 'o2');
 INSERT INTO gas_level VALUES (40, 40, 'tx');
+
+-- Log/audit
+
+CREATE TABLE audit (
+  event_time timestamp with time zone NOT NULL,
+  uid INTEGER NOT NULL,
+  address TEXT,
+  type CHARACTER VARYING(16),
+  event TEXT
+);

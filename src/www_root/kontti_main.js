@@ -795,7 +795,7 @@ function logout() {
     var json_data = JSON.stringify(logout_data);
     /* Send the JSON to the server */
     var xhr = new XMLHttpRequest();
-    xhr.open("POST", 'http://kontti.lappari/login.php', true);
+    xhr.open("POST", 'http://kontti.lappari/logout.php', true);
     xhr.setRequestHeader("Content-type", "application/json");
 
     xhr.onreadystatechange = function () {
