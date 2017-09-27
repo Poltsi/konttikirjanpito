@@ -20,7 +20,7 @@ if (array_key_exists('login', $data) &&
     array_key_exists('password', $data)) {
     // Get the user uid and whether the account is enabled
 
-    $sql_string = "SELECT uid, enabled FROM users WHERE login = $1 AND password = crypt($2, salt)";
+    $sql_string = "SELECT uid, enabled, level FROM users WHERE login = $1 AND password = crypt($2, salt)";
     $result = pg_prepare($db_conn, 'login', $sql_string);
 // Get the result set
     $result = pg_execute($db_conn, 'login', array($data['login'], $data['password']));
@@ -42,6 +42,8 @@ if (array_key_exists('login', $data) &&
         session_start();
         $_SESSION['uid'] = $rs_array[0];
         $_SESSION['login_time'] = time();
+        $_SESSION['locked'] = $rs_array[1];
+        $_SESSION['level'] = $rs_array[2];
         $_SESSION['last_time'] = time();
         pg_execute($db_conn, 'audit', array($_SESSION['uid'], $_SERVER['REMOTE_ADDR'], 'login-ok', 'Login succeeded for user: ' . $data['login']));
     }

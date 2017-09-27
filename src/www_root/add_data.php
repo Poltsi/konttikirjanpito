@@ -21,6 +21,7 @@
  * Time: 6:36 PM
  */
 
+session_start();
 header("Content-Type: application/json");
 /* Default response is only plain ok */
 $response['status'] = 'OK';
@@ -28,38 +29,55 @@ $response['status'] = 'OK';
 $data = json_decode(stripslashes(file_get_contents("php://input")), true);
 $db_conn = pg_connect("host=localhost port=5432 dbname=kontti user=kontti password=konttipassu");
 
-// TODO: Get the user uid
-// TODO: Check that the user is not locked
+$sql_string = "INSERT INTO audit VALUES (NOW(), $1 , $2, $3, $4)";
+$result = pg_prepare($db_conn, 'audit', $sql_string);
 
-$i = 0;
+// Check the user uid
+if (!array_key_exists('uid', $_SESSION)) {
+    pg_execute($db_conn, 'audit', array(-1, $_SERVER['REMOTE_ADDR'], 'session-fail', 'Client tries to add fill without session'));
+    $response['status'] = 'NOK';
+    $response['reason'] = 'User session has expired';
+} else {
+    // Check that the user is not locked
+    if (!array_key_exists('locked', $_SESSION) ||
+        $_SESSION['locked'] != 'TRUE') {
+        pg_execute($db_conn, 'audit', array($_SESSION['uid'], $_SERVER['REMOTE_ADDR'], 'session-fail', 'User is locked'));
+        $response['status'] = 'NOK';
+        $response['reason'] = 'User account is locked';
+    } else {
+        // TODO: Check that the user is allowed to to the fill
 
-$sql_string = 'INSERT INTO fills (uid, fill_datetime, gas_type, fill_type, cyl_type, cyl_count, cyl_size, start_pressure, end_pressure, o2_start, o2_end, he_start, he_end, o2_vol, he_vol, counted) VALUES ';
-$sql_parts = array();
+        $i = 0;
 
-while (array_key_exists($i, $data)) {
-	$sql_parts[] = "(1, " .
-		"now(), " .
-		"'" . pg_escape_string($db_conn, $data[$i][0]) . "'," .
-		"'" . pg_escape_string($db_conn, $data[$i][1]) . "'," .
-		"'" . pg_escape_string($db_conn, $data[$i][2]) . "', " .
-		intval($data[$i][3]) . ", " .
-		floatval($data[$i][4]) . ", " .
-		intval($data[$i][5]) . ", " .
-		intval($data[$i][6]) . ", " .
-		intval($data[$i][7]) . ", " .
-		intval($data[$i][8]) . ", " .
-		intval($data[$i][9]) . ", " .
-		intval($data[$i][10]) . ", " .
-		intval($data[$i][11]) . ", " .
-		intval($data[$i][12]) . ", false)";
-	$i++;
+        $sql_string = 'INSERT INTO fills (uid, fill_datetime, gas_type, fill_type, cyl_type, cyl_count, cyl_size, start_pressure, end_pressure, o2_start, o2_end, he_start, he_end, o2_vol, he_vol, counted) VALUES ';
+        $sql_parts = array();
+
+        while (array_key_exists($i, $data)) {
+            $sql_parts[] = "(1, " .
+                "now(), " .
+                "'" . pg_escape_string($db_conn, $data[$i][0]) . "'," .
+                "'" . pg_escape_string($db_conn, $data[$i][1]) . "'," .
+                "'" . pg_escape_string($db_conn, $data[$i][2]) . "', " .
+                intval($data[$i][3]) . ", " .
+                floatval($data[$i][4]) . ", " .
+                intval($data[$i][5]) . ", " .
+                intval($data[$i][6]) . ", " .
+                intval($data[$i][7]) . ", " .
+                intval($data[$i][8]) . ", " .
+                intval($data[$i][9]) . ", " .
+                intval($data[$i][10]) . ", " .
+                intval($data[$i][11]) . ", " .
+                intval($data[$i][12]) . ", false)";
+            $i++;
+        }
+
+        $sql_string .= implode(',', $sql_parts);
+
+        pg_query($db_conn, $sql_string);
+
+        // TODO: Check whether the insert worked
+    }
 }
-
-$sql_string .= implode(',', $sql_parts);
-
-pg_query($db_conn, $sql_string);
-
-// TODO: Check whether the insert worked
 
 pg_close($db_conn);
 // print_r($response);
