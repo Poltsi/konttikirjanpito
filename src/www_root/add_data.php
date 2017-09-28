@@ -39,43 +39,40 @@ if (!array_key_exists('uid', $_SESSION)) {
     $response['reason'] = 'User session has expired';
 } else {
     // Check that the user is not locked
-    if (!array_key_exists('locked', $_SESSION) ||
-        $_SESSION['locked'] != 'TRUE') {
+    if (!array_key_exists('enabled', $_SESSION) ||
+        $_SESSION['enabled'] == 0) {
         pg_execute($db_conn, 'audit', array($_SESSION['uid'], $_SERVER['REMOTE_ADDR'], 'session-fail', 'User is locked'));
         $response['status'] = 'NOK';
         $response['reason'] = 'User account is locked';
     } else {
-        // TODO: Check that the user is allowed to to the fill
+        $sql_string = "SELECT min_fill_level, gas_id FROM gas_level WHERE gas_key = $1";
+        $result = pg_prepare($db_conn, 'getgasid', $sql_string);
 
         $i = 0;
 
-        $sql_string = 'INSERT INTO fills (uid, fill_datetime, gas_type, fill_type, cyl_type, cyl_count, cyl_size, start_pressure, end_pressure, o2_start, o2_end, he_start, he_end, o2_vol, he_vol, counted) VALUES ';
+        $sql_string = 'INSERT INTO fills (uid, fill_datetime, gas_level_id, fill_type, cyl_type, cyl_count, cyl_size, start_pressure, end_pressure, o2_start, o2_end, he_start, he_end, o2_vol, he_vol, counted) ' .
+            'VALUES ($1, now(), $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, false)';
+        $result = pg_prepare($db_conn, 'addfill', $sql_string);
         $sql_parts = array();
 
         while (array_key_exists($i, $data)) {
-            $sql_parts[] = "(1, " .
-                "now(), " .
-                "'" . pg_escape_string($db_conn, $data[$i][0]) . "'," .
-                "'" . pg_escape_string($db_conn, $data[$i][1]) . "'," .
-                "'" . pg_escape_string($db_conn, $data[$i][2]) . "', " .
-                intval($data[$i][3]) . ", " .
-                floatval($data[$i][4]) . ", " .
-                intval($data[$i][5]) . ", " .
-                intval($data[$i][6]) . ", " .
-                intval($data[$i][7]) . ", " .
-                intval($data[$i][8]) . ", " .
-                intval($data[$i][9]) . ", " .
-                intval($data[$i][10]) . ", " .
-                intval($data[$i][11]) . ", " .
-                intval($data[$i][12]) . ", false)";
+            // Get the min fill_level and gas_level_id for the given fill
+            $result = pg_execute($db_conn, 'getgasid', array($data[$i][0]));
+            $rs_array = pg_fetch_row($result);
+
+            // TODO: Check that the user is allowed to do the fill
+            if ($rs_array[1] > $_SESSION['level']) {
+                $response['status'] = 'NOK';
+                $response['reason'] .= $data[$i][0] . ' fill was rejected as user is not permitted to do such fill';
+
+            } else {
+                $result = pg_execute($db_conn, 'addfill',
+                    array($_SESSION['uid'], $rs_array[1], $data[$i][1], $data[$i][2], intval($data[$i][3]), floatval($data[$i][4]), intval($data[$i][5]), intval($data[$i][6]), intval($data[$i][7]), intval($data[$i][8]), intval($data[$i][9]), intval($data[$i][10]), intval($data[$i][11]), intval($data[$i][12])));
+                // TODO: Check whether the insert worked
+            }
+
             $i++;
         }
-
-        $sql_string .= implode(',', $sql_parts);
-
-        pg_query($db_conn, $sql_string);
-
-        // TODO: Check whether the insert worked
     }
 }
 

@@ -159,17 +159,24 @@ function get_main_action_buttons() {
     button_div.id = 'main_action';
     button_div.width = '100%';
 
-    for (var i = 0; i < TYPELIST.length; i++) {
-        if (parseInt(sessionStorage.getItem('kontti_level')) >= TYPELIST[i][0]) {
-            var fill_button = document.createElement('button');
-            fill_button.id = TYPELIST[i][1] + '_fill_button';
-            fill_button.style.backgroundColor = TYPELIST[i][3];
-            fill_button.innerHTML = TYPELIST[i][2];
-            fill_button.addEventListener('click', get_show_fill_ref(TYPELIST[i][1]));
-            button_div.appendChild(fill_button);
+    if (sessionStorage.getItem('kontti_enabled') == 0) {
+        for (var i = 0; i < TYPELIST.length; i++) {
+            if (parseInt(sessionStorage.getItem('kontti_level')) >= TYPELIST[i][0]) {
+                var fill_button = document.createElement('button');
+                fill_button.id = TYPELIST[i][1] + '_fill_button';
+                fill_button.style.backgroundColor = TYPELIST[i][3];
+                fill_button.innerHTML = TYPELIST[i][2];
+                fill_button.addEventListener('click', get_show_fill_ref(TYPELIST[i][1]));
+                button_div.appendChild(fill_button);
+            }
         }
     }
 
+    var stats_button = document.createElement('button');
+    stats_button.innerHTML = 'Statistics';
+    stats_button.id = 'stats';
+    stats_button.addEventListener('click', get_stats_function());
+    button_div.appendChild(stats_button);
     var logout_button = document.createElement('button');
     logout_button.id = 'logout';
     logout_button.innerHTML = 'Logout';
@@ -421,7 +428,6 @@ function save_data() {
     }
 
     var json_data = JSON.stringify(fill_array);
-    add_info(json_data);
 
     /* Send the JSON to the server */
     var xhr = new XMLHttpRequest();
@@ -430,13 +436,12 @@ function save_data() {
     xhr.onreadystatechange = function () {
         if (xhr.readyState === 4 && xhr.status === 200) {
             var json = JSON.parse(xhr.responseText);
-            add_info('Return value: ' + json)
 
             if (json['status'] === 'OK') {
                 empty_info();
                 add_info('Fill data store successfully');
             } else {
-                add_info('Failed to store the data. Return value: ' + json['status']);
+                add_info(json['reason']);
             }
         }
     };
@@ -761,6 +766,7 @@ function verify_login() {
                 empty_info();
                 add_info('User logged in successfully');
                 sessionStorage.setItem('kontti_mode', 'main');
+                sessionStorage.setItem('kontti_enabled', json['enabled']);
                 sessionStorage.setItem('kontti_level', json['level']);
                 display_action_buttons();
             } else {
@@ -823,4 +829,20 @@ function logout() {
 
     xhr.send(json_data);
 
+}
+
+/**
+ * get_stats_function: Returns reference to the stats-function
+ * @returns {Function}
+ */
+
+function get_stats_function() {
+    return (function () {
+        stats();
+    })
+}
+
+function stats() {
+    // TODO: Empty the main div
+    // TODO: Fetch the stats from server
 }

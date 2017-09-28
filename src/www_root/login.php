@@ -52,21 +52,21 @@ if (array_key_exists('login', $data) &&
             pg_execute($db_conn, 'audit', array(-1, $_SERVER['REMOTE_ADDR'], 'login-fail', 'Login failed for user: ' . $data['login']));
         }
 
-// Check that the user is not locked
+        // Check whether the user has a locked account. We will allow him to log on, but will be unable to make any fills.
         $rs_array = pg_fetch_row($result);
+        $response['enabled'] = $rs_array[1] === 'f' ? 0: 1;
+        $response['level'] = $rs_array[2];
+        session_start();
+        $_SESSION['last_time'] = time();
+        $_SESSION['uid'] = $rs_array[0];
+        $_SESSION['login_time'] = time();
+        $_SESSION['enabled'] = $rs_array[1] === 'f' ? 0: 1;
+        $_SESSION['level'] = $rs_array[2];
 
-        if ($rs_array[1] === 'FALSE') {
-            $response['status'] = 'NOK';
-            $response['reason'] = 'Account locked, please contact the operator';
-            pg_execute($db_conn, 'audit', array(-1, $_SERVER['REMOTE_ADDR'], 'login-fail', 'Locked account for user: ' . $data['login']));
+        if ($rs_array[1] === 'f') {
+            $response['reason'] = 'Account locked, you can only view your data';
+            pg_execute($db_conn, 'audit', array(-1, $_SERVER['REMOTE_ADDR'], 'login-ok', 'Locked account for user: ' . $data['login']));
         } else {
-            $response['level'] = $rs_array[2];
-            session_start();
-            $_SESSION['uid'] = $rs_array[0];
-            $_SESSION['login_time'] = time();
-            $_SESSION['locked'] = $rs_array[1];
-            $_SESSION['level'] = $rs_array[2];
-            $_SESSION['last_time'] = time();
             pg_execute($db_conn, 'audit', array($_SESSION['uid'], $_SERVER['REMOTE_ADDR'], 'login-ok', 'Login succeeded for user: ' . $data['login']));
         }
     }
