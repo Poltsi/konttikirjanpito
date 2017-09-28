@@ -39,8 +39,8 @@ var next_id = 0;
  */
 const TYPELIST = [['air', 'Air fill', '#99CC99'],
     ['nx', 'Nitrox fill', '#9999CC'],
-    ['tx', 'Trimix fill', '#CC99CC'],
-    ['o2', 'Oxygen fill', '#9999FF']];
+    ['o2', 'Oxygen fill', '#9999FF'],
+    ['tx', 'Trimix fill', '#CC99CC']];
 
 
 const CYLLIST = {

@@ -54,6 +54,7 @@ if (array_key_exists('login', $data) &&
         $response['reason'] = 'Account locked, please contact the operator';
         pg_execute($db_conn, 'audit', array(-1, $_SERVER['REMOTE_ADDR'], 'login-fail', 'Locked account for user: ' . $data['login']));
     } else {
+	    $response['level'] = $data['login'];
         session_start();
         $_SESSION['uid'] = $rs_array[0];
         $_SESSION['login_time'] = time();
