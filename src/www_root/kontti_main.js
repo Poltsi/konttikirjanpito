@@ -37,10 +37,10 @@ var next_id = 0;
  *  1. Name
  *  2. Button color
  */
-const TYPELIST = [['air', 'Air fill', '#99CC99'],
-    ['nx', 'Nitrox fill', '#9999CC'],
-    ['o2', 'Oxygen fill', '#9999FF'],
-    ['tx', 'Trimix fill', '#CC99CC']];
+const TYPELIST = [[10, 'air', 'Air fill', '#99CC99'],
+    [20, 'nx', 'Nitrox fill', '#9999CC'],
+    [30, 'o2', 'Oxygen fill', '#9999FF'],
+    [40, 'tx', 'Trimix fill', '#CC99CC']];
 
 
 const CYLLIST = {
@@ -160,12 +160,14 @@ function get_main_action_buttons() {
     button_div.width = '100%';
 
     for (var i = 0; i < TYPELIST.length; i++) {
-        var fill_button = document.createElement('button');
-        fill_button.id = TYPELIST[i][0] + '_fill_button';
-        fill_button.style.backgroundColor = TYPELIST[i][2];
-        fill_button.innerHTML = TYPELIST[i][1];
-        fill_button.addEventListener('click', get_show_fill_ref(TYPELIST[i][0]));
-        button_div.appendChild(fill_button);
+        if (parseInt(sessionStorage.getItem('kontti_level')) >= TYPELIST[i][0]) {
+            var fill_button = document.createElement('button');
+            fill_button.id = TYPELIST[i][1] + '_fill_button';
+            fill_button.style.backgroundColor = TYPELIST[i][3];
+            fill_button.innerHTML = TYPELIST[i][2];
+            fill_button.addEventListener('click', get_show_fill_ref(TYPELIST[i][1]));
+            button_div.appendChild(fill_button);
+        }
     }
 
     var logout_button = document.createElement('button');
@@ -737,7 +739,7 @@ function get_verify_login_function() {
  */
 
 function verify_login() {
-    /* TODO: Connect to server and verify the login credentials */
+    /* Connect to server and verify the login credentials */
     var login_data = {
         'type': 'login',
         'login': get_login(),
@@ -759,6 +761,7 @@ function verify_login() {
                 empty_info();
                 add_info('User logged in successfully');
                 sessionStorage.setItem('kontti_mode', 'main');
+                sessionStorage.setItem('kontti_level', json['level']);
                 display_action_buttons();
             } else {
                 add_info('User not logged in');

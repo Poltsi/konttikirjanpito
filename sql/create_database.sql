@@ -51,10 +51,15 @@ CREATE SEQUENCE users_uid_seq START WITH 1 INCREMENT BY 1 NO MINVALUE NO MAXVALU
 ALTER TABLE users_uid_seq OWNER TO kontti;
 ALTER SEQUENCE users_uid_seq OWNED BY users.uid;
 ALTER TABLE ONLY users ALTER COLUMN uid SET DEFAULT nextval('users_uid_seq'::regclass);
-INSERT INTO users (uid, gid, login, salt, password, name, enabled)
-VALUES (1, 1, 'admin', gen_salt('bf', 8), '', 'Administrator', TRUE);
+INSERT INTO users (uid, gid, login, level, salt, password, name, enabled) VALUES
+  (1, 1, 'admin', 40,gen_salt('bf', 8), '', 'Administrator', TRUE),
+  (2, 1, 'juuso', 20,gen_salt('bf', 8), '', 'Administrator', TRUE),
+  (3, 1, 'kaaso', 10,gen_salt('bf', 8), '', 'Administrator', TRUE);
 UPDATE users SET password = crypt('US_admin_passu', salt) WHERE uid = 1;
-SELECT pg_catalog.setval('users_uid_seq', 1, false);
+UPDATE users SET password = crypt('juuso', salt) WHERE uid = 2;
+UPDATE users SET password = crypt('kaaso', salt) WHERE uid = 3;
+
+SELECT pg_catalog.setval('users_uid_seq', 3, false);
 
 ALTER TABLE ONLY users ADD CONSTRAINT users_login_key UNIQUE (login);
 ALTER TABLE ONLY users ADD CONSTRAINT users_password_key UNIQUE (password);
