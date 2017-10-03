@@ -14,11 +14,12 @@
  */
 
 /* Global variables for strings */
-const FILLTYPEID = 'fill_type';
-const FILLLISTID = 'fill_list';
-const FILLLISTTABLEID = 'fill_list_table';
-const ACTIONID = 'action';
-const FILLLISTFORMID = 'fill_form';
+const MAINDATAACTIONID = 'main_action';
+const DATAAREAID = 'data_area';
+const DATAAREATABLEID = 'data_area_table';
+const DATAACTIONID = 'data_action';
+const INFOID = 'info';
+const DATAAREAFORMID = 'fill_form';
 const FILLROWPREFIX = 'fill_tr_';
 const FILLTYPEPREFIX = 'fill_type_';
 const FILLCYLTYPEPREFIX = 'cyl_type_';
@@ -77,36 +78,54 @@ function display_action_buttons() {
     /* TODO: Check that mode is set */
 
     /* Clear the divs first */
-    var my_filltype_elem = document.getElementById(FILLTYPEID);
-    my_filltype_elem.innerHTML = '';
-    var my_filllist_elem = document.querySelector('#' + FILLLISTID);
-    my_filllist_elem.innerHTML = '';
-    var my_action_elem = document.querySelector('#' + ACTIONID);
-    my_action_elem.innerHTML = '';
+    clear_divs();
 
     switch (mode) {
         case 'login':
             show_login();
             break;
         case 'main':
-            my_filltype_elem.appendChild(get_main_action_buttons());
-            /* Add the fill form to the main field div */
-            var fill_form = document.createElement('form');
-            fill_form.id = FILLLISTFORMID;
-            var fill_form_table = document.createElement('table');
-            fill_form_table.appendChild(get_fill_table_header());
-            fill_form_table.id = FILLLISTTABLEID;
-            fill_form_table.setAttribute('border', '1');
-            fill_form.appendChild(fill_form_table);
-            my_filllist_elem.appendChild(fill_form);
-            my_action_elem.appendChild(get_check_button());
-            my_action_elem.appendChild(get_save_data_button(FILLLISTFORMID));
+            show_main();
+            break;
+        case 'stats':
+            break;
+        case 'admin':
+            show_admin();
             break;
         case 'logout':
             break;
         default:
     }
 }
+
+function clear_divs() {
+    var my_filltype_elem = document.querySelector('#' + MAINDATAACTIONID);
+    my_filltype_elem.innerHTML = '';
+    var my_filllist_elem = document.querySelector('#' + DATAAREAID);
+    my_filllist_elem.innerHTML = '';
+    var my_action_elem = document.querySelector('#' + DATAACTIONID);
+    my_action_elem.innerHTML = '';
+}
+
+function show_main() {
+    var my_filltype_elem = document.getElementById(MAINDATAACTIONID);
+    var my_filllist_elem = document.querySelector('#' + DATAAREAID);
+    var my_action_elem = document.querySelector('#' + DATAACTIONID);
+
+    my_filltype_elem.appendChild(get_main_action_buttons());
+    /* Add the fill form to the main field div */
+    var fill_form = document.createElement('form');
+    fill_form.id = DATAAREAFORMID;
+    var fill_form_table = document.createElement('table');
+    fill_form_table.appendChild(get_fill_table_header());
+    fill_form_table.id = DATAAREATABLEID;
+    fill_form_table.setAttribute('border', '1');
+    fill_form.appendChild(fill_form_table);
+    my_filllist_elem.appendChild(fill_form);
+    my_action_elem.appendChild(get_check_button());
+    my_action_elem.appendChild(get_save_data_button(DATAAREAFORMID));
+}
+
 
 /**
  * get_fill_table_header: Adds the header row to the fill table
@@ -159,7 +178,7 @@ function get_main_action_buttons() {
     button_div.id = 'main_action';
     button_div.width = '100%';
 
-    if (sessionStorage.getItem('kontti_enabled') == 0) {
+    if (sessionStorage.getItem('kontti_enabled') == 1) {
         for (var i = 0; i < TYPELIST.length; i++) {
             if (parseInt(sessionStorage.getItem('kontti_level')) >= TYPELIST[i][0]) {
                 var fill_button = document.createElement('button');
@@ -172,11 +191,23 @@ function get_main_action_buttons() {
         }
     }
 
+    /* Admin button */
+    if (sessionStorage.getItem('kontti_level') > 40) {
+        var admin_button = document.createElement('button');
+        admin_button.innerHTML = 'Admin';
+        admin_button.id = 'admin';
+        admin_button.addEventListener('click', get_admin_function());
+        button_div.appendChild(admin_button);
+    }
+
+    /* Stats button */
     var stats_button = document.createElement('button');
     stats_button.innerHTML = 'Statistics';
     stats_button.id = 'stats';
     stats_button.addEventListener('click', get_stats_function());
     button_div.appendChild(stats_button);
+
+    /* Logout button */
     var logout_button = document.createElement('button');
     logout_button.id = 'logout';
     logout_button.innerHTML = 'Logout';
@@ -186,6 +217,142 @@ function get_main_action_buttons() {
     button_div.appendChild(logout_button);
     return (button_div);
 }
+
+/******************************************************  ADMIN  ******************************************************/
+/**
+ *
+ */
+
+function get_admin_function() {
+    return (function() {admin()});
+}
+
+function admin() {
+    sessionStorage.setItem('kontti_mode', 'admin');
+    display_action_buttons();
+}
+
+function show_admin() {
+    /* TODO: Populate the action div */
+    var my_action_elem = document.querySelector('#' + MAINDATAACTIONID);
+    var button_div = document.createElement('div');
+    button_div.id = 'admin_action';
+
+    /* List users */
+    var users_button = document.createElement('button');
+    users_button.innerHTML = 'Users';
+    users_button.id = 'users_list';
+    users_button.addEventListener('click', get_user_list_function());
+    button_div.appendChild(users_button);
+
+
+    my_action_elem.appendChild(button_div);
+}
+
+function get_user_list_function() {
+    return (function() {user_list();});
+}
+
+function user_list() {
+    get_user_data();
+}
+
+function display_user_data(json) {
+    var my_filllist_elem = document.querySelector('#' + DATAAREAID);
+    var users_div = document.createElement('div');
+
+    if (!json.length) {
+        users_div.innerHTML = 'No data available';
+        return;
+    }
+
+    var users_table = document.createElement('table');
+    users_table.setAttribute('border', '1');
+    users_table.appendChild(get_users_table_header());
+
+    for (var i = 0; i < json.length; i++) {
+
+    }
+}
+
+function get_users_table_header() {
+    var header_tr = document.createElement('tr');
+    header_tr.id = 'tr_header';
+    var header_td1 = document.createElement('td');
+    header_td1.innerHTML = 'Login name';
+    header_tr.appendChild(header_td1);
+    var header_td2 = document.createElement('td');
+    header_td2.innerHTML = 'Real name';
+    header_tr.appendChild(header_td2);
+    var header_td3 = document.createElement('td');
+    header_td3.innerHTML = 'Account locked';
+    header_tr.appendChild(header_td3);
+    var header_td4 = document.createElement('td');
+    header_td4.innerHTML = 'Last login';
+    header_tr.appendChild(header_td4);
+    var header_td5 = document.createElement('td');
+    header_td5.innerHTML = 'He used, total (l)';
+    header_tr.appendChild(header_td5);
+    var header_td6 = document.createElement('td');
+    header_td6.innerHTML = 'O2 used total (l)';
+    header_tr.appendChild(header_td6);
+    var header_td7 = document.createElement('td');
+    header_td7.innerHTML = 'Unpaid He (l)';
+    header_tr.appendChild(header_td7);
+    var header_td8 = document.createElement('td');
+    header_td8.innerHTML = 'Unpaid O2 (l)';
+    header_tr.appendChild(header_td8);
+    var header_td9 = document.createElement('td');
+    header_td9.innerHTML = 'Air fills';
+    header_tr.appendChild(header_td9);
+    var header_td10 = document.createElement('td');
+    header_td10.innerHTML = 'Nx fills';
+    header_tr.appendChild(header_td10);
+    var header_td11 = document.createElement('td');
+    header_td11.innerHTML = 'O2 fills';
+    header_tr.appendChild(header_td11);
+    var header_td12 = document.createElement('td');
+    header_td12.innerHTML = 'Tx fills';
+    header_tr.appendChild(header_td12);
+    return (header_tr);
+
+}
+
+function get_user_data() {
+    var search_data = {
+        'action': 'get',
+        'object': 'user_list'
+    };
+
+    var json_data = JSON.stringify(search_data);
+    /* Send the JSON to the server */
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", 'http://kontti.lappari/admin.php', true);
+    xhr.setRequestHeader("Content-type", "application/json");
+
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+            var json = JSON.parse(xhr.responseText);
+            add_info('Return value: ' + json)
+
+            if (json['status'] === 'OK') {
+                empty_info();
+                add_info('User data retrieved');
+                display_user_data(json)
+            } else {
+                add_info('Could not get the user data');
+
+                if (json['reason'] != null) {
+                    add_info(json['reason']);
+                }
+            }
+        }
+    };
+
+    xhr.send(json_data);
+}
+
+/****************************************************** /ADMIN  ******************************************************/
 
 /**
  * get_show_fill_ref: Helper function to attach the add_gas_fill_row-function to an action
@@ -207,7 +374,7 @@ function get_show_fill_ref(type) {
 
 function add_gas_fill_row(type) {
     var id = get_next_fill_id();
-    var my_filllist_elem = document.querySelector('#' + FILLLISTTABLEID);
+    var my_filllist_elem = document.querySelector('#' + DATAAREATABLEID);
     var gas_tr = document.createElement('tr');
     gas_tr.id = FILLROWPREFIX + id;
 
@@ -410,7 +577,7 @@ function get_check_data_function() {
 function save_data() {
     var fill_array = [];
 
-    var table = document.querySelector('#' + FILLLISTTABLEID);
+    var table = document.querySelector('#' + DATAAREATABLEID);
     var num_rows = table.childElementCount;
 
     /* There is the header row*/
@@ -668,7 +835,7 @@ function mark_red(id) {
  */
 
 function empty_info() {
-    var info_div = document.querySelector('#info');
+    var info_div = document.querySelector('#' + INFOID);
     info_div.innerHTML = '';
 }
 
@@ -678,7 +845,7 @@ function empty_info() {
  */
 
 function add_info(message) {
-    var info_div = document.querySelector('#info');
+    var info_div = document.querySelector('#' + INFOID);
     var new_par = document.createElement('p');
     new_par.innerHTML = message;
     info_div.appendChild(new_par);
@@ -690,13 +857,13 @@ function add_info(message) {
 
 function show_login() {
     /* Clear the action div */
-    var action_div = document.querySelector('#fill_type');
+    var action_div = document.querySelector('#' + MAINDATAACTIONID);
     action_div.innerHTML = '';
     /* Clear the data div */
-    var data_div = document.querySelector('#fill_list');
+    var data_div = document.querySelector('#' + DATAAREAID);
     data_div.innerHTML = '';
     /* Clear the info div */
-    var info_div = document.querySelector('#info');
+    var info_div = document.querySelector('#' + INFOID);
     info_div.innerHTML = '';
     /* Create the login form */
     action_div.appendChild(get_login_form());
@@ -831,6 +998,7 @@ function logout() {
 
 }
 
+/******************************************************  STATS  ******************************************************/
 /**
  * get_stats_function: Returns reference to the stats-function
  * @returns {Function}
@@ -842,7 +1010,14 @@ function get_stats_function() {
     })
 }
 
+/**
+ *
+ */
 function stats() {
+    sessionStorage.setItem('kontti_mode', 'stats');
+    display_action_buttons();
     // TODO: Empty the main div
     // TODO: Fetch the stats from server
 }
+
+/****************************************************** /STATS  ******************************************************/

@@ -52,7 +52,7 @@ ALTER TABLE users_uid_seq OWNER TO kontti;
 ALTER SEQUENCE users_uid_seq OWNED BY users.uid;
 ALTER TABLE ONLY users ALTER COLUMN uid SET DEFAULT nextval('users_uid_seq'::regclass);
 INSERT INTO users (uid, gid, login, level, salt, password, name, enabled) VALUES
-  (1, 1, 'admin', 40,gen_salt('bf', 8), '', 'Administrator', TRUE),
+  (1, 1, 'admin', 60,gen_salt('bf', 8), '', 'Administrator', TRUE),
   (2, 1, 'juuso', 20,gen_salt('bf', 8), '', 'Juuso Juustolainen', TRUE),
   (3, 1, 'kaaso', 10,gen_salt('bf', 8), '', 'Kaaso Kaastolainen', TRUE),
   (4, 1, 'nooso', 30,gen_salt('bf', 8), '', 'Nooso Nope', FALSE);
