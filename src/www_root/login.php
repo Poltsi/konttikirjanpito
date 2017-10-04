@@ -21,6 +21,8 @@
  * Time: 8:51 PM
  */
 
+include_once ('../lib/Kontti/Audit/Audit.php');
+
 header("Content-Type: application/json");
 /* Default response is only plain ok */
 $response['status'] = 'OK';
@@ -28,8 +30,7 @@ $response['status'] = 'OK';
 $data = json_decode(stripslashes(file_get_contents("php://input")), true);
 
 $db_conn = pg_connect("host=localhost port=5432 dbname=kontti user=kontti password=konttipassu");
-$sql_string = "INSERT INTO audit VALUES (NOW(), $1 , $2, $3, $4)";
-$result = pg_prepare($db_conn, 'audit', $sql_string);
+$audit = new \Kontti\Audit\Audit($db_conn, 'audit');
 
 if (array_key_exists('login', $data) &&
     array_key_exists('password', $data)) {
@@ -37,19 +38,19 @@ if (array_key_exists('login', $data) &&
     if (!strlen(trim($data['login'])) ||!strlen(trim($data['password']))) {
         $response['status'] = 'NOK';
         $response['reason'] = 'Missing username or password';
-        pg_execute($db_conn, 'audit', array(-1, $_SERVER['REMOTE_ADDR'], 'login-fail', 'User did not provide username or password'));
+        $audit->log(-1,'login-fail', 'User did not provide username or password');
     } else {
         // Get the user uid and whether the account is enabled
 
         $sql_string = "SELECT uid, enabled, level FROM users WHERE login = $1 AND password = crypt($2, salt)";
         $result = pg_prepare($db_conn, 'login', $sql_string);
-// Get the result set
+        // Get the result set
         $result = pg_execute($db_conn, 'login', array($data['login'], $data['password']));
 
         if (!$result) {
             $response['status'] = 'NOK';
             $response['reason'] = 'Username or password incorrect';
-            pg_execute($db_conn, 'audit', array(-1, $_SERVER['REMOTE_ADDR'], 'login-fail', 'Login failed for user: ' . $data['login']));
+            $audit->log(-1,'login-fail', 'Login failed for user: ' . $data['login']);
         }
 
         // Check whether the user has a locked account. We will allow him to log on, but will be unable to make any fills.
@@ -65,15 +66,15 @@ if (array_key_exists('login', $data) &&
 
         if ($rs_array[1] === 'f') {
             $response['reason'] = 'Account locked, you can only view your data';
-            pg_execute($db_conn, 'audit', array(-1, $_SERVER['REMOTE_ADDR'], 'login-ok', 'Locked account for user: ' . $data['login']));
+            $audit->log($_SESSION['uid'], 'login-ok', 'Locked account for user: ' . $data['login']);
         } else {
-            pg_execute($db_conn, 'audit', array($_SESSION['uid'], $_SERVER['REMOTE_ADDR'], 'login-ok', 'Login succeeded for user: ' . $data['login']));
+            $audit->log($_SESSION['uid'], 'login-ok', 'Login succeeded for user: ' . $data['login']);
         }
     }
 } else {
     $response['status'] = 'NOK';
     $response['reason'] = 'Missing credentials';
-    pg_execute($db_conn, 'audit', array(-1, $_SERVER['REMOTE_ADDR'], 'login-fail', 'No credentials were provided'));
+    $audit->log(-1,'login-fail', 'No credentials were provided');
 }
 
 pg_close($db_conn);

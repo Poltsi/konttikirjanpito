@@ -21,6 +21,8 @@
  * Time: 6:36 PM
  */
 
+include_once ('../lib/Kontti/Audit/Audit.php');
+
 session_start();
 header("Content-Type: application/json");
 /* Default response is only plain ok */
@@ -29,19 +31,18 @@ $response['status'] = 'OK';
 $data = json_decode(stripslashes(file_get_contents("php://input")), true);
 $db_conn = pg_connect("host=localhost port=5432 dbname=kontti user=kontti password=konttipassu");
 
-$sql_string = "INSERT INTO audit VALUES (NOW(), $1 , $2, $3, $4)";
-$result = pg_prepare($db_conn, 'audit', $sql_string);
+$audit = new \Kontti\Audit\Audit($db_conn, 'audit');
 
 // Check the user uid
 if (!array_key_exists('uid', $_SESSION)) {
-    pg_execute($db_conn, 'audit', array(-1, $_SERVER['REMOTE_ADDR'], 'session-fail', 'Client tries to add fill without session'));
+    $audit->log(-1,'session-fail', 'Client tries to add fill without session');
     $response['status'] = 'NOK';
     $response['reason'] = 'User session has expired';
 } else {
     // Check that the user is not locked
     if (!array_key_exists('enabled', $_SESSION) ||
         $_SESSION['enabled'] == 0) {
-        pg_execute($db_conn, 'audit', array($_SESSION['uid'], $_SERVER['REMOTE_ADDR'], 'session-fail', 'User is locked'));
+        $audit->log($_SESSION['uid'], 'session-fail', 'User is locked');
         $response['status'] = 'NOK';
         $response['reason'] = 'User account is locked';
     } else {
@@ -64,10 +65,11 @@ if (!array_key_exists('uid', $_SESSION)) {
             if ($rs_array[1] > $_SESSION['level']) {
                 $response['status'] = 'NOK';
                 $response['reason'] .= $data[$i][0] . ' fill was rejected as user is not permitted to do such fill';
-
+                $audit->log($_SESSION['uid'], 'fill-fail', 'User attempted to submit a fill above his permission');
             } else {
                 $result = pg_execute($db_conn, 'addfill',
                     array($_SESSION['uid'], $rs_array[1], $data[$i][1], $data[$i][2], intval($data[$i][3]), floatval($data[$i][4]), intval($data[$i][5]), intval($data[$i][6]), intval($data[$i][7]), intval($data[$i][8]), intval($data[$i][9]), intval($data[$i][10]), intval($data[$i][11]), intval($data[$i][12])));
+                $audit->log($_SESSION['uid'], 'fill-ok', 'User added a ' . $data[$i][2] . ' fill');
                 // TODO: Check whether the insert worked
             }
 
