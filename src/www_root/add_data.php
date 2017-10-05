@@ -14,13 +14,6 @@
  *
  */
 
-/**
- * Created by PhpStorm.
- * User: poltsi
- * Date: 9/22/17
- * Time: 6:36 PM
- */
-
 include_once('../lib/Kontti/Audit.php');
 
 session_start();
