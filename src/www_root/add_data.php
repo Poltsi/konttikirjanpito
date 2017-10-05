@@ -21,7 +21,7 @@
  * Time: 6:36 PM
  */
 
-include_once ('../lib/Kontti/Audit/Audit.php');
+include_once('../lib/Kontti/Audit.php');
 
 session_start();
 header("Content-Type: application/json");

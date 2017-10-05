@@ -21,7 +21,7 @@
  * Time: 8:51 PM
  */
 
-include_once ('../lib/Kontti/Audit/Audit.php');
+include_once('../lib/Kontti/Audit.php');
 
 session_start();
 

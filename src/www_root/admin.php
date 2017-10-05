@@ -10,8 +10,8 @@ session_start();
 
 header("Content-Type: application/json");
 
-include_once ('../lib/Kontti/Audit/Audit.php');
-include_once ('../lib/Kontti/Admin/Admin.php');
+include_once('../lib/Kontti/Audit.php');
+include_once('../lib/Kontti/Admin.php');
 
 $data = json_decode(stripslashes(file_get_contents("php://input")), true);
 /* Default response is only plain ok */
