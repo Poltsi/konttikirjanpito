@@ -63,7 +63,7 @@ UPDATE users SET password = crypt('kaaso', salt) WHERE uid = 3;
 UPDATE users SET password = crypt('nooso', salt) WHERE uid = 4;
 UPDATE users SET password = crypt('teeso', salt) WHERE uid = 5;
 
-SELECT pg_catalog.setval('users_uid_seq', 3, false);
+SELECT pg_catalog.setval('users_uid_seq', 6, false);
 
 ALTER TABLE ONLY users ADD CONSTRAINT users_login_key UNIQUE (login);
 ALTER TABLE ONLY users ADD CONSTRAINT users_password_key UNIQUE (password);
