@@ -39,7 +39,8 @@ class DB {
 		'get_he_by_user' => ['sql' => 'SELECT SUM(he_vol) FROM fills WHERE uid = $1'],
 		'get_unpaid_o2_by_user' => ['sql' => 'SELECT SUM(o2_vol) FROM fills WHERE uid = $1 AND counted = FALSE'],
 		'get_unpaid_he_by_user' => ['sql' => 'SELECT SUM(he_vol) FROM fills WHERE uid = $1 AND counted = FALSE'],
-		'get_count_by_user_and_type' => ['sql' => 'SELECT COUNT(f.*) FROM fills f, gas_level g WHERE f.uid = $1 AND f.gas_level_id = g.gas_id AND g.gas_key = $2']
+		'get_count_by_user_and_type' => ['sql' => 'SELECT COUNT(f.*) FROM fills f, gas_level g WHERE f.uid = $1 AND f.gas_level_id = g.gas_id AND g.gas_key = $2'],
+		'get_fill_id_by_key' => ['sql' => 'SELECT gas_id FROM gas_level WHERE gas_key = $1']
 	];
 
 	/**
@@ -189,6 +190,13 @@ class DB {
 		$res = pg_fetch_row($result)[0];
 		if (is_null($res)) {$res = 0;}
 		return $res;
+	}
 
+	public function getFillIDFromKey(string $fill_key): int {
+		$key = 'get_fill_id_by_key';
+		$result = pg_execute($this->dbcon, $key, array($uid, $fill_type));
+		$res = pg_fetch_row($result)[0];
+		if (is_null($res)) {$res = 0;}
+		return $res;
 	}
 }
