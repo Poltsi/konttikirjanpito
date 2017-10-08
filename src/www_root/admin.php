@@ -18,16 +18,18 @@ session_start();
 header("Content-Type: application/json");
 
 include_once('../lib/Kontti/Audit.php');
+include_once('../lib/Kontti/DB.php');
 include_once('../lib/Kontti/Admin.php');
+include_once('../lib/Kontti/UserManipulator.php');
 
 $data = json_decode(stripslashes(file_get_contents("php://input")), true);
 /* Default response is only plain ok */
 $response['status'] = 'OK';
 
-$db_conn = pg_connect("host=localhost port=5432 dbname=kontti user=kontti password=konttipassu");
+$db = new \Kontti\DB('localhost', 5432, 'kontti', 'kontti', 'konttipassu');
 
-$audit = new \Kontti\Audit\Audit($db_conn, 'audit');
-$admin = new \Kontti\Admin\Admin($db_conn, $audit, $data);
+$audit = new \Kontti\Audit($db);
+$admin = new \Kontti\Admin($db);
 
 /* Check first if we're admins */
 if (!array_key_exists('uid', $_SESSION)) {
@@ -43,12 +45,14 @@ if (!array_key_exists('uid', $_SESSION)) {
     } else {
         $response['status'] = 'OK';
 
-        switch ($data['action']) {
-            case 'get':
-                $audit->log($_SESSION['uid'], 'admin-ok', 'User will get data');
+        switch ($data['object']) {
+            case 'user':
+                $audit->log($_SESSION['uid'], 'admin-ok', 'User wants to handle user');
+                $userManipulator = new Kontti\UserManipulator($db, $data);
+                $response['data'] = $userManipulator->action();
                 break;
-            case 'set':
-                $audit->log($_SESSION['uid'], 'admin-ok', 'User will set data');
+            case 'self':
+                $audit->log($_SESSION['uid'], 'admin-ok', 'User wants to handle self');
                 break;
             default:
                 $audit->log($_SESSION['uid'], 'admin-fail', 'User sent unknown action: ' . $data['action']);
@@ -57,6 +61,5 @@ if (!array_key_exists('uid', $_SESSION)) {
     }
 }
 
-pg_close($db_conn);
-
+$db->close();
 print(json_encode($response));

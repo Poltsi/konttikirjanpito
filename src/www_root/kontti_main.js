@@ -99,33 +99,36 @@ function display_action_buttons() {
 }
 
 function clear_divs() {
-    var my_filltype_elem = document.querySelector('#' + MAINDATAACTIONID);
-    my_filltype_elem.innerHTML = '';
-    var my_filllist_elem = document.querySelector('#' + DATAAREAID);
-    my_filllist_elem.innerHTML = '';
-    var my_action_elem = document.querySelector('#' + DATAACTIONID);
-    my_action_elem.innerHTML = '';
+    var main_action_elem = document.querySelector('#' + MAINDATAACTIONID);
+    main_action_elem.innerHTML = '';
+    var data_area_elem = document.querySelector('#' + DATAAREAID);
+    data_area_elem.innerHTML = '';
+    var data_action_elem = document.querySelector('#' + DATAACTIONID);
+    data_action_elem.innerHTML = '';
 }
 
 function show_main() {
-    var my_filltype_elem = document.getElementById(MAINDATAACTIONID);
-    var my_filllist_elem = document.querySelector('#' + DATAAREAID);
-    var my_action_elem = document.querySelector('#' + DATAACTIONID);
+    var main_action_elem = document.getElementById(MAINDATAACTIONID);
+    var data_area_elem = document.querySelector('#' + DATAAREAID);
+    var data_action_elem = document.querySelector('#' + DATAACTIONID);
+    main_action_elem.innerHTML = '';
+    main_action_elem.appendChild(get_main_action_buttons());
 
-    my_filltype_elem.appendChild(get_main_action_buttons());
     /* Add the fill form to the main field div */
     var fill_form = document.createElement('form');
     fill_form.id = DATAAREAFORMID;
+
     var fill_form_table = document.createElement('table');
     fill_form_table.appendChild(get_fill_table_header());
     fill_form_table.id = DATAAREATABLEID;
     fill_form_table.setAttribute('border', '1');
     fill_form.appendChild(fill_form_table);
-    my_filllist_elem.appendChild(fill_form);
-    my_action_elem.appendChild(get_check_button());
-    my_action_elem.appendChild(get_save_data_button(DATAAREAFORMID));
-}
+    data_area_elem.appendChild(fill_form);
 
+    data_action_elem.innerHTML = '';
+    data_action_elem.appendChild(get_check_button());
+    data_action_elem.appendChild(get_save_data_button(DATAAREAFORMID));
+}
 
 /**
  * get_fill_table_header: Adds the header row to the fill table
@@ -234,7 +237,7 @@ function admin() {
 
 function show_admin() {
     /* TODO: Populate the action div */
-    var my_action_elem = document.querySelector('#' + MAINDATAACTIONID);
+    var data_action_elem = document.querySelector('#' + MAINDATAACTIONID);
     var button_div = document.createElement('div');
     button_div.id = 'admin_action';
 
@@ -245,8 +248,14 @@ function show_admin() {
     users_button.addEventListener('click', get_user_list_function());
     button_div.appendChild(users_button);
 
+    var back_button = document.createElement('button');
+    back_button.innerHTML = 'Back to fill';
+    back_button.id = 'back';
+    back_button.addEventListener('click', get_back_button_function());
+    button_div.appendChild(back_button);
 
-    my_action_elem.appendChild(button_div);
+
+    data_action_elem.appendChild(button_div);
 }
 
 function get_user_list_function() {
@@ -257,11 +266,20 @@ function user_list() {
     get_user_data();
 }
 
-function display_user_data(json) {
-    var my_filllist_elem = document.querySelector('#' + DATAAREAID);
-    var users_div = document.createElement('div');
+function get_back_button_function() {
+    return(function() {back_button();});
+}
 
-    if (!json.length) {
+function back_button() {
+    empty_data();
+    sessionStorage.setItem('kontti_mode', 'main');
+    show_main();
+}
+
+function display_user_data(json) {
+    var data_elem = document.querySelector('#' + DATAAREAID);
+
+    if (!json['data'].length) {
         users_div.innerHTML = 'No data available';
         return;
     }
@@ -270,58 +288,105 @@ function display_user_data(json) {
     users_table.setAttribute('border', '1');
     users_table.appendChild(get_users_table_header());
 
-    for (var i = 0; i < json.length; i++) {
+    for (var i = 0; i < json['data'].length; i++) {
+        var data_row = document.createElement('tr');
 
+        var uid_cell = document.createElement('td');
+        uid_cell.innerHTML = json['data'][i]['uid'];
+        data_row.appendChild(uid_cell);
+
+        var gid_cell = document.createElement('td');
+        gid_cell.innerHTML = json['data'][i]['gid'];
+        data_row.appendChild(gid_cell);
+
+        var level_cell = document.createElement('td');
+        level_cell.innerHTML = json['data'][i]['level'];
+        data_row.appendChild(level_cell);
+
+        var login_cell = document.createElement('td');
+        login_cell.innerHTML = json['data'][i]['login'];
+        data_row.appendChild(login_cell);
+
+        var name_cell = document.createElement('td');
+        name_cell.innerHTML = json['data'][i]['name'];
+        data_row.appendChild(name_cell);
+
+        var enabled_cell = document.createElement('td');
+        enabled_cell.innerHTML = json['data'][i]['enabled'] ? 'Enabled' : 'Disabled';
+        data_row.appendChild(enabled_cell);
+
+        var o2_total_cell = document.createElement('td');
+        o2_total_cell.innerHTML = json['data'][i]['total_o2'];
+        data_row.appendChild(o2_total_cell);
+
+        var he_total_cell = document.createElement('td');
+        he_total_cell.innerHTML = json['data'][i]['total_he'];
+        data_row.appendChild(he_total_cell);
+
+        var o2_unpaid_cell = document.createElement('td');
+        o2_unpaid_cell.innerHTML = json['data'][i]['unpaid_o2'];
+        data_row.appendChild(o2_unpaid_cell);
+
+        var he_unpaid_cell = document.createElement('td');
+        he_unpaid_cell.innerHTML = json['data'][i]['unpaid_he'];
+        data_row.appendChild(he_unpaid_cell);
+
+        var count_air_cell = document.createElement('td');
+        count_air_cell.innerHTML = json['data'][i]['count_air'];
+        data_row.appendChild(count_air_cell);
+
+        var count_nx_cell = document.createElement('td');
+        count_nx_cell.innerHTML = json['data'][i]['count_nx'];
+        data_row.appendChild(count_nx_cell);
+
+        var count_o2_cell = document.createElement('td');
+        count_o2_cell.innerHTML = json['data'][i]['count_o2'];
+        data_row.appendChild(count_o2_cell);
+
+        var count_tx_cell = document.createElement('td');
+        count_tx_cell.innerHTML = json['data'][i]['count_tx'];
+        data_row.appendChild(count_tx_cell);
+
+        users_table.appendChild(data_row);
     }
+
+    data_elem.appendChild(users_table);
 }
 
 function get_users_table_header() {
     var header_tr = document.createElement('tr');
     header_tr.id = 'tr_header';
-    var header_td1 = document.createElement('td');
-    header_td1.innerHTML = 'Login name';
-    header_tr.appendChild(header_td1);
-    var header_td2 = document.createElement('td');
-    header_td2.innerHTML = 'Real name';
-    header_tr.appendChild(header_td2);
-    var header_td3 = document.createElement('td');
-    header_td3.innerHTML = 'Account locked';
-    header_tr.appendChild(header_td3);
-    var header_td4 = document.createElement('td');
-    header_td4.innerHTML = 'Last login';
-    header_tr.appendChild(header_td4);
-    var header_td5 = document.createElement('td');
-    header_td5.innerHTML = 'He used, total (l)';
-    header_tr.appendChild(header_td5);
-    var header_td6 = document.createElement('td');
-    header_td6.innerHTML = 'O2 used total (l)';
-    header_tr.appendChild(header_td6);
-    var header_td7 = document.createElement('td');
-    header_td7.innerHTML = 'Unpaid He (l)';
-    header_tr.appendChild(header_td7);
-    var header_td8 = document.createElement('td');
-    header_td8.innerHTML = 'Unpaid O2 (l)';
-    header_tr.appendChild(header_td8);
-    var header_td9 = document.createElement('td');
-    header_td9.innerHTML = 'Air fills';
-    header_tr.appendChild(header_td9);
-    var header_td10 = document.createElement('td');
-    header_td10.innerHTML = 'Nx fills';
-    header_tr.appendChild(header_td10);
-    var header_td11 = document.createElement('td');
-    header_td11.innerHTML = 'O2 fills';
-    header_tr.appendChild(header_td11);
-    var header_td12 = document.createElement('td');
-    header_td12.innerHTML = 'Tx fills';
-    header_tr.appendChild(header_td12);
-    return (header_tr);
+    var field_array = [
+        'userID',
+        'GroupID',
+        'Level',
+        'Login',
+        'Full name',
+        'Account status',
+        'O2 used total (l)',
+        'He used total (l)',
+        'Unpaid O2 (l)',
+        'Unpaid He (l)',
+        'Air fills',
+        'Nx fills',
+        'O2 fills',
+        'Tx fills'
+    ];
 
+    for (var i = 0; i < field_array.length; i++) {
+        var td_elem = document.createElement('td');
+        td_elem.innerHTML = field_array[i];
+        header_tr.appendChild(td_elem);
+    }
+
+    return (header_tr);
 }
 
 function get_user_data() {
     var search_data = {
+        'object': 'user',
         'action': 'get',
-        'object': 'user_list'
+        'target': ['user_all','gas_total','gas_unpaid_l', 'fill_total']
     };
 
     var json_data = JSON.stringify(search_data);
@@ -337,6 +402,7 @@ function get_user_data() {
 
             if (json['status'] === 'OK') {
                 empty_info();
+                empty_data();
                 add_info('User data retrieved');
                 display_user_data(json)
             } else {
@@ -606,6 +672,8 @@ function save_data() {
 
             if (json['status'] === 'OK') {
                 empty_info();
+                empty_data();
+                show_main();
                 add_info('Fill data store successfully');
             } else {
                 add_info(json['reason']);
@@ -836,6 +904,15 @@ function mark_red(id) {
 
 function empty_info() {
     var info_div = document.querySelector('#' + INFOID);
+    info_div.innerHTML = '';
+}
+
+/**
+ * empty_data: Empty the data-area
+ */
+
+function empty_data() {
+    var info_div = document.querySelector('#' + DATAAREAID);
     info_div.innerHTML = '';
 }
 

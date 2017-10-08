@@ -24,7 +24,7 @@ $response['status'] = 'OK';
 // build a PHP variable from JSON sent using POST method
 $data = json_decode(stripslashes(file_get_contents("php://input")), true);
 $db_conn = pg_connect("host=localhost port=5432 dbname=kontti user=kontti password=konttipassu");
-$audit = new \Kontti\Audit\Audit($db_conn, 'audit');
+$audit = new \Kontti\Audit($db_conn, 'audit');
 
 if (array_key_exists('type', $data) &&
     $data['type'] == 'logout') {
@@ -40,5 +40,5 @@ if (array_key_exists('type', $data) &&
     $audit->log(-1,'logout-fail', 'Request had no type defined, or it was not logout');
 }
 
-pg_close($db_conn);
+$db->close();
 print(json_encode($response));

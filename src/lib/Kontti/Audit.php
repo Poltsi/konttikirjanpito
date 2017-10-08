@@ -15,6 +15,7 @@
 
 namespace Kontti;
 
+include_once ('DB.php');
 
 /**
  * Class Audit
@@ -23,21 +24,16 @@ namespace Kontti;
 
 class Audit
 {
-    private $dbcon;
-    private $sql_string = "INSERT INTO audit VALUES (NOW(), $1 , $2, $3, $4)";
-    private $result;
-    private $id;
+    private $db;
     /**
      * Audit constructor.
      *
      * @param resource $dbcon The database connection
      * @param string $id The unique identifier used to prepare the satement
      */
-    public function __construct($dbcon, $id)
+    public function __construct(DB $db)
     {
-        $this->dbcon = $dbcon;
-        $this->id = $id;
-        $this->result = pg_prepare($this->dbcon, $id, $this->sql_string);
+        $this->db = $db;
     }
 
 
@@ -50,12 +46,8 @@ class Audit
      */
     public function log($uid, $type, $message)
     {
-        if ($this->result) {
-            $result = pg_execute($this->dbcon, $this->id, array($uid, $_SERVER['REMOTE_ADDR'], $type, $message));
-
-            if (!$result) {
-                $this->result = $result;
-            }
+        if ($this->db->getState()) {
+        	$this->db->addAudit($uid, $_SERVER['REMOTE_ADDR'], $type, $message);
         }
     }
 }

@@ -15,21 +15,12 @@
 
 namespace Kontti;
 
-include_once ('DB.php');
 
-/**
- * Class Admin
- * @package Kontti
- */
-class Admin
+class Session
 {
-    private $data;
-    private $dbcon;
-    /**
-     * Admin constructor.
-     * @param DB $dbcon
+	/**
+     * Session constructor.
      */
-    public function __construct(DB $dbcon) {
-        $this->dbcon = $dbcon;
+    public function __construct() {
     }
 }
