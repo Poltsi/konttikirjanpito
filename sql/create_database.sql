@@ -55,11 +55,13 @@ INSERT INTO users (uid, gid, login, level, salt, password, name, enabled) VALUES
   (1, 1, 'admin', 60,gen_salt('bf', 8), '', 'Administrator', TRUE),
   (2, 1, 'juuso', 20,gen_salt('bf', 8), '', 'Juuso Juustolainen', TRUE),
   (3, 1, 'kaaso', 10,gen_salt('bf', 8), '', 'Kaaso Kaastolainen', TRUE),
-  (4, 1, 'nooso', 30,gen_salt('bf', 8), '', 'Nooso Nope', FALSE);
-UPDATE users SET password = crypt('US_admin_passu', salt) WHERE uid = 1;
+  (4, 1, 'nooso', 30,gen_salt('bf', 8), '', 'Nooso Nope', FALSE),
+  (5, 1, 'teeso', 40,gen_salt('bf', 8), '', 'Teeso Tekki', TRUE);
+UPDATE users SET password = crypt('madmin', salt) WHERE uid = 1;
 UPDATE users SET password = crypt('juuso', salt) WHERE uid = 2;
 UPDATE users SET password = crypt('kaaso', salt) WHERE uid = 3;
 UPDATE users SET password = crypt('nooso', salt) WHERE uid = 4;
+UPDATE users SET password = crypt('teeso', salt) WHERE uid = 5;
 
 SELECT pg_catalog.setval('users_uid_seq', 3, false);
 
