@@ -14,6 +14,7 @@
  *
  */
 
+include_once('../lib/Kontti/DB.php');
 include_once('../lib/Kontti/Audit.php');
 
 session_start();
@@ -23,8 +24,8 @@ header("Content-Type: application/json");
 $response['status'] = 'OK';
 // build a PHP variable from JSON sent using POST method
 $data = json_decode(stripslashes(file_get_contents("php://input")), true);
-$db_conn = pg_connect("host=localhost port=5432 dbname=kontti user=kontti password=konttipassu");
-$audit = new \Kontti\Audit($db_conn, 'audit');
+$db = new \Kontti\DB('localhost', 5432, 'kontti', 'kontti', 'konttipassu');
+$audit = new \Kontti\Audit($db);
 
 if (array_key_exists('type', $data) &&
     $data['type'] == 'logout') {

@@ -25,12 +25,12 @@ include_once ('DB.php');
 class Audit
 {
     private $db;
-    /**
-     * Audit constructor.
-     *
-     * @param resource $dbcon The database connection
-     * @param string $id The unique identifier used to prepare the satement
-     */
+
+	/**
+	 * Audit constructor.
+	 *
+	 * @param DB $db The database object
+	 */
     public function __construct(DB $db)
     {
         $this->db = $db;

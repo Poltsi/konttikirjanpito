@@ -23,13 +23,12 @@ include_once ('DB.php');
  */
 class Admin
 {
-    private $data;
-    private $dbcon;
+    private $db;
     /**
      * Admin constructor.
-     * @param DB $dbcon
+     * @param DB $db
      */
-    public function __construct(DB $dbcon) {
-        $this->dbcon = $dbcon;
+    public function __construct(DB $db) {
+        $this->db = $db;
     }
 }

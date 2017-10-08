@@ -66,7 +66,6 @@ const CYLLIST = {
 
 /**
  * display_action_buttons: Shows the action buttons depending of the mode, default is to show the main action buttons
- * @param  mode
  * @return void
  */
 
@@ -74,7 +73,7 @@ function display_action_buttons() {
     /* TODO: Retrieve the session data */
     var mode = sessionStorage.getItem('kontti_mode');
 
-    if (mode == null) mode = 'login';
+    if (mode === null) {mode = 'login';}
     /* TODO: Check that mode is set */
 
     /* Clear the divs first */
@@ -181,7 +180,7 @@ function get_main_action_buttons() {
     button_div.id = 'main_action';
     button_div.width = '100%';
 
-    if (sessionStorage.getItem('kontti_enabled') == 1) {
+    if (sessionStorage.getItem('kontti_enabled') === 1) {
         for (var i = 0; i < TYPELIST.length; i++) {
             if (parseInt(sessionStorage.getItem('kontti_level')) >= TYPELIST[i][0]) {
                 var fill_button = document.createElement('button');
@@ -280,7 +279,7 @@ function display_user_data(json) {
     var data_elem = document.querySelector('#' + DATAAREAID);
 
     if (!json['data'].length) {
-        users_div.innerHTML = 'No data available';
+        data_elem.innerHTML = 'No data available';
         return;
     }
 
@@ -398,7 +397,7 @@ function get_user_data() {
     xhr.onreadystatechange = function () {
         if (xhr.readyState === 4 && xhr.status === 200) {
             var json = JSON.parse(xhr.responseText);
-            add_info('Return value: ' + json)
+            add_info('Return value: ' + json);
 
             if (json['status'] === 'OK') {
                 empty_info();
@@ -408,7 +407,7 @@ function get_user_data() {
             } else {
                 add_info('Could not get the user data');
 
-                if (json['reason'] != null) {
+                if (json['reason'] !== null) {
                     add_info(json['reason']);
                 }
             }
@@ -460,7 +459,7 @@ function add_gas_fill_row(type) {
     gas_tr.appendChild(gas_td_cyl);
 
     var gas_td_num = document.createElement('td');
-    gas_td_num.appendChild(get_amount_select(1, 15, 'Number of cylinders', FILLCYLNUMPREFIX + id, '', ''));
+    gas_td_num.appendChild(get_amount_select(1, 15, 'Number of cylinders', FILLCYLNUMPREFIX + id));
     gas_td_num.id = 'td_' + FILLCYLNUMPREFIX + id;
     gas_tr.appendChild(gas_td_num);
 
@@ -468,36 +467,36 @@ function add_gas_fill_row(type) {
 
     if (type !== 'air') {
         var gas_td_bar_start = document.createElement('td');
-        gas_td_bar_start.appendChild(get_amount_select(0, 350, 'Pressure before fill', FILLCYLPRESSSTARTPREFIX + id, '', ' bar'));
+        gas_td_bar_start.appendChild(get_amount_select(0, 350, 'Pressure before fill', FILLCYLPRESSSTARTPREFIX + id));
         gas_td_bar_start.id = 'td_' + FILLCYLPRESSSTARTPREFIX + id;
         gas_tr.appendChild(gas_td_bar_start);
 
         var gas_td_bar_end = document.createElement('td');
-        gas_td_bar_end.appendChild(get_amount_select(1, 350, 'Pressure after fill', FILLCYLPRESSENDPREFIX + id, '', ' bar'));
+        gas_td_bar_end.appendChild(get_amount_select(1, 350, 'Pressure after fill', FILLCYLPRESSENDPREFIX + id));
         gas_td_bar_end.id = 'td_' + FILLCYLPRESSENDPREFIX + id;
         gas_tr.appendChild(gas_td_bar_end);
         n = 4;
 
         if (type !== 'o2') {
             var gas_td_o2_start = document.createElement('td');
-            gas_td_o2_start.appendChild(get_amount_select(0, 100, 'O2 percentage before fill', FILLCYLO2PCNTSTARTPREFIX + id, '', ' %'));
+            gas_td_o2_start.appendChild(get_amount_select(0, 100, 'O2 percentage before fill', FILLCYLO2PCNTSTARTPREFIX + id));
             gas_td_o2_start.id = 'td_' + FILLCYLO2PCNTSTARTPREFIX + id;
             gas_tr.appendChild(gas_td_o2_start);
 
             var gas_td_o2_end = document.createElement('td');
-            gas_td_o2_end.appendChild(get_amount_select(1, 100, 'O2 percentage after fill', FILLCYLO2PCNTENDPREFIX + id, '', ' %'));
+            gas_td_o2_end.appendChild(get_amount_select(1, 100, 'O2 percentage after fill', FILLCYLO2PCNTENDPREFIX + id));
             gas_td_o2_end.id = 'td_' + FILLCYLO2PCNTENDPREFIX + id;
             gas_tr.appendChild(gas_td_o2_end);
             n = 2;
 
             if (type !== 'nx') {
                 var gas_td_he_start = document.createElement('td');
-                gas_td_he_start.appendChild(get_amount_select(0, 100, 'He percentage before fill', FILLCYLHEPCNTSTARTPREFIX + id, '', ' %'));
+                gas_td_he_start.appendChild(get_amount_select(0, 100, 'He percentage before fill', FILLCYLHEPCNTSTARTPREFIX + id));
                 gas_td_he_start.id = 'td_' + FILLCYLHEPCNTSTARTPREFIX + id;
                 gas_tr.appendChild(gas_td_he_start);
 
                 var gas_td_he_end = document.createElement('td');
-                gas_td_he_end.appendChild(get_amount_select(1, 100, 'He percentage after fill', FILLCYLHEPCNTENDPREFIX + id, '', ' %'));
+                gas_td_he_end.appendChild(get_amount_select(1, 100, 'He percentage after fill', FILLCYLHEPCNTENDPREFIX + id));
                 gas_td_he_end.id = 'td_' + FILLCYLHEPCNTENDPREFIX + id;
                 gas_tr.appendChild(gas_td_he_end);
                 n = 0;
@@ -567,13 +566,14 @@ function get_check_button() {
 
 /**
  * get_save_data_button: Returns a clear button for the form
- * @param form_id
+ * @param button_id
  * @return {Element}
  */
 
-function get_save_data_button(form_id) {
+function get_save_data_button(button_id) {
     var clear_button = document.createElement('button');
     clear_button.innerHTML = 'Save fill(s)';
+    clear_button.id = button_id;
     clear_button.onclick = get_save_data_function();
     clear_button.style.backgroundColor = '#CC9999';
     return (clear_button);
@@ -655,7 +655,7 @@ function save_data() {
     /* Try to fetch any id from 0 to max value */
     for (var i = 0; i < next_id; i++) {
         var row = document.querySelector('#' + FILLROWPREFIX + i);
-        if (row != null) {
+        if (row !== null) {
             fill_array.push(get_fill_data(i));
         }
     }
@@ -777,7 +777,7 @@ function check_data() {
         var selector = '#' + FILLROWPREFIX + i;
 
         var row = document.querySelector(selector);
-        if (row != null) {
+        if (row !== null) {
             if (!verify_row_data(i)) {
                 ret_val = false;
             }
@@ -961,7 +961,7 @@ function get_login_form() {
     var login_password = document.createElement('input');
     login_password.setAttribute('placeholder', 'Password');
     login_password.id = 'password';
-    var login_button = document.createElement('button')
+    var login_button = document.createElement('button');
     login_button.innerHTML = 'Login';
     login_button.onclick = get_verify_login_function();
     login_password.setAttribute('type', 'password');
@@ -1004,7 +1004,7 @@ function verify_login() {
     xhr.onreadystatechange = function () {
         if (xhr.readyState === 4 && xhr.status === 200) {
             var json = JSON.parse(xhr.responseText);
-            add_info('Return value: ' + json)
+            add_info('Return value: ' + json);
 
             if (json['status'] === 'OK') {
                 empty_info();
@@ -1016,7 +1016,7 @@ function verify_login() {
             } else {
                 add_info('User not logged in');
 
-                if (json['reason'] != null) {
+                if (json['reason'] !== null) {
                     add_info(json['reason']);
                 }
             }
@@ -1054,7 +1054,7 @@ function logout() {
     xhr.onreadystatechange = function () {
         if (xhr.readyState === 4 && xhr.status === 200) {
             var json = JSON.parse(xhr.responseText);
-            add_info('Return value: ' + json)
+            add_info('Return value: ' + json);
 
             if (json['status'] === 'OK') {
                 empty_info();
@@ -1064,7 +1064,7 @@ function logout() {
             } else {
                 add_info('Failed to log out, please contact maintainers');
 
-                if (json['reason'] != null) {
+                if (json['reason'] !== null) {
                     add_info(json['reason']);
                 }
             }

@@ -36,6 +36,7 @@ class User {
         'admin' => 60);
     /**
      * User constructor.
+     * @param DB $dbcon
      */
     public function __construct(DB $dbcon) {
         $this->dbcon = $dbcon;

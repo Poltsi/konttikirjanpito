@@ -37,9 +37,8 @@ if (array_key_exists('login', $data) &&
     } else {
     	$user = new \Kontti\User($db);
         // Get the user uid and whether the account is enabled
-	    $is_auth = $user->authenticate($data['login'], $data['password']);
 
-        if (!count($user)) {
+        if ($user->authenticate($data['login'], $data['password'])) {
             $response['status'] = 'NOK';
             $response['reason'] = 'Username or password incorrect';
             $audit->log(-1,'login-fail', 'Login failed for user: ' . $data['login']);

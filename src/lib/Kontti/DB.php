@@ -194,7 +194,7 @@ class DB {
 
 	public function getFillIDFromKey(string $fill_key): int {
 		$key = 'get_fill_id_by_key';
-		$result = pg_execute($this->dbcon, $key, array($uid, $fill_type));
+		$result = pg_execute($this->dbcon, $key, array($fill_key));
 		$res = pg_fetch_row($result)[0];
 		if (is_null($res)) {$res = 0;}
 		return $res;
