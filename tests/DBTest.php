@@ -17,9 +17,9 @@ namespace Kontti;
 include_once ('/usr/share/php/PHPUnit6/autoload.php');
 include_once ('db_init.php');
 
-class UserTest extends \PHPUnit\Framework\TestCase {
+class DBTest extends \PHPUnit\Framework\TestCase {
     /**
-     * @var User
+     * @var DB
      */
     protected $object;
 
@@ -29,7 +29,7 @@ class UserTest extends \PHPUnit\Framework\TestCase {
      */
     protected function setUp()
     {
-        $this->object = new User($db);
+        $this->object = new DB;
     }
 
     /**
@@ -41,10 +41,10 @@ class UserTest extends \PHPUnit\Framework\TestCase {
     }
 
     /**
-     * @covers Kontti\User::setUserLogin
-     * @todo   Implement testSetUserLogin().
+     * @covers Kontti\DB::getState
+     * @todo   Implement testGetState().
      */
-    public function testSetUserLogin()
+    public function testGetState()
     {
         // Remove the following lines when you implement this test.
         $this->markTestIncomplete(
@@ -53,7 +53,19 @@ class UserTest extends \PHPUnit\Framework\TestCase {
     }
 
     /**
-     * @covers Kontti\User::authenticate
+     * @covers Kontti\DB::addAudit
+     * @todo   Implement testAddAudit().
+     */
+    public function testAddAudit()
+    {
+        // Remove the following lines when you implement this test.
+        $this->markTestIncomplete(
+            'This test has not been implemented yet.'
+        );
+    }
+
+    /**
+     * @covers Kontti\DB::authenticate
      * @todo   Implement testAuthenticate().
      */
     public function testAuthenticate()
@@ -65,10 +77,10 @@ class UserTest extends \PHPUnit\Framework\TestCase {
     }
 
     /**
-     * @covers Kontti\User::getDataFromDB
-     * @todo   Implement testGetDataFromDB().
+     * @covers Kontti\DB::getUserDataByUID
+     * @todo   Implement testGetUserDataByUID().
      */
-    public function testGetDataFromDB()
+    public function testGetUserDataByUID()
     {
         // Remove the following lines when you implement this test.
         $this->markTestIncomplete(
@@ -77,10 +89,10 @@ class UserTest extends \PHPUnit\Framework\TestCase {
     }
 
     /**
-     * @covers Kontti\User::getUserAuthenticated
-     * @todo   Implement testGetUserAuthenticated().
+     * @covers Kontti\DB::getMinGasLevelAndID
+     * @todo   Implement testGetMinGasLevelAndID().
      */
-    public function testGetUserAuthenticated()
+    public function testGetMinGasLevelAndID()
     {
         // Remove the following lines when you implement this test.
         $this->markTestIncomplete(
@@ -89,10 +101,10 @@ class UserTest extends \PHPUnit\Framework\TestCase {
     }
 
     /**
-     * @covers Kontti\User::setUid
-     * @todo   Implement testSetUid().
+     * @covers Kontti\DB::addFill
+     * @todo   Implement testAddFill().
      */
-    public function testSetUid()
+    public function testAddFill()
     {
         // Remove the following lines when you implement this test.
         $this->markTestIncomplete(
@@ -101,10 +113,10 @@ class UserTest extends \PHPUnit\Framework\TestCase {
     }
 
     /**
-     * @covers Kontti\User::getUid
-     * @todo   Implement testGetUid().
+     * @covers Kontti\DB::getAllUserID
+     * @todo   Implement testGetAllUserID().
      */
-    public function testGetUid()
+    public function testGetAllUserID()
     {
         // Remove the following lines when you implement this test.
         $this->markTestIncomplete(
@@ -113,10 +125,10 @@ class UserTest extends \PHPUnit\Framework\TestCase {
     }
 
     /**
-     * @covers Kontti\User::getGid
-     * @todo   Implement testGetGid().
+     * @covers Kontti\DB::close
+     * @todo   Implement testClose().
      */
-    public function testGetGid()
+    public function testClose()
     {
         // Remove the following lines when you implement this test.
         $this->markTestIncomplete(
@@ -125,10 +137,10 @@ class UserTest extends \PHPUnit\Framework\TestCase {
     }
 
     /**
-     * @covers Kontti\User::getLogin
-     * @todo   Implement testGetLogin().
+     * @covers Kontti\DB::getGasPerUser
+     * @todo   Implement testGetGasPerUser().
      */
-    public function testGetLogin()
+    public function testGetGasPerUser()
     {
         // Remove the following lines when you implement this test.
         $this->markTestIncomplete(
@@ -137,10 +149,10 @@ class UserTest extends \PHPUnit\Framework\TestCase {
     }
 
     /**
-     * @covers Kontti\User::getLevel
-     * @todo   Implement testGetLevel().
+     * @covers Kontti\DB::getUnpaidGasPerUser
+     * @todo   Implement testGetUnpaidGasPerUser().
      */
-    public function testGetLevel()
+    public function testGetUnpaidGasPerUser()
     {
         // Remove the following lines when you implement this test.
         $this->markTestIncomplete(
@@ -149,10 +161,10 @@ class UserTest extends \PHPUnit\Framework\TestCase {
     }
 
     /**
-     * @covers Kontti\User::getName
-     * @todo   Implement testGetName().
+     * @covers Kontti\DB::getFillCountPerUser
+     * @todo   Implement testGetFillCountPerUser().
      */
-    public function testGetName()
+    public function testGetFillCountPerUser()
     {
         // Remove the following lines when you implement this test.
         $this->markTestIncomplete(
@@ -161,22 +173,10 @@ class UserTest extends \PHPUnit\Framework\TestCase {
     }
 
     /**
-     * @covers Kontti\User::enabled
-     * @todo   Implement testEnabled().
+     * @covers Kontti\DB::getFillIDFromKey
+     * @todo   Implement testGetFillIDFromKey().
      */
-    public function testEnabled()
-    {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-            'This test has not been implemented yet.'
-        );
-    }
-
-    /**
-     * @covers Kontti\User::hasPermission
-     * @todo   Implement testHasPermission().
-     */
-    public function testHasPermission()
+    public function testGetFillIDFromKey()
     {
         // Remove the following lines when you implement this test.
         $this->markTestIncomplete(
