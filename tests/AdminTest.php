@@ -14,28 +14,27 @@
  */
 
 namespace Kontti;
-include_once ('/usr/share/php/PHPUnit6/autoload.php');
-include_once ('db_init.php');
+include_once('/usr/share/php/PHPUnit6/autoload.php');
+include_once('db_init.php');
 
 class AdminTest extends \PHPUnit\Framework\TestCase {
-    /**
-     * @var Admin
-     */
-    protected $object;
+	/**
+	 * @var Admin
+	 */
+	protected $object;
 
-    /**
-     * Sets up the fixture, for example, opens a network connection.
-     * This method is called before a test is executed.
-     */
-    protected function setUp() {
-        $this->object = new Admin($db);
-    }
+	/**
+	 * Sets up the fixture, for example, opens a network connection.
+	 * This method is called before a test is executed.
+	 */
+	protected function setUp() {
+		$this->object = new Admin($db);
+	}
 
-    /**
-     * Tears down the fixture, for example, closes a network connection.
-     * This method is called after a test is executed.
-     */
-    protected function tearDown()
-    {
-    }
+	/**
+	 * Tears down the fixture, for example, closes a network connection.
+	 * This method is called after a test is executed.
+	 */
+	protected function tearDown() {
+	}
 }

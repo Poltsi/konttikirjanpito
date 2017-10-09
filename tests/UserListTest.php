@@ -14,65 +14,60 @@
  */
 
 namespace Kontti;
-include_once ('/usr/share/php/PHPUnit6/autoload.php');
-include_once ('db_init.php');
+include_once('/usr/share/php/PHPUnit6/autoload.php');
+include_once('db_init.php');
 
 class UserListTest extends \PHPUnit\Framework\TestCase {
-    /**
-     * @var UserList
-     */
-    protected $object;
+	/**
+	 * @var UserList
+	 */
+	protected $object;
 
-    /**
-     * Sets up the fixture, for example, opens a network connection.
-     * This method is called before a test is executed.
-     */
-    protected function setUp()
-    {
-        $this->object = new UserList;
-    }
+	/**
+	 * @covers Kontti\UserList::add
+	 * @todo   Implement testAdd().
+	 */
+	public function testAdd() {
+		// Remove the following lines when you implement this test.
+		$this->markTestIncomplete(
+			'This test has not been implemented yet.'
+		);
+	}
 
-    /**
-     * Tears down the fixture, for example, closes a network connection.
-     * This method is called after a test is executed.
-     */
-    protected function tearDown()
-    {
-    }
+	/**
+	 * @covers Kontti\UserList::getUserList
+	 * @todo   Implement testGetUserList().
+	 */
+	public function testGetUserList() {
+		// Remove the following lines when you implement this test.
+		$this->markTestIncomplete(
+			'This test has not been implemented yet.'
+		);
+	}
 
-    /**
-     * @covers Kontti\UserList::add
-     * @todo   Implement testAdd().
-     */
-    public function testAdd()
-    {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-            'This test has not been implemented yet.'
-        );
-    }
+	/**
+	 * @covers Kontti\UserList::getUserListAsArray
+	 * @todo   Implement testGetUserListAsArray().
+	 */
+	public function testGetUserListAsArray() {
+		// Remove the following lines when you implement this test.
+		$this->markTestIncomplete(
+			'This test has not been implemented yet.'
+		);
+	}
 
-    /**
-     * @covers Kontti\UserList::getUserList
-     * @todo   Implement testGetUserList().
-     */
-    public function testGetUserList()
-    {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-            'This test has not been implemented yet.'
-        );
-    }
+	/**
+	 * Sets up the fixture, for example, opens a network connection.
+	 * This method is called before a test is executed.
+	 */
+	protected function setUp() {
+		$this->object = new UserList;
+	}
 
-    /**
-     * @covers Kontti\UserList::getUserListAsArray
-     * @todo   Implement testGetUserListAsArray().
-     */
-    public function testGetUserListAsArray()
-    {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-            'This test has not been implemented yet.'
-        );
-    }
+	/**
+	 * Tears down the fixture, for example, closes a network connection.
+	 * This method is called after a test is executed.
+	 */
+	protected function tearDown() {
+	}
 }

@@ -14,41 +14,38 @@
  */
 
 namespace Kontti;
-include_once ('/usr/share/php/PHPUnit6/autoload.php');
-include_once ('db_init.php');
+include_once('/usr/share/php/PHPUnit6/autoload.php');
+include_once('db_init.php');
 
 class UserManipulatorTest extends \PHPUnit\Framework\TestCase {
-    /**
-     * @var UserManipulator
-     */
-    protected $object;
+	/**
+	 * @var UserManipulator
+	 */
+	protected $object;
 
-    /**
-     * Sets up the fixture, for example, opens a network connection.
-     * This method is called before a test is executed.
-     */
-    protected function setUp()
-    {
-        $this->object = new UserManipulator;
-    }
+	/**
+	 * @covers Kontti\UserManipulator::action
+	 * @todo   Implement testAction().
+	 */
+	public function testAction() {
+		// Remove the following lines when you implement this test.
+		$this->markTestIncomplete(
+			'This test has not been implemented yet.'
+		);
+	}
 
-    /**
-     * Tears down the fixture, for example, closes a network connection.
-     * This method is called after a test is executed.
-     */
-    protected function tearDown()
-    {
-    }
+	/**
+	 * Sets up the fixture, for example, opens a network connection.
+	 * This method is called before a test is executed.
+	 */
+	protected function setUp() {
+		$this->object = new UserManipulator;
+	}
 
-    /**
-     * @covers Kontti\UserManipulator::action
-     * @todo   Implement testAction().
-     */
-    public function testAction()
-    {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-            'This test has not been implemented yet.'
-        );
-    }
+	/**
+	 * Tears down the fixture, for example, closes a network connection.
+	 * This method is called after a test is executed.
+	 */
+	protected function tearDown() {
+	}
 }

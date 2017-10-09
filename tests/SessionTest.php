@@ -14,29 +14,27 @@
  */
 
 namespace Kontti;
-include_once ('/usr/share/php/PHPUnit6/autoload.php');
-include_once ('db_init.php');
+include_once('/usr/share/php/PHPUnit6/autoload.php');
+include_once('db_init.php');
 
 class SessionTest extends \PHPUnit\Framework\TestCase {
-    /**
-     * @var Session
-     */
-    protected $object;
+	/**
+	 * @var Session
+	 */
+	protected $object;
 
-    /**
-     * Sets up the fixture, for example, opens a network connection.
-     * This method is called before a test is executed.
-     */
-    protected function setUp()
-    {
-        $this->object = new Session;
-    }
+	/**
+	 * Sets up the fixture, for example, opens a network connection.
+	 * This method is called before a test is executed.
+	 */
+	protected function setUp() {
+		$this->object = new Session;
+	}
 
-    /**
-     * Tears down the fixture, for example, closes a network connection.
-     * This method is called after a test is executed.
-     */
-    protected function tearDown()
-    {
-    }
+	/**
+	 * Tears down the fixture, for example, closes a network connection.
+	 * This method is called after a test is executed.
+	 */
+	protected function tearDown() {
+	}
 }

@@ -14,29 +14,27 @@
  */
 
 namespace Kontti;
-include_once ('/usr/share/php/PHPUnit6/autoload.php');
-include_once ('db_init.php');
+include_once('/usr/share/php/PHPUnit6/autoload.php');
+include_once('db_init.php');
 
 class FillTest extends \PHPUnit\Framework\TestCase {
-    /**
-     * @var Fill
-     */
-    protected $object;
+	/**
+	 * @var Fill
+	 */
+	protected $object;
 
-    /**
-     * Sets up the fixture, for example, opens a network connection.
-     * This method is called before a test is executed.
-     */
-    protected function setUp()
-    {
-        $this->object = new Fill;
-    }
+	/**
+	 * Sets up the fixture, for example, opens a network connection.
+	 * This method is called before a test is executed.
+	 */
+	protected function setUp() {
+		$this->object = new Fill;
+	}
 
-    /**
-     * Tears down the fixture, for example, closes a network connection.
-     * This method is called after a test is executed.
-     */
-    protected function tearDown()
-    {
-    }
+	/**
+	 * Tears down the fixture, for example, closes a network connection.
+	 * This method is called after a test is executed.
+	 */
+	protected function tearDown() {
+	}
 }
