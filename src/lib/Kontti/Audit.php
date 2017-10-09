@@ -22,8 +22,7 @@ include_once ('DB.php');
  * @package Kontti
  */
 
-class Audit
-{
+class Audit {
     private $db;
 
 	/**
@@ -51,3 +50,4 @@ class Audit
         }
     }
 }
+?>
