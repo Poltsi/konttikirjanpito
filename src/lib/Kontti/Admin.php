@@ -15,20 +15,20 @@
 
 namespace Kontti;
 
-include_once ('DB.php');
+include_once('DB.php');
 
 /**
  * Class Admin
  * @package Kontti
  */
-class Admin
-{
-    private $db;
-    /**
-     * Admin constructor.
-     * @param DB $db
-     */
-    public function __construct(DB $db) {
-        $this->db = $db;
-    }
+class Admin {
+	private $db;
+
+	/**
+	 * Admin constructor.
+	 * @param DB $db
+	 */
+	public function __construct(DB $db) {
+		$this->db = $db;
+	}
 }

@@ -29,14 +29,12 @@ namespace Kontti\UI;
  * @package Kontti\UI
  */
 
-class KonttiUI
-{
+class KonttiUI {
 
 	/**
 	 * KonttiUI constructor.
 	 */
-	public function __construct()
-	{
+	public function __construct() {
 	}
 
 	/**
@@ -45,8 +43,7 @@ class KonttiUI
 	 * @return void
 	 */
 
-	public function show()
-	{
+	public function show() {
 		readfile("../resources/base_page.html");
 	}
 }

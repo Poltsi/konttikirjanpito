@@ -28,17 +28,17 @@ $db = new \Kontti\DB('localhost', 5432, 'kontti', 'kontti', 'konttipassu');
 $audit = new \Kontti\Audit($db);
 
 if (array_key_exists('type', $data) &&
-    $data['type'] == 'logout') {
-    if (isset($_SESSION) &&
-        array_key_exists('uid', $_SESSION)) {
-        $audit->log($_SESSION['uid'],'logout-ok', 'User logged out successfully');
-        session_destroy();
-    } else {
-        $audit->log(-1,'logout-fail', 'No session data found');
-    }
+	$data['type'] == 'logout') {
+	if (isset($_SESSION) &&
+		array_key_exists('uid', $_SESSION)) {
+		$audit->log($_SESSION['uid'], 'logout-ok', 'User logged out successfully');
+		session_destroy();
+	} else {
+		$audit->log(-1, 'logout-fail', 'No session data found');
+	}
 } else {
-    $response['reason'] = 'Missing action';
-    $audit->log(-1,'logout-fail', 'Request had no type defined, or it was not logout');
+	$response['reason'] = 'Missing action';
+	$audit->log(-1, 'logout-fail', 'Request had no type defined, or it was not logout');
 }
 
 $db->close();

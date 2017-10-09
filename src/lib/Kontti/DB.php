@@ -51,8 +51,7 @@ class DB {
 	 * @param $user
 	 * @param $password
 	 */
-	public function __construct($hostname, $port, $database, $user, $password)
-	{
+	public function __construct($hostname, $port, $database, $user, $password) {
 		$this->hostname = $hostname;
 		$this->port = $port;
 		$this->database = $database;
@@ -73,7 +72,11 @@ class DB {
 			" user=" . $this->user .
 			" password=" . $this->password);
 
-		if (!$this->dbcon) {$this->state = false;} else {$this->state = true;}
+		if (!$this->dbcon) {
+			$this->state = false;
+		} else {
+			$this->state = true;
+		}
 	}
 
 	private function prepareStatements(): void {
@@ -134,18 +137,20 @@ class DB {
 	public function addFill(int $uid, int $level, string $fill_type,
 	                        string $cyl_type, int $cyl_count, float $cyl_size,
 	                        int $start_pressure, int $end_pressure,
-							int $o2_start, int $o2_end,
-							int $he_start, int $he_end,
-							int $o2_vol, int $he_vol): bool {
+	                        int $o2_start, int $o2_end,
+	                        int $he_start, int $he_end,
+	                        int $o2_vol, int $he_vol): bool {
 		$key = 'add_fill';
 		$result = pg_execute($this->dbcon, $key, array($uid, $level, $fill_type,
-	                        $cyl_type, $cyl_count, $cyl_size,
-	                        $start_pressure, $end_pressure,
-							$o2_start, $o2_end,
-							$he_start, $he_end,
-							$o2_vol, $he_vol));
+			$cyl_type, $cyl_count, $cyl_size,
+			$start_pressure, $end_pressure,
+			$o2_start, $o2_end,
+			$he_start, $he_end,
+			$o2_vol, $he_vol));
 
-		if (!$result) {return false;}
+		if (!$result) {
+			return false;
+		}
 
 		return true;
 	}
@@ -172,7 +177,9 @@ class DB {
 		$key = 'get_' . $gas . '_by_user';
 		$result = pg_execute($this->dbcon, $key, array($uid));
 		$res = pg_fetch_row($result)[0];
-		if (is_null($res)) {$res = 0;}
+		if (is_null($res)) {
+			$res = 0;
+		}
 		return $res;
 	}
 
@@ -180,7 +187,9 @@ class DB {
 		$key = 'get_unpaid_' . $gas . '_by_user';
 		$result = pg_execute($this->dbcon, $key, array($uid));
 		$res = pg_fetch_row($result)[0];
-		if (is_null($res)) {$res = 0;}
+		if (is_null($res)) {
+			$res = 0;
+		}
 		return $res;
 	}
 
@@ -188,7 +197,9 @@ class DB {
 		$key = 'get_count_by_user_and_type';
 		$result = pg_execute($this->dbcon, $key, array($uid, $fill_type));
 		$res = pg_fetch_row($result)[0];
-		if (is_null($res)) {$res = 0;}
+		if (is_null($res)) {
+			$res = 0;
+		}
 		return $res;
 	}
 
@@ -196,7 +207,9 @@ class DB {
 		$key = 'get_fill_id_by_key';
 		$result = pg_execute($this->dbcon, $key, array($fill_key));
 		$res = pg_fetch_row($result)[0];
-		if (is_null($res)) {$res = 0;}
+		if (is_null($res)) {
+			$res = 0;
+		}
 		return $res;
 	}
 }

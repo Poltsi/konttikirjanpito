@@ -16,11 +16,10 @@
 namespace Kontti;
 
 
-class Session
-{
+class Session {
 	/**
-     * Session constructor.
-     */
-    public function __construct() {
-    }
+	 * Session constructor.
+	 */
+	public function __construct() {
+	}
 }

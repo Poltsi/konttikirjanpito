@@ -15,83 +15,83 @@
 
 namespace Kontti;
 
-include_once ('DB.php');
+include_once('DB.php');
 
 class User {
-    private $user_uid;
-    private $user_gid;
-    private $user_login;
-    private $user_level;
-    private $user_name;
-    private $user_enabled;
-    private $user_authenticated;
-    private $dbcon;
+	private $user_uid;
+	private $user_gid;
+	private $user_login;
+	private $user_level;
+	private $user_name;
+	private $user_enabled;
+	private $user_authenticated;
+	private $dbcon;
 
-    /* TODO: Get this from database and make into an object */
-    private $auth_level = array(
-        'air' => 10,
-        'nx' => 20,
-        'o2' => 30,
-        'tx' => 40,
-        'admin' => 60);
-    /**
-     * User constructor.
-     * @param DB $dbcon
-     */
-    public function __construct(DB $dbcon) {
-        $this->dbcon = $dbcon;
-    }
+	/* TODO: Get this from database and make into an object */
+	private $auth_level = array(
+		'air' => 10,
+		'nx' => 20,
+		'o2' => 30,
+		'tx' => 40,
+		'admin' => 60);
 
-    /**
-     * @param string $user_login
-     */
-    public function setUserLogin($user_login)
-    {
-        $this->user_login = $user_login;
-    }
+	/**
+	 * User constructor.
+	 * @param DB $dbcon
+	 */
+	public function __construct(DB $dbcon) {
+		$this->dbcon = $dbcon;
+	}
 
-    public function authenticate($login, $password): bool {
-	    $user_data = $this->dbcon->authenticate($login, $password);
+	/**
+	 * @param string $user_login
+	 */
+	public function setUserLogin($user_login) {
+		$this->user_login = $user_login;
+	}
 
-        if (!count($user_data)) {
-            $this->user_authenticated = false;
-            return false;
-        } else {
-	        $this->user_login = $login;
-	        $this->user_uid = $user_data[0];
-	        $this->user_gid = $user_data[1];
-	        $this->user_level = $user_data[2];
-	        $this->user_name = $user_data[3];
-	        $this->user_enabled = $user_data[4] === 'f' ? 0 : 1;
-	        $this->user_authenticated = true;
-        }
+	public function authenticate($login, $password): bool {
+		$user_data = $this->dbcon->authenticate($login, $password);
 
-        return $this->user_authenticated;
-    }
+		if (!count($user_data)) {
+			$this->user_authenticated = false;
+			return false;
+		} else {
+			$this->user_login = $login;
+			$this->user_uid = $user_data[0];
+			$this->user_gid = $user_data[1];
+			$this->user_level = $user_data[2];
+			$this->user_name = $user_data[3];
+			$this->user_enabled = $user_data[4] === 'f' ? 0 : 1;
+			$this->user_authenticated = true;
+		}
 
-    public function getDataFromDB(): bool {
-	    $user_data = $this->dbcon->getUserDataByUID($this->user_uid);
+		return $this->user_authenticated;
+	}
 
-	    if (!count($user_data)) {
-		    return false;
-	    } else {
-            $this->user_uid = $user_data[0];
-            $this->user_gid = $user_data[1];
-            $this->user_login = $user_data[2];
-            $this->user_level = $user_data[3];
-            $this->user_name = $user_data[4];
-            $this->user_enabled = $user_data[5] === 'f' ? 0 : 1;
-        }
+	public function getDataFromDB(): bool {
+		$user_data = $this->dbcon->getUserDataByUID($this->user_uid);
 
-        return true;
-    }
+		if (!count($user_data)) {
+			return false;
+		} else {
+			$this->user_uid = $user_data[0];
+			$this->user_gid = $user_data[1];
+			$this->user_login = $user_data[2];
+			$this->user_level = $user_data[3];
+			$this->user_name = $user_data[4];
+			$this->user_enabled = $user_data[5] === 'f' ? 0 : 1;
+		}
 
-    /**
-     * @return boolean
-     */
-    public function getUserAuthenticated():bool {
-        return $this->user_authenticated;
-    }
+		return true;
+	}
+
+	/**
+	 * @return boolean
+	 */
+	public function getUserAuthenticated(): bool {
+		return $this->user_authenticated;
+	}
 
 	/**
 	 * @param mixed $user_uid
@@ -117,7 +117,7 @@ class User {
 	/**
 	 * @return string
 	 */
-	public function getLogin(): string 	{
+	public function getLogin(): string {
 		return $this->user_login;
 	}
 
@@ -143,11 +143,11 @@ class User {
 	}
 
 
-    /**
-     * @param string $fill_type
-     * @return bool
-     */
-    public function hasPermission($fill_type): bool {
-        return ($this->user_level >= $this->auth_level[$fill_type]);
-    }
+	/**
+	 * @param string $fill_type
+	 * @return bool
+	 */
+	public function hasPermission($fill_type): bool {
+		return ($this->user_level >= $this->auth_level[$fill_type]);
+	}
 }

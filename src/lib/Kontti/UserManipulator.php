@@ -15,75 +15,73 @@
 
 namespace Kontti;
 
-include_once ('DB.php');
-include_once ('UserList.php');
+include_once('DB.php');
+include_once('UserList.php');
 
-class UserManipulator
-{
-    private $action = null;
-    private $target = null;
-    private $filter = null;
-    private $dbcon = null;
+class UserManipulator {
+	private $action = null;
+	private $target = null;
+	private $filter = null;
+	private $dbcon = null;
 
 	/**
 	 * UserManipulator constructor.
 	 * @param DB $dbcon
 	 * @param array $struct
 	 */
-	public function __construct(DB $dbcon, array $struct)
-    {
-        $this->dbcon = $dbcon;
-        $this->action = $struct['action'];
-        $this->target = $struct['target'];
+	public function __construct(DB $dbcon, array $struct) {
+		$this->dbcon = $dbcon;
+		$this->action = $struct['action'];
+		$this->target = $struct['target'];
 
-        if (array_key_exists('filter', $struct)) {
-            $this->filter = $struct['filter'];
-        }
-    }
+		if (array_key_exists('filter', $struct)) {
+			$this->filter = $struct['filter'];
+		}
+	}
 
-    public function action() {
-        switch ($this->action) {
-            case 'get':
-                return $this->get();
-                break;
-            case 'set':
-                break;
-            case 'update':
-                break;
-            default:
-                return false;
-                break;
-        }
+	public function action() {
+		switch ($this->action) {
+			case 'get':
+				return $this->get();
+				break;
+			case 'set':
+				break;
+			case 'update':
+				break;
+			default:
+				return false;
+				break;
+		}
 
-        return true;
-    }
+		return true;
+	}
 
-    private function get() {
-    	$arr = array();
+	private function get() {
+		$arr = array();
 
-        if ($this->filter == null ||
-        $this->filter['scope'] == '*') {
-        	foreach ($this->target as $target) {
-        		switch ($target) {
-			        case 'user_all':
-				        $list = new UserList($this->dbcon);
-				        $arr = $list->getUserListAsArray();
-				        break;
-			        case 'gas_total':
-			        	$arr = $this->getGasTotal($arr);
-				        break;
-			        case 'gas_unpaid_l':
-				        $arr = $this->getGasUnpaid($arr);
-				        break;
-			        case 'fill_total':
-				        $arr = $this->getFillCountTotal($arr);
-				        break;
-		        }
-	        }
-        }
+		if ($this->filter == null ||
+			$this->filter['scope'] == '*') {
+			foreach ($this->target as $target) {
+				switch ($target) {
+					case 'user_all':
+						$list = new UserList($this->dbcon);
+						$arr = $list->getUserListAsArray();
+						break;
+					case 'gas_total':
+						$arr = $this->getGasTotal($arr);
+						break;
+					case 'gas_unpaid_l':
+						$arr = $this->getGasUnpaid($arr);
+						break;
+					case 'fill_total':
+						$arr = $this->getFillCountTotal($arr);
+						break;
+				}
+			}
+		}
 
-        return $arr;
-    }
+		return $arr;
+	}
 
 	private function getGasTotal(array $arr): array {
 		for ($i = 0; $i < count($arr); $i++) {

@@ -14,41 +14,41 @@
  */
 
 namespace Kontti;
-include_once ('User.php');
-include_once ('DB.php');
+include_once('User.php');
+include_once('DB.php');
 
 class UserList {
-    private $user_list = null;
-    private $db = null;
+	private $user_list = null;
+	private $db = null;
 
-    /**
-     * UserList constructor.
-     * @param DB $db
-     */
-    public function __construct(DB $db) {
-        $this->user_list = array();
-        $this->db = $db;
-        $this->populateList();
-    }
+	/**
+	 * UserList constructor.
+	 * @param DB $db
+	 */
+	public function __construct(DB $db) {
+		$this->user_list = array();
+		$this->db = $db;
+		$this->populateList();
+	}
 
-    /**
-     * populateList: Fetches all the users from database to internal array
-     * @return void
-     */
-    private function populateList(): void {
-        $result = $this->db->getAllUserID();
+	/**
+	 * populateList: Fetches all the users from database to internal array
+	 * @return void
+	 */
+	private function populateList(): void {
+		$result = $this->db->getAllUserID();
 
-        if (!count($result)) {
-            return;
-        } else {
-            for ($i = 0; $i < count($result); $i++) {
-            	$user = new User($this->db);
-	            $user->setUid($result[$i]['uid']);
-	            $user->getDataFromDB();
-	            $this->add($user);
-            }
-        }
-    }
+		if (!count($result)) {
+			return;
+		} else {
+			for ($i = 0; $i < count($result); $i++) {
+				$user = new User($this->db);
+				$user->setUid($result[$i]['uid']);
+				$user->getDataFromDB();
+				$this->add($user);
+			}
+		}
+	}
 
 	/**
 	 * add: Adds an existing user object to the internal array
@@ -56,21 +56,20 @@ class UserList {
 	 * @return void
 	 */
 	public function add(User $user): void {
-        array_push($this->user_list, $user);
-    }
+		array_push($this->user_list, $user);
+	}
 
 	/**
 	 * @return array|null
 	 */
-	public function getUserList()
-	{
+	public function getUserList() {
 		return $this->user_list;
 	}
+
 	/**
 	 * @return array|null
 	 */
-	public function getUserListAsArray()
-	{
+	public function getUserListAsArray() {
 		$arr = array();
 
 		foreach ($this->user_list as $user) {

@@ -73,7 +73,9 @@ function display_action_buttons() {
     /* TODO: Retrieve the session data */
     var mode = sessionStorage.getItem('kontti_mode');
 
-    if (mode === null) {mode = 'login';}
+    if (mode === null) {
+        mode = 'login';
+    }
     /* TODO: Check that mode is set */
 
     /* Clear the divs first */
@@ -226,7 +228,9 @@ function get_main_action_buttons() {
  */
 
 function get_admin_function() {
-    return (function() {admin()});
+    return (function () {
+        admin()
+    });
 }
 
 function admin() {
@@ -258,7 +262,9 @@ function show_admin() {
 }
 
 function get_user_list_function() {
-    return (function() {user_list();});
+    return (function () {
+        user_list();
+    });
 }
 
 function user_list() {
@@ -266,7 +272,9 @@ function user_list() {
 }
 
 function get_back_button_function() {
-    return(function() {back_button();});
+    return (function () {
+        back_button();
+    });
 }
 
 function back_button() {
@@ -385,7 +393,7 @@ function get_user_data() {
     var search_data = {
         'object': 'user',
         'action': 'get',
-        'target': ['user_all','gas_total','gas_unpaid_l', 'fill_total']
+        'target': ['user_all', 'gas_total', 'gas_unpaid_l', 'fill_total']
     };
 
     var json_data = JSON.stringify(search_data);

@@ -30,41 +30,41 @@ $audit = new \Kontti\Audit($db);
 
 // Check the user uid
 if (!array_key_exists('uid', $_SESSION)) {
-    $audit->log(-1,'session-fail', 'Client tries to add fill without a session');
-    $response['status'] = 'NOK';
-    $response['reason'] = 'User session has expired';
+	$audit->log(-1, 'session-fail', 'Client tries to add fill without a session');
+	$response['status'] = 'NOK';
+	$response['reason'] = 'User session has expired';
 } else {
-    // Check that the user is not locked
-    if (!array_key_exists('enabled', $_SESSION) ||
-        !$_SESSION['enabled']) {
-        $audit->log($_SESSION['uid'], 'session-fail', 'User is locked');
-        $response['status'] = 'NOK';
-        $response['reason'] = 'User account is locked';
-    } else {
-        $i = 0;
+	// Check that the user is not locked
+	if (!array_key_exists('enabled', $_SESSION) ||
+		!$_SESSION['enabled']) {
+		$audit->log($_SESSION['uid'], 'session-fail', 'User is locked');
+		$response['status'] = 'NOK';
+		$response['reason'] = 'User account is locked';
+	} else {
+		$i = 0;
 
-        while (array_key_exists($i, $data)) {
-            // Check that the user is allowed to do the fill
-	        $fill_level = $db->getMinGasLevelAndID($data[$i][0]);
+		while (array_key_exists($i, $data)) {
+			// Check that the user is allowed to do the fill
+			$fill_level = $db->getMinGasLevelAndID($data[$i][0]);
 
-            if ($fill_level[0] > $_SESSION['level']) {
-                $response['status'] = 'NOK';
-                $response['reason'] .= $data[$i][0] . ' fill was rejected as user is not permitted to do such fill';
-                $audit->log($_SESSION['uid'], 'fill-fail', 'User attempted to submit a fill above his permission');
-            } else {
-	            if ($db->addFill(   $_SESSION['uid'], $fill_level[1], $data[$i][1], $data[$i][2], intval($data[$i][3]),
-		                            floatval($data[$i][4]), intval($data[$i][5]), intval($data[$i][6]),
-		                            intval($data[$i][7]), intval($data[$i][8]), intval($data[$i][9]),
-		                            intval($data[$i][10]), intval($data[$i][11]), intval($data[$i][12]))) {
-		            $audit->log($_SESSION['uid'], 'fill-ok', 'User added a ' . $data[$i][2] . ' fill');
-	            } else {
-		            $audit->log($_SESSION['uid'], 'fill-fail', 'User failed to add a ' . $data[$i][2] . ' fill');
-	            }
-            }
+			if ($fill_level[0] > $_SESSION['level']) {
+				$response['status'] = 'NOK';
+				$response['reason'] .= $data[$i][0] . ' fill was rejected as user is not permitted to do such fill';
+				$audit->log($_SESSION['uid'], 'fill-fail', 'User attempted to submit a fill above his permission');
+			} else {
+				if ($db->addFill($_SESSION['uid'], $fill_level[1], $data[$i][1], $data[$i][2], intval($data[$i][3]),
+					floatval($data[$i][4]), intval($data[$i][5]), intval($data[$i][6]),
+					intval($data[$i][7]), intval($data[$i][8]), intval($data[$i][9]),
+					intval($data[$i][10]), intval($data[$i][11]), intval($data[$i][12]))) {
+					$audit->log($_SESSION['uid'], 'fill-ok', 'User added a ' . $data[$i][2] . ' fill');
+				} else {
+					$audit->log($_SESSION['uid'], 'fill-fail', 'User failed to add a ' . $data[$i][2] . ' fill');
+				}
+			}
 
-            $i++;
-        }
-    }
+			$i++;
+		}
+	}
 }
 
 $db->close();

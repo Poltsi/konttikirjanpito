@@ -33,32 +33,32 @@ $admin = new \Kontti\Admin($db);
 
 /* Check first if we're admins */
 if (!array_key_exists('uid', $_SESSION)) {
-    $audit->log(-1,'admin-fail', 'Client tries to call admin functions without session');
-    $response['status'] = 'NOK';
-    $response['reason'] = 'Session expired, please log in again with admin credentials';
+	$audit->log(-1, 'admin-fail', 'Client tries to call admin functions without session');
+	$response['status'] = 'NOK';
+	$response['reason'] = 'Session expired, please log in again with admin credentials';
 } else {
-    if (!array_key_exists('level', $_SESSION) &&
-        $_SESSION['level'] <= 40) {
-        $audit->log($_SESSION['uid'], 'admin-fail', 'User tries to access admin functionality without proper permissions');
-        $response['status'] = 'NOK';
-        $response['reason'] = 'You are not allowed to use these functions';
-    } else {
-        $response['status'] = 'OK';
+	if (!array_key_exists('level', $_SESSION) &&
+		$_SESSION['level'] <= 40) {
+		$audit->log($_SESSION['uid'], 'admin-fail', 'User tries to access admin functionality without proper permissions');
+		$response['status'] = 'NOK';
+		$response['reason'] = 'You are not allowed to use these functions';
+	} else {
+		$response['status'] = 'OK';
 
-        switch ($data['object']) {
-            case 'user':
-                $audit->log($_SESSION['uid'], 'admin-ok', 'User wants to handle user');
-                $userManipulator = new Kontti\UserManipulator($db, $data);
-                $response['data'] = $userManipulator->action();
-                break;
-            case 'self':
-                $audit->log($_SESSION['uid'], 'admin-ok', 'User wants to handle self');
-                break;
-            default:
-                $audit->log($_SESSION['uid'], 'admin-fail', 'User sent unknown action: ' . $data['action']);
-                break;
-        }
-    }
+		switch ($data['object']) {
+			case 'user':
+				$audit->log($_SESSION['uid'], 'admin-ok', 'User wants to handle user');
+				$userManipulator = new Kontti\UserManipulator($db, $data);
+				$response['data'] = $userManipulator->action();
+				break;
+			case 'self':
+				$audit->log($_SESSION['uid'], 'admin-ok', 'User wants to handle self');
+				break;
+			default:
+				$audit->log($_SESSION['uid'], 'admin-fail', 'User sent unknown action: ' . $data['action']);
+				break;
+		}
+	}
 }
 
 $db->close();
