@@ -212,4 +212,13 @@ class DB {
 		}
 		return $res;
 	}
+
+	/**
+	 * @param string $sql
+	 * @param array $params
+	 * @return array|bool
+	 */
+	public function runSQL(string $sql, array $params): ?array {
+		return pg_query_params($this->dbcon, $sql, $params);
+	}
 }
