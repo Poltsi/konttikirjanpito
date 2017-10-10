@@ -16,6 +16,7 @@
 namespace Kontti;
 include_once('/usr/share/php/PHPUnit6/autoload.php');
 include_once('db_init.php');
+include_once('../src/lib/Kontti/UserManipulator.php');
 
 class UserManipulatorTest extends \PHPUnit\Framework\TestCase {
 	/**
@@ -23,6 +24,7 @@ class UserManipulatorTest extends \PHPUnit\Framework\TestCase {
 	 */
 	protected $object;
 	protected $db;
+	protected $struct = array();
 
 	/**
 	 * @covers Kontti\UserManipulator::action
@@ -41,7 +43,7 @@ class UserManipulatorTest extends \PHPUnit\Framework\TestCase {
 	 */
 	protected function setUp() {
 		$this->db = get_for_test_DB();
-		$this->object = new UserManipulator($this->db);
+		$this->object = new UserManipulator($this->db, $this->struct);
 	}
 
 	/**

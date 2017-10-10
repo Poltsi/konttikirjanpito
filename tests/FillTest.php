@@ -16,6 +16,7 @@
 namespace Kontti;
 include_once('/usr/share/php/PHPUnit6/autoload.php');
 include_once('db_init.php');
+include_once('../src/lib/Kontti/Fill.php');
 
 class FillTest extends \PHPUnit\Framework\TestCase {
 	/**
@@ -23,14 +24,15 @@ class FillTest extends \PHPUnit\Framework\TestCase {
 	 */
 	protected $object;
 	protected $db;
-
+	protected $fill_arr = array();
+	protected $uid = 50000;
 	/**
 	 * Sets up the fixture, for example, opens a network connection.
 	 * This method is called before a test is executed.
 	 */
 	protected function setUp() {
 		$this->db = get_for_test_DB();
-		$this->object = new Fill($this->db);
+		$this->object = new Fill($this->db, $this->uid, $this->fill_arr);
 	}
 
 	/**

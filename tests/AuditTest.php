@@ -16,6 +16,7 @@
 namespace Kontti;
 include_once('/usr/share/php/PHPUnit6/autoload.php');
 include_once('db_init.php');
+include_once('../src/lib/Kontti/Audit.php');
 
 class AuditTest extends \PHPUnit\Framework\TestCase {
 	/**
@@ -25,7 +26,7 @@ class AuditTest extends \PHPUnit\Framework\TestCase {
 	protected $db;
 
 	/**
-	 * @covers Kontti\Audit::log
+	 * @covers Audit::log
 	 * @todo   Implement testLog().
 	 */
 	public function testLog() {

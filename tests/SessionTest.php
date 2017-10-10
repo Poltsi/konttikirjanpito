@@ -16,6 +16,7 @@
 namespace Kontti;
 include_once('/usr/share/php/PHPUnit6/autoload.php');
 include_once('db_init.php');
+include_once('../src/lib/Kontti/Session.php');
 
 class SessionTest extends \PHPUnit\Framework\TestCase {
 	/**
@@ -29,7 +30,7 @@ class SessionTest extends \PHPUnit\Framework\TestCase {
 	 * This method is called before a test is executed.
 	 */
 	protected function setUp() {
-		$this->object = new Session;
+		$this->object = new Session();
 	}
 
 	/**
