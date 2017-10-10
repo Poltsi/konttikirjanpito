@@ -22,6 +22,7 @@ class UserListTest extends \PHPUnit\Framework\TestCase {
 	 * @var UserList
 	 */
 	protected $object;
+	protected $db;
 
 	/**
 	 * @covers Kontti\UserList::add
@@ -61,7 +62,8 @@ class UserListTest extends \PHPUnit\Framework\TestCase {
 	 * This method is called before a test is executed.
 	 */
 	protected function setUp() {
-		$this->object = new UserList;
+		$this->db = get_for_test_DB();
+		$this->object = new UserList($this->db);
 	}
 
 	/**
@@ -69,5 +71,6 @@ class UserListTest extends \PHPUnit\Framework\TestCase {
 	 * This method is called after a test is executed.
 	 */
 	protected function tearDown() {
+		$this->db->close();
 	}
 }

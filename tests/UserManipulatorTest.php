@@ -22,6 +22,7 @@ class UserManipulatorTest extends \PHPUnit\Framework\TestCase {
 	 * @var UserManipulator
 	 */
 	protected $object;
+	protected $db;
 
 	/**
 	 * @covers Kontti\UserManipulator::action
@@ -39,7 +40,8 @@ class UserManipulatorTest extends \PHPUnit\Framework\TestCase {
 	 * This method is called before a test is executed.
 	 */
 	protected function setUp() {
-		$this->object = new UserManipulator;
+		$this->db = get_for_test_DB();
+		$this->object = new UserManipulator($this->db);
 	}
 
 	/**
@@ -47,5 +49,6 @@ class UserManipulatorTest extends \PHPUnit\Framework\TestCase {
 	 * This method is called after a test is executed.
 	 */
 	protected function tearDown() {
+		$this->db->close();
 	}
 }

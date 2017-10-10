@@ -22,13 +22,15 @@ class FillTest extends \PHPUnit\Framework\TestCase {
 	 * @var Fill
 	 */
 	protected $object;
+	protected $db;
 
 	/**
 	 * Sets up the fixture, for example, opens a network connection.
 	 * This method is called before a test is executed.
 	 */
 	protected function setUp() {
-		$this->object = new Fill;
+		$this->db = get_for_test_DB();
+		$this->object = new Fill($this->db);
 	}
 
 	/**
@@ -36,5 +38,6 @@ class FillTest extends \PHPUnit\Framework\TestCase {
 	 * This method is called after a test is executed.
 	 */
 	protected function tearDown() {
+		$this->db->close();
 	}
 }

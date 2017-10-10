@@ -16,15 +16,37 @@
 namespace Kontti;
 include_once('/usr/share/php/PHPUnit6/autoload.php');
 include_once('db_init.php');
+include_once('../src/lib/Kontti/User.php');
 
 class UserTest extends \PHPUnit\Framework\TestCase {
 	/**
 	 * @var User
 	 */
 	protected $object;
+	protected $db;
+
+	private function insertUser(int $uid, int $gid, string $login, int $level, string $password, string $name, bool $enabled): bool {
+		$params = array($uid, $gid, $login, $level, $name, $enabled);
+		$sql = "INSERT INTO users VALUES ($1, $2, $3, $4, gen_salt('bf', 8), '', $5, $6)";
+		if (!$this->db->runSQL($sql, $params)) {return false;}
+
+		$params = array($password, $uid);
+		$sql = "UPDATE users SET password = crypt($1, salt) WHERE uid = $2";
+		if (!$this->db->runSQL($sql, $params)) {return false;}
+
+		return true;
+	}
+
+	private function removeUser(int $uid) {
+		$params = array($uid);
+		$sql = "DELETE FROM users WHERE uid = $1";
+		if (!$this->db->runSQL($sql, $params)) {return false;}
+
+		return true;
+	}
 
 	/**
-	 * @covers Kontti\User::setUserLogin
+	 * @covers \Kontti\User::setUserLogin
 	 * @todo   Implement testSetUserLogin().
 	 */
 	public function testSetUserLogin() {
@@ -35,7 +57,7 @@ class UserTest extends \PHPUnit\Framework\TestCase {
 	}
 
 	/**
-	 * @covers Kontti\User::authenticate
+	 * @covers \Kontti\User::authenticate
 	 * @todo   Implement testAuthenticate().
 	 */
 	public function testAuthenticate() {
@@ -46,7 +68,7 @@ class UserTest extends \PHPUnit\Framework\TestCase {
 	}
 
 	/**
-	 * @covers Kontti\User::getDataFromDB
+	 * @covers \Kontti\User::getDataFromDB
 	 * @todo   Implement testGetDataFromDB().
 	 */
 	public function testGetDataFromDB() {
@@ -57,7 +79,7 @@ class UserTest extends \PHPUnit\Framework\TestCase {
 	}
 
 	/**
-	 * @covers Kontti\User::getUserAuthenticated
+	 * @covers \Kontti\User::getUserAuthenticated
 	 * @todo   Implement testGetUserAuthenticated().
 	 */
 	public function testGetUserAuthenticated() {
@@ -68,7 +90,7 @@ class UserTest extends \PHPUnit\Framework\TestCase {
 	}
 
 	/**
-	 * @covers Kontti\User::setUid
+	 * @covers \Kontti\User::setUid
 	 * @todo   Implement testSetUid().
 	 */
 	public function testSetUid() {
@@ -79,7 +101,7 @@ class UserTest extends \PHPUnit\Framework\TestCase {
 	}
 
 	/**
-	 * @covers Kontti\User::getUid
+	 * @covers \Kontti\User::getUid
 	 * @todo   Implement testGetUid().
 	 */
 	public function testGetUid() {
@@ -90,7 +112,7 @@ class UserTest extends \PHPUnit\Framework\TestCase {
 	}
 
 	/**
-	 * @covers Kontti\User::getGid
+	 * @covers \Kontti\User::getGid
 	 * @todo   Implement testGetGid().
 	 */
 	public function testGetGid() {
@@ -101,7 +123,7 @@ class UserTest extends \PHPUnit\Framework\TestCase {
 	}
 
 	/**
-	 * @covers Kontti\User::getLogin
+	 * @covers \Kontti\User::getLogin
 	 * @todo   Implement testGetLogin().
 	 */
 	public function testGetLogin() {
@@ -112,7 +134,7 @@ class UserTest extends \PHPUnit\Framework\TestCase {
 	}
 
 	/**
-	 * @covers Kontti\User::getLevel
+	 * @covers \Kontti\User::getLevel
 	 * @todo   Implement testGetLevel().
 	 */
 	public function testGetLevel() {
@@ -123,7 +145,7 @@ class UserTest extends \PHPUnit\Framework\TestCase {
 	}
 
 	/**
-	 * @covers Kontti\User::getName
+	 * @covers \Kontti\User::getName
 	 * @todo   Implement testGetName().
 	 */
 	public function testGetName() {
@@ -134,7 +156,7 @@ class UserTest extends \PHPUnit\Framework\TestCase {
 	}
 
 	/**
-	 * @covers Kontti\User::enabled
+	 * @covers \Kontti\User::enabled
 	 * @todo   Implement testEnabled().
 	 */
 	public function testEnabled() {
@@ -145,7 +167,7 @@ class UserTest extends \PHPUnit\Framework\TestCase {
 	}
 
 	/**
-	 * @covers Kontti\User::hasPermission
+	 * @covers \Kontti\User::hasPermission
 	 * @todo   Implement testHasPermission().
 	 */
 	public function testHasPermission() {
@@ -160,7 +182,8 @@ class UserTest extends \PHPUnit\Framework\TestCase {
 	 * This method is called before a test is executed.
 	 */
 	protected function setUp() {
-		$this->object = new User($db);
+		$this->db = get_for_test_DB();
+		$this->object = new User($this->db);
 	}
 
 	/**
@@ -168,5 +191,6 @@ class UserTest extends \PHPUnit\Framework\TestCase {
 	 * This method is called after a test is executed.
 	 */
 	protected function tearDown() {
+		$this->db->close();
 	}
 }

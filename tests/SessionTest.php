@@ -22,6 +22,7 @@ class SessionTest extends \PHPUnit\Framework\TestCase {
 	 * @var Session
 	 */
 	protected $object;
+	protected $db;
 
 	/**
 	 * Sets up the fixture, for example, opens a network connection.

@@ -22,6 +22,7 @@ class AuditTest extends \PHPUnit\Framework\TestCase {
 	 * @var Audit
 	 */
 	protected $object;
+	protected $db;
 
 	/**
 	 * @covers Kontti\Audit::log
@@ -39,7 +40,8 @@ class AuditTest extends \PHPUnit\Framework\TestCase {
 	 * This method is called before a test is executed.
 	 */
 	protected function setUp() {
-		$this->object = new Audit($db);
+		$this->db = get_for_test_DB();
+		$this->object = new Audit($this->db);
 	}
 
 	/**
@@ -47,5 +49,6 @@ class AuditTest extends \PHPUnit\Framework\TestCase {
 	 * This method is called after a test is executed.
 	 */
 	protected function tearDown() {
+		$this->db->close();
 	}
 }

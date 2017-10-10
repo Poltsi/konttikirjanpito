@@ -160,7 +160,7 @@ class DBTest extends \PHPUnit\Framework\TestCase {
 	 * This method is called before a test is executed.
 	 */
 	protected function setUp() {
-		$this->object = new DB;
+		$this->object = get_for_test_DB();
 	}
 
 	/**
@@ -168,5 +168,6 @@ class DBTest extends \PHPUnit\Framework\TestCase {
 	 * This method is called after a test is executed.
 	 */
 	protected function tearDown() {
+		$this->object->close();
 	}
 }
