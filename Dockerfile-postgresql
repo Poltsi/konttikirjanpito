@@ -1,0 +1,5 @@
+FROM postgres:9.6-alpine
+USER postgres
+ENV POSTGRES_PASSWORD 342kl,fmdns234
+COPY sql/create_database.sql /docker-entrypoint-initdb.d/
+
