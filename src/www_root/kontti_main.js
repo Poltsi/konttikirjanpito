@@ -32,6 +32,11 @@ const FILLCYLO2PCNTENDPREFIX = 'cyl_o2_end_';
 const FILLCYLHEPCNTSTARTPREFIX = 'cyl_he_start_';
 const FILLCYLHEPCNTENDPREFIX = 'cyl_he_end_';
 
+/* Get our host URL*/
+var url = document.URL;
+var url_parts = url.split('/');
+var baseUrl = url_parts[0] + '//' + url_parts[2] + '/';
+
 var next_id = 0;
 /* Types of fills, fields are:
  *  0. key
@@ -399,7 +404,7 @@ function get_user_data() {
     var json_data = JSON.stringify(search_data);
     /* Send the JSON to the server */
     var xhr = new XMLHttpRequest();
-    xhr.open("POST", 'http://kontti.lappari/admin.php', true);
+    xhr.open("POST", baseUrl + 'admin.php', true);
     xhr.setRequestHeader("Content-type", "application/json");
 
     xhr.onreadystatechange = function () {
@@ -672,7 +677,7 @@ function save_data() {
 
     /* Send the JSON to the server */
     var xhr = new XMLHttpRequest();
-    xhr.open("POST", 'http://kontti.lappari/add_data.php', true);
+    xhr.open("POST", baseUrl + 'add_data.php', true);
     xhr.setRequestHeader("Content-type", "application/json");
     xhr.onreadystatechange = function () {
         if (xhr.readyState === 4 && xhr.status === 200) {
@@ -1006,7 +1011,7 @@ function verify_login() {
     var json_data = JSON.stringify(login_data);
     /* Send the JSON to the server */
     var xhr = new XMLHttpRequest();
-    xhr.open("POST", 'http://kontti.lappari/login.php', true);
+    xhr.open("POST", baseUrl + 'login.php', true);
     xhr.setRequestHeader("Content-type", "application/json");
 
     xhr.onreadystatechange = function () {
@@ -1056,7 +1061,7 @@ function logout() {
     var json_data = JSON.stringify(logout_data);
     /* Send the JSON to the server */
     var xhr = new XMLHttpRequest();
-    xhr.open("POST", 'http://kontti.lappari/logout.php', true);
+    xhr.open("POST", baseUrl + 'logout.php', true);
     xhr.setRequestHeader("Content-type", "application/json");
 
     xhr.onreadystatechange = function () {
