@@ -14,6 +14,8 @@
  *
  */
 
+phpinfo();
+
 require_once "../lib/Kontti/UI/KonttiUI.php";
 
 $ui = new \Kontti\UI\KonttiUI();
