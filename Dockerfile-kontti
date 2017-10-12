@@ -8,4 +8,9 @@ COPY src/www_root /var/www/html/
 COPY src/lib/ /var/www/lib/
 COPY src/resources/ /var/www/resources/
 EXPOSE 80
+ENV KONTTI_HOST kontti_db
+ENV KONTTI_PORT 5432
+ENV KONTTI_DB kontti
+ENV KONTTI_USER kontti
+ENV KONTTI_PASSWORD konttipassu
 CMD [ "/usr/sbin/httpd", "-DFOREGROUND" ]
