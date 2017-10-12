@@ -37,7 +37,7 @@ if (!array_key_exists('uid', $_SESSION)) {
 	$response['status'] = 'NOK';
 	$response['reason'] = 'Session expired, please log in again with admin credentials';
 } else {
-	if (!array_key_exists('level', $_SESSION) &&
+	if (!array_key_exists('level', $_SESSION) ||
 		$_SESSION['level'] <= 40) {
 		$audit->log($_SESSION['uid'], 'admin-fail', 'User tries to access admin functionality without proper permissions');
 		$response['status'] = 'NOK';

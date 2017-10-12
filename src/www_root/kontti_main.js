@@ -94,6 +94,7 @@ function display_action_buttons() {
             show_main();
             break;
         case 'stats':
+            show_stats();
             break;
         case 'admin':
             show_admin();
@@ -216,15 +217,18 @@ function get_main_action_buttons() {
     stats_button.addEventListener('click', get_stats_function());
     button_div.appendChild(stats_button);
 
+    button_div.appendChild(get_logout_button());
+    return (button_div);
+}
+
+function get_logout_button() {
     /* Logout button */
     var logout_button = document.createElement('button');
     logout_button.id = 'logout';
     logout_button.innerHTML = 'Logout';
     logout_button.addEventListener('click', get_logout_function());
     logout_button.style = 'float: right';
-
-    button_div.appendChild(logout_button);
-    return (button_div);
+    return logout_button;
 }
 
 /******************************************************  ADMIN  ******************************************************/
@@ -256,14 +260,17 @@ function show_admin() {
     users_button.addEventListener('click', get_user_list_function());
     button_div.appendChild(users_button);
 
+    button_div.appendChild(get_back_to_fill_button());
+    button_div.appendChild(get_logout_button());
+    data_action_elem.appendChild(button_div);
+}
+
+function get_back_to_fill_button() {
     var back_button = document.createElement('button');
     back_button.innerHTML = 'Back to fill';
     back_button.id = 'back';
     back_button.addEventListener('click', get_back_button_function());
-    button_div.appendChild(back_button);
-
-
-    data_action_elem.appendChild(button_div);
+    return back_button;
 }
 
 function get_user_list_function() {
@@ -1108,6 +1115,44 @@ function stats() {
     display_action_buttons();
     // TODO: Empty the main div
     // TODO: Fetch the stats from server
+}
+
+function show_stats() {
+    /* TODO: Populate the action div */
+    var data_action_elem = document.querySelector('#' + MAINDATAACTIONID);
+    var button_div = document.createElement('div');
+    button_div.id = 'stats_action';
+
+    /* List users */
+    var own_button = document.createElement('button');
+    own_button.innerHTML = 'Show your own stats';
+    own_button.id = 'own_stats';
+    own_button.addEventListener('click', get_user_list_function());
+    button_div.appendChild(own_button);
+
+    if (sessionStorage.getItem('kontti_level') > 40) {
+        var users_button = document.createElement('button');
+        users_button.innerHTML = 'Show your own stats';
+        users_button.id = 'users_stats';
+        users_button.addEventListener('click', get_user_stats_function());
+        button_div.appendChild(users_button);
+    }
+
+    button_div.appendChild(get_back_to_fill_button());
+    button_div.appendChild(get_logout_button());
+
+
+    data_action_elem.appendChild(button_div);
+
+}
+
+function get_user_stats_function() {
+    "use strict";
+    return (function() {get_user_stats();});
+}
+
+function get_user_stats() {
+
 }
 
 /****************************************************** /STATS  ******************************************************/
