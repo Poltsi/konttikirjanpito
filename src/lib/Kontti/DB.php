@@ -52,11 +52,11 @@ class DB {
 	 * @param $password
 	 */
 	public function __construct($hostname, $port, $database, $user, $password) {
-		$this->hostname = $hostname;
-		$this->port = $port;
-		$this->database = $database;
-		$this->user = $user;
-		$this->password = $password;
+		$this->hostname = getenv('KONTTI_HOST') ?? $hostname;
+		$this->port = getenv('KONTTI_PORT') ?? $port;
+		$this->database = getenv('KONTTI_DB') ?? $database;
+		$this->user = getenv('KONTTI_USER') ?? $user;
+		$this->password = getenv('KONTTI_PASSWORD') ?? $password;
 
 		$this->connect();
 
