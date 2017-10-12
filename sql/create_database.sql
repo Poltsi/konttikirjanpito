@@ -92,12 +92,15 @@ CREATE TABLE fills (
   counted_date timestamp with time zone
   );
 
+ALTER TABLE fills OWNER TO kontti;
 -- Fill levels
 
 CREATE TABLE fill_level (
   level_id integer NOT NULL,
   description text
 );
+
+ALTER TABLE fill_level OWNER TO kontti;
 
 ALTER TABLE ONLY fill_level ADD CONSTRAINT fill_level_id_key UNIQUE (level_id);
 
@@ -113,6 +116,8 @@ CREATE TABLE gas_level (
   min_fill_level integer NOT NULL,
   gas_key character varying(12)
 );
+
+ALTER TABLE gas_level OWNER TO kontti;
 
 ALTER TABLE ONLY gas_level ADD CONSTRAINT gas_level_id_key UNIQUE (gas_id);
 
@@ -130,3 +135,5 @@ CREATE TABLE audit (
   type CHARACTER VARYING(16),
   event TEXT
 );
+
+ALTER TABLE audit OWNER TO kontti;
