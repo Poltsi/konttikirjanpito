@@ -217,15 +217,18 @@ function get_main_action_buttons() {
     stats_button.addEventListener('click', get_stats_function());
     button_div.appendChild(stats_button);
 
+    button_div.appendChild(get_logout_button());
+    return (button_div);
+}
+
+function get_logout_button() {
     /* Logout button */
     var logout_button = document.createElement('button');
     logout_button.id = 'logout';
     logout_button.innerHTML = 'Logout';
     logout_button.addEventListener('click', get_logout_function());
     logout_button.style = 'float: right';
-
-    button_div.appendChild(logout_button);
-    return (button_div);
+    return logout_button;
 }
 
 /******************************************************  ADMIN  ******************************************************/
@@ -257,13 +260,12 @@ function show_admin() {
     users_button.addEventListener('click', get_user_list_function());
     button_div.appendChild(users_button);
 
-    button_div.appendChild(show_back_to_fill_button());
-
-
+    button_div.appendChild(get_back_to_fill_button());
+    button_div.appendChild(get_logout_button());
     data_action_elem.appendChild(button_div);
 }
 
-function show_back_to_fill_button() {
+function get_back_to_fill_button() {
     var back_button = document.createElement('button');
     back_button.innerHTML = 'Back to fill';
     back_button.id = 'back';
@@ -1132,14 +1134,24 @@ function show_stats() {
         var users_button = document.createElement('button');
         users_button.innerHTML = 'Show your own stats';
         users_button.id = 'users_stats';
-        users_button.addEventListener('click', get_user_list_function());
+        users_button.addEventListener('click', get_user_stats_function());
         button_div.appendChild(users_button);
     }
 
-    button_div.appendChild(show_back_to_fill_button());
+    button_div.appendChild(get_back_to_fill_button());
+    button_div.appendChild(get_logout_button());
 
 
     data_action_elem.appendChild(button_div);
+
+}
+
+function get_user_stats_function() {
+    "use strict";
+    return (function() {get_user_stats();});
+}
+
+function get_user_stats() {
 
 }
 
