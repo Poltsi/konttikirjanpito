@@ -22,6 +22,7 @@ const INFOID = 'info';
 const DATAAREAFORMID = 'fill_form';
 const FILLROWPREFIX = 'fill_tr_';
 const FILLTYPEPREFIX = 'fill_type_';
+const GASLEVELPREFIX = 'gas_level_';
 const FILLCYLTYPEPREFIX = 'cyl_type_';
 const FILLCYLSIZEPREFIX = 'cyl_size_';
 const FILLCYLNUMPREFIX = 'cyl_num_';
@@ -48,6 +49,11 @@ const TYPELIST = [[10, 'air', 'Air fill', '#99CC99'],
     [30, 'o2', 'Oxygen fill', '#9999FF'],
     [40, 'tx', 'Trimix fill', '#CC99CC']];
 
+const FILLTYPELIST = {
+    'pp': ['Prepaid', ''],
+    'vid': ['VID', ''],
+    'int': ['Internal', '']
+};
 
 const CYLLIST = {
     '40cf': ['40cf/5.7l', 5.7],
@@ -145,8 +151,11 @@ function show_main() {
 function get_fill_table_header() {
     var header_tr = document.createElement('tr');
     header_tr.id = 'tr_header';
+    var header_td0 = document.createElement('td');
+    header_td0.innerHTML = '# and type';
+    header_tr.appendChild(header_td0);
     var header_td1 = document.createElement('td');
-    header_td1.innerHTML = '# and type';
+    header_td1.innerHTML = 'Fill type';
     header_tr.appendChild(header_td1);
     var header_td2 = document.createElement('td');
     header_td2.innerHTML = 'Cylinder size';
@@ -465,13 +474,19 @@ function add_gas_fill_row(type) {
 
     var gas_td_type = document.createElement('td');
     gas_td_type.innerHTML = id + ': ' + type + ' fill';
-    var gas_type_input = document.createElement('input');
-    gas_type_input.setAttribute('type', 'hidden');
-    gas_type_input.setAttribute('value', type);
-    gas_type_input.id = FILLTYPEPREFIX + id;
-    gas_td_type.appendChild(gas_type_input);
-    gas_td_type.id = 'td_' + FILLTYPEPREFIX + id;
+
+    var gas_level = document.createElement('input');
+    gas_level.setAttribute('type', 'hidden');
+    gas_level.setAttribute('value', type);
+    gas_level.id = GASLEVELPREFIX + id;
+    gas_td_type.appendChild(gas_level);
+    gas_td_type.id = 'td_' + GASLEVELPREFIX + id;
     gas_tr.appendChild(gas_td_type);
+
+    var gas_td_level = document.createElement('td');
+    gas_td_level.appendChild(get_fill_type_select(id));
+    gas_td_level.id = 'td_' + FILLTYPEPREFIX + id;
+    gas_tr.appendChild(gas_td_level);
 
     var gas_td_cyl = document.createElement('td');
     gas_td_cyl.appendChild(get_cylinder_select(id));
@@ -532,6 +547,20 @@ function add_gas_fill_row(type) {
     /* Finally add the row removal button */
     gas_tr.appendChild(get_removal_cell(id));
     my_filllist_elem.appendChild(gas_tr);
+}
+
+
+function get_fill_type_select(id) {
+    "use strict";
+    var fill_type_select = document.createElement('select');
+    fill_type_select.id = FILLTYPEPREFIX + id;
+    fill_type_select.title = 'Select type of fill';
+
+    for (var key in FILLTYPELIST) {
+        fill_type_select.options.add(new Option(FILLTYPELIST[key][0], key));
+    }
+
+    return (fill_type_select);
 }
 
 /**
@@ -713,8 +742,8 @@ function save_data() {
 function get_fill_data(id) {
     var data_array = [null, null, null, null, null, null, null, null, null, null, null, null, null];
 
-    data_array[0] = get_fill_type(id);
-    data_array[1] = 'VID';
+    data_array[0] = get_gas_level(id);
+    data_array[1] = get_fill_type(id);
     data_array[2] = get_cylinder_size(id);
     data_array[3] = get_cylinder_number(id);
     data_array[4] = CYLLIST[get_cylinder_size(id)][1];
@@ -739,6 +768,10 @@ function get_fill_data(id) {
 
     // TODO: Verify the data
     return (data_array);
+}
+
+function get_gas_level(id) {
+    return (document.querySelector('#' + GASLEVELPREFIX + id).value);
 }
 
 function get_fill_type(id) {
@@ -814,7 +847,7 @@ function check_data() {
  */
 
 function verify_row_data(id) {
-    var type = get_fill_type(id);
+    var type = get_gas_level(id);
     var ret_val = true;
 
     if (type !== 'air') {
@@ -1114,7 +1147,6 @@ function stats() {
     sessionStorage.setItem('kontti_mode', 'stats');
     display_action_buttons();
     // TODO: Empty the main div
-    // TODO: Fetch the stats from server
 }
 
 function show_stats() {
@@ -1127,12 +1159,19 @@ function show_stats() {
     var own_button = document.createElement('button');
     own_button.innerHTML = 'Show your own stats';
     own_button.id = 'own_stats';
-    own_button.addEventListener('click', get_user_list_function());
+    own_button.addEventListener('click', get_user_stats_function());
     button_div.appendChild(own_button);
+
+    /* List general stats */
+    var general_stats_button = document.createElement('button');
+    general_stats_button.innerHTML = 'Show your own stats';
+    general_stats_button.id = 'own_stats';
+    general_stats_button.addEventListener('click', get_general_stats_function());
+    button_div.appendChild(general_stats_button);
 
     if (sessionStorage.getItem('kontti_level') > 40) {
         var users_button = document.createElement('button');
-        users_button.innerHTML = 'Show your own stats';
+        users_button.innerHTML = 'Show user statistics';
         users_button.id = 'users_stats';
         users_button.addEventListener('click', get_user_stats_function());
         button_div.appendChild(users_button);
@@ -1152,7 +1191,16 @@ function get_user_stats_function() {
 }
 
 function get_user_stats() {
+    // TODO: Implement user specific stats
+}
 
+function get_general_stats_function() {
+    "use strict";
+    return (function() {get_general_stats();});
+}
+
+function get_general_stats() {
+    // TODO: Implement general stats
 }
 
 /****************************************************** /STATS  ******************************************************/
