@@ -39,7 +39,7 @@ class DB {
 		'get_he_by_user' => ['sql' => 'SELECT SUM(he_vol) FROM fills WHERE uid = $1'],
 		'get_unpaid_o2_by_user' => ['sql' => 'SELECT SUM(o2_vol) FROM fills WHERE uid = $1 AND counted = FALSE'],
 		'get_unpaid_he_by_user' => ['sql' => 'SELECT SUM(he_vol) FROM fills WHERE uid = $1 AND counted = FALSE'],
-		'get_count_by_user_and_type' => ['sql' => 'SELECT COUNT(f.*) FROM fills f, gas_level g WHERE f.uid = $1 AND f.gas_level_id = g.gas_id AND g.gas_key = $2'],
+		'get_count_by_user_and_type' => ['sql' => 'SELECT SUM(f.cyl_count) FROM fills f, gas_level g WHERE f.uid = $1 AND f.gas_level_id = g.gas_id AND g.gas_key = $2'],
 		'get_fill_id_by_key' => ['sql' => 'SELECT gas_id FROM gas_level WHERE gas_key = $1']
 	];
 
@@ -52,11 +52,11 @@ class DB {
 	 * @param $password
 	 */
 	public function __construct($hostname, $port, $database, $user, $password) {
-		$this->hostname = getenv('KONTTI_HOST') ?? $hostname;
-		$this->port = getenv('KONTTI_PORT') ?? $port;
-		$this->database = getenv('KONTTI_DB') ?? $database;
-		$this->user = getenv('KONTTI_USER') ?? $user;
-		$this->password = getenv('KONTTI_PASSWORD') ?? $password;
+		$this->hostname = strlen(getenv('KONTTI_HOST',     true)) ? getenv('KONTTI_HOST', true) : $hostname;
+		$this->port     = strlen(getenv('KONTTI_PORT',     true)) ? getenv('KONTTI_PORT', true) : $port;
+		$this->database = strlen(getenv('KONTTI_DB',       true)) ? getenv('KONTTI_DB', true) : $database;
+		$this->user     = strlen(getenv('KONTTI_USER',     true)) ? getenv('KONTTI_USER', true) : $user;
+		$this->password = strlen(getenv('KONTTI_PASSWORD', true)) ? getenv('KONTTI_PASSWORD', true) : $password;
 
 		$this->connect();
 
