@@ -50,7 +50,7 @@ if (array_key_exists('login', $data) &&
 			$_SESSION['gid'] = $user->getGid();
 			$_SESSION['level'] = $user->getLevel();
 			$_SESSION['name'] = $user->getName();
-			$_SESSION['enabled'] = $user->enabled();
+			$_SESSION['enabled'] = $user->enabled() ? 1 : 0;
 			// We will allow a locked user to log on, but the user will be unable to make any fills.
 			$response['enabled'] = $_SESSION['enabled'];
 			$response['level'] = $_SESSION['level'];

@@ -187,7 +187,7 @@ function get_main_action_buttons() {
     button_div.id = 'main_action';
     button_div.width = '100%';
 
-    if (sessionStorage.getItem('kontti_enabled') === 1) {
+    if (sessionStorage.getItem('kontti_enabled') === '1') {
         for (var i = 0; i < TYPELIST.length; i++) {
             if (parseInt(sessionStorage.getItem('kontti_level')) >= TYPELIST[i][0]) {
                 var fill_button = document.createElement('button');
