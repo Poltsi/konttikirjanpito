@@ -1,4 +1,7 @@
 VERSION = $(shell cat VERSION)
+MAJOR = $(shell echo $(VERSION) | cut -f 1 -d ".")
+MINOR = $(shell echo $(VERSION) | cut -f 2 -d ".")
+NEWMINOR = $(shell expr $(MINOR) + 1)
 REGISTRY_HOST = docker-registry.intra.poltsi.fi
 
 all: publish_kontti publish_kontti_db
@@ -24,6 +27,10 @@ publish_kontti_db: build_kontti_db
 	docker tag kontti-db:$(VERSION) $(REGISTRY_HOST)/kontti-db:latest
 	docker push $(REGISTRY_HOST)/kontti-db:$(VERSION)
 	docker push $(REGISTRY_HOST)/kontti-db:latest
+
+bump_version:
+	echo "$(MAJOR).$(NEWMINOR)" > VERSION; \
+	git commit -s -m "* Bump version" VERSION
 
 clean:
 	docker stop konttilocal konttilocaldb; \
