@@ -53,6 +53,7 @@ if (!array_key_exists('uid', $_SESSION)) {
 				break;
 			case 'self':
 				$audit->log($_SESSION['uid'], 'admin-ok', 'User wants to handle self');
+				// TODO: Implement manipulatong self
 				break;
 			default:
 				$audit->log($_SESSION['uid'], 'admin-fail', 'User sent unknown action: ' . $data['action']);
