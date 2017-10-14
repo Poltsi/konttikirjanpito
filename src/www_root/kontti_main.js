@@ -1125,7 +1125,6 @@ function logout() {
     };
 
     xhr.send(json_data);
-
 }
 
 /******************************************************  STATS  ******************************************************/
@@ -1159,13 +1158,13 @@ function show_stats() {
     var own_button = document.createElement('button');
     own_button.innerHTML = 'Show your own stats';
     own_button.id = 'own_stats';
-    own_button.addEventListener('click', get_user_stats_function());
+    own_button.addEventListener('click', get_own_stats_function());
     button_div.appendChild(own_button);
 
     /* List general stats */
     var general_stats_button = document.createElement('button');
-    general_stats_button.innerHTML = 'Show your own stats';
-    general_stats_button.id = 'own_stats';
+    general_stats_button.innerHTML = 'Show general stats';
+    general_stats_button.id = 'general_stats';
     general_stats_button.addEventListener('click', get_general_stats_function());
     button_div.appendChild(general_stats_button);
 
@@ -1185,15 +1184,92 @@ function show_stats() {
 
 }
 
-function get_user_stats_function() {
+//----------------------------------- Own stats
+function get_own_stats_function() {
     "use strict";
-    return (function() {get_user_stats();});
+    return (function() {get_own_stats();});
 }
 
-function get_user_stats() {
-    // TODO: Implement user specific stats
+function get_own_stats() {
+    var request_data = {
+        'object': 'self',
+        'action': 'get'
+    };
+
+    var json_data = JSON.stringify(request_data);
+    /* Send the JSON to the server */
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", baseUrl + 'stats.php', true);
+    xhr.setRequestHeader("Content-type", "application/json");
+
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+            var response = JSON.parse(xhr.responseText);
+
+            if (response['status'] === 'OK') {
+                // empty_info();
+                add_info('Own status retrieved');
+                show_own_stats(response);
+            } else {
+                add_info('Failed to log out, please contact maintainers');
+
+                if (response['reason'] !== null) {
+                    add_info(response['reason']);
+                }
+            }
+        }
+    };
+
+    xhr.send(json_data);
+
 }
 
+function show_own_stats(response) {
+    print_stat_table(response['data']['fill_type'], "Sorted by fill type");
+    print_stat_table(response['data']['gas_type'], "Sorted by gas type");
+}
+
+function print_stat_table(arr, header) {
+    var data_elem = document.querySelector('#' + DATAAREAID);
+
+    var users_table = document.createElement('table');
+    users_table.setAttribute('border', '1');
+
+    var header_row = document.createElement('tr');
+
+    var cell1 = document.createElement('td');
+    cell1.innerHTML = "Type";
+    header_row.appendChild(cell1);
+
+    var cell2 = document.createElement('td');
+    cell2.innerHTML = "Count";
+    header_row.appendChild(cell2);
+
+
+    users_table.appendChild(header_row);
+
+    for (var i = 0; i < arr.length; i++) {
+        var data_row = document.createElement('tr');
+
+        var key_cell = document.createElement('td');
+        key_cell.innerHTML = arr[i]['stat_key'];
+        data_row.appendChild(key_cell);
+
+        var value_cell = document.createElement('td');
+        value_cell.innerHTML = arr[i]['stat_value'];
+        data_row.appendChild(value_cell);
+
+        users_table.appendChild(data_row);
+    }
+
+    var header_elem = document.createElement('h2');
+    header_elem.innerHTML = header;
+    data_elem.appendChild(header_elem);
+    data_elem.appendChild(users_table);
+
+}
+
+//----------------------------------- General stats
 function get_general_stats_function() {
     "use strict";
     return (function() {get_general_stats();});
@@ -1203,4 +1279,16 @@ function get_general_stats() {
     // TODO: Implement general stats
 }
 
+//----------------------------------- User stats
+function get_user_stats_function() {
+    "use strict";
+    return (function() {get_user_stats();});
+}
+
+function get_user_stats() {
+    // TODO: Implement user specific stats
+}
+
 /****************************************************** /STATS  ******************************************************/
+
+/****************************************************** GENERIC ******************************************************/

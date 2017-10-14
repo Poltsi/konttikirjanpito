@@ -40,7 +40,11 @@ class DB {
 		'get_unpaid_o2_by_user' => ['sql' => 'SELECT SUM(o2_vol) FROM fills WHERE uid = $1 AND counted = FALSE'],
 		'get_unpaid_he_by_user' => ['sql' => 'SELECT SUM(he_vol) FROM fills WHERE uid = $1 AND counted = FALSE'],
 		'get_count_by_user_and_type' => ['sql' => 'SELECT SUM(f.cyl_count) FROM fills f, gas_level g WHERE f.uid = $1 AND f.gas_level_id = g.gas_id AND g.gas_key = $2'],
-		'get_fill_id_by_key' => ['sql' => 'SELECT gas_id FROM gas_level WHERE gas_key = $1']
+		'get_fill_id_by_key' => ['sql' => 'SELECT gas_id FROM gas_level WHERE gas_key = $1'],
+		'get_user_stats_filltype_count' => ['sql' => 'SELECT fill_type AS stat_key, COUNT(*) AS stat_value FROM fills WHERE uid = $1 GROUP BY fill_type ORDER BY stat_key'],
+		'get_user_stats_gastype_count' => ['sql' => 'SELECT gl.gas_key  AS stat_key, COUNT(*) AS stat_value FROM gas_level gl, fills f WHERE f.gas_level_id = gl.gas_id AND f.uid = $1 GROUP BY f.gas_level_id, gl.gas_key ORDER BY stat_key'],
+		'get_generic_stats' => ['sql' => 'SELECT gas_id FROM gas_level WHERE gas_key = $1'],
+		'get_user_stats' => ['sql' => 'SELECT gas_id FROM gas_level WHERE gas_key = $1']
 	];
 
 	/**
@@ -210,6 +214,31 @@ class DB {
 		if (is_null($res)) {
 			$res = 0;
 		}
+		return $res;
+	}
+
+	public function getFillTypeCountByUser(int $uid): array {
+		$key = 'get_user_stats_filltype_count';
+
+		$result = pg_execute($this->dbcon, $key, array($uid));
+		$res = pg_fetch_all($result);
+
+		if (is_null($res)) {
+			$res = array();
+		}
+
+		return $res;
+	}
+
+	public function getGasTypeCountByUser(int $uid): array {
+		$key = 'get_user_stats_gastype_count';
+		$result = pg_execute($this->dbcon, $key, array($uid));
+		$res = pg_fetch_all($result);
+
+		if (is_null($res)) {
+			$res = array();
+		}
+
 		return $res;
 	}
 
