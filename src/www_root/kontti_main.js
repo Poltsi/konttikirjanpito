@@ -1211,7 +1211,7 @@ function get_own_stats() {
 			if (response['status'] === 'OK') {
 				// empty_info();
 				add_info('Own status retrieved');
-				show_own_stats(response);
+				show_basic_stats(response);
 			} else {
 				add_info('Failed to log out, please contact maintainers');
 
@@ -1226,7 +1226,7 @@ function get_own_stats() {
 
 }
 
-function show_own_stats(response) {
+function show_basic_stats(response) {
 	print_stat_table(response['data']['fill_type'], "Sorted by fill type");
 	print_stat_table(response['data']['gas_type'], "Sorted by gas type");
 }
@@ -1280,7 +1280,31 @@ function get_general_stats_function() {
 }
 
 function get_general_stats() {
-	// TODO: Implement general stats
+	var request_data = {
+		'object': 'self',
+		'action': 'get'
+	};
+
+	var callback = function(xhr) {
+		"use strict";
+		if (xhr.readyState === 4 && xhr.status === 200) {
+			var response = JSON.parse(xhr.responseText);
+
+			if (response['status'] === 'OK') {
+				empty_info();
+				add_info('Generic status retrieved');
+				show_basic_stats(response);
+			} else {
+				add_info('Failed to log out, please contact maintainers');
+
+				if (response['reason'] !== null) {
+					add_info(response['reason']);
+				}
+			}
+		}
+	}
+
+	send_json_request(request_data, 'stats.php', callback);
 }
 
 //----------------------------------- User stats
@@ -1298,3 +1322,17 @@ function get_user_stats() {
 /****************************************************** /STATS  ******************************************************/
 
 /****************************************************** GENERIC ******************************************************/
+
+function send_json_request(request_data, URI, callback) {
+	var json_data = JSON.stringify(request_data);
+	/* Send the JSON to the server */
+	var xhr = new XMLHttpRequest();
+	xhr.open("POST", baseUrl + URI, true);
+	xhr.setRequestHeader("Content-type", "application/json");
+
+	xhr.onreadystatechange = function () {
+		callback(xhr);
+	};
+
+	xhr.send(json_data);
+}
