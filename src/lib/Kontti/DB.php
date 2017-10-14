@@ -246,7 +246,7 @@ class DB {
 	public function getFillTypeCountGeneric(): array {
 		$key = 'get_generic_stats_filltype_count';
 
-		$result = pg_execute($this->dbcon, $key, array($uid));
+		$result = pg_execute($this->dbcon, $key, array());
 		$res = pg_fetch_all($result);
 
 		if (is_null($res)) {
@@ -258,7 +258,7 @@ class DB {
 
 	public function getGasTypeCountGeneric(): array {
 		$key = 'get_generic_stats_gastype_count';
-		$result = pg_execute($this->dbcon, $key, array($uid));
+		$result = pg_execute($this->dbcon, $key, array());
 		$res = pg_fetch_all($result);
 
 		if (is_null($res)) {

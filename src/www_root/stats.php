@@ -24,6 +24,7 @@ include_once('../lib/Kontti/Stats.php');
 
 $data = json_decode(stripslashes(file_get_contents("php://input")), true);
 /* Default response is only plain ok */
+$response = array();
 $response['status'] = 'OK';
 
 $db = new \Kontti\DB('localhost', 5432, 'kontti', 'kontti', 'konttipassu');
