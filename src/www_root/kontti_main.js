@@ -411,19 +411,13 @@ function get_users_table_header() {
 }
 
 function get_user_data() {
-	var search_data = {
+	var request_data = {
 		'object': 'user',
 		'action': 'get',
 		'target': ['user_all', 'gas_total', 'gas_unpaid_l', 'fill_total']
 	};
 
-	var json_data = JSON.stringify(search_data);
-	/* Send the JSON to the server */
-	var xhr = new XMLHttpRequest();
-	xhr.open("POST", baseUrl + 'admin.php', true);
-	xhr.setRequestHeader("Content-type", "application/json");
-
-	xhr.onreadystatechange = function () {
+	var callback= function (xhr) {
 		if (xhr.readyState === 4 && xhr.status === 200) {
 			var json = JSON.parse(xhr.responseText);
 			add_info('Return value: ' + json);
@@ -443,7 +437,7 @@ function get_user_data() {
 		}
 	};
 
-	xhr.send(json_data);
+	send_json_request(request_data, 'admin.php', callback);
 }
 
 /****************************************************** /ADMIN  ******************************************************/
@@ -690,7 +684,7 @@ function get_check_data_function() {
  */
 
 function save_data() {
-	var fill_array = [];
+	var request_data = [];
 
 	var table = document.querySelector('#' + DATAAREATABLEID);
 	var num_rows = table.childElementCount;
@@ -705,17 +699,11 @@ function save_data() {
 	for (var i = 0; i < next_id; i++) {
 		var row = document.querySelector('#' + FILLROWPREFIX + i);
 		if (row !== null) {
-			fill_array.push(get_fill_data(i));
+			request_data.push(get_fill_data(i));
 		}
 	}
 
-	var json_data = JSON.stringify(fill_array);
-
-	/* Send the JSON to the server */
-	var xhr = new XMLHttpRequest();
-	xhr.open("POST", baseUrl + 'add_data.php', true);
-	xhr.setRequestHeader("Content-type", "application/json");
-	xhr.onreadystatechange = function () {
+	var callback = function (xhr) {
 		if (xhr.readyState === 4 && xhr.status === 200) {
 			var json = JSON.parse(xhr.responseText);
 
@@ -730,7 +718,7 @@ function save_data() {
 		}
 	};
 
-	xhr.send(json_data);
+	send_json_request(request_data, 'add_data.php', callback);
 }
 
 /**
@@ -1042,19 +1030,13 @@ function get_verify_login_function() {
 
 function verify_login() {
 	/* Connect to server and verify the login credentials */
-	var login_data = {
+	var request_data = {
 		'type': 'login',
 		'login': get_login(),
 		'password': get_password()
 	};
 
-	var json_data = JSON.stringify(login_data);
-	/* Send the JSON to the server */
-	var xhr = new XMLHttpRequest();
-	xhr.open("POST", baseUrl + 'login.php', true);
-	xhr.setRequestHeader("Content-type", "application/json");
-
-	xhr.onreadystatechange = function () {
+	var callback = function (xhr) {
 		if (xhr.readyState === 4 && xhr.status === 200) {
 			var json = JSON.parse(xhr.responseText);
 			add_info('Return value: ' + json);
@@ -1076,7 +1058,7 @@ function verify_login() {
 		}
 	};
 
-	xhr.send(json_data);
+	send_json_request(request_data, 'login.php', callback);
 }
 
 /**
@@ -1096,15 +1078,9 @@ function get_logout_function() {
 
 function logout() {
 	/* TODO: Connect to server and verify the login credentials */
-	var logout_data = {'type': 'logout'};
+	var request_data = {'type': 'logout'};
 
-	var json_data = JSON.stringify(logout_data);
-	/* Send the JSON to the server */
-	var xhr = new XMLHttpRequest();
-	xhr.open("POST", baseUrl + 'logout.php', true);
-	xhr.setRequestHeader("Content-type", "application/json");
-
-	xhr.onreadystatechange = function () {
+	var callback = function (xhr) {
 		if (xhr.readyState === 4 && xhr.status === 200) {
 			var json = JSON.parse(xhr.responseText);
 			add_info('Return value: ' + json);
@@ -1124,7 +1100,7 @@ function logout() {
 		}
 	};
 
-	xhr.send(json_data);
+	send_json_request(request_data, 'logout.php', callback);
 }
 
 /******************************************************  STATS  ******************************************************/
@@ -1198,13 +1174,7 @@ function get_own_stats() {
 		'action': 'get'
 	};
 
-	var json_data = JSON.stringify(request_data);
-	/* Send the JSON to the server */
-	var xhr = new XMLHttpRequest();
-	xhr.open("POST", baseUrl + 'stats.php', true);
-	xhr.setRequestHeader("Content-type", "application/json");
-
-	xhr.onreadystatechange = function () {
+	var callback = function (xhr) {
 		if (xhr.readyState === 4 && xhr.status === 200) {
 			var response = JSON.parse(xhr.responseText);
 
@@ -1222,11 +1192,11 @@ function get_own_stats() {
 		}
 	};
 
-	xhr.send(json_data);
-
+	send_json_request(request_data, 'stats.php', callback);
 }
 
 function show_basic_stats(response) {
+	empty_data();
 	print_stat_table(response['data']['fill_type'], "Sorted by fill type");
 	print_stat_table(response['data']['gas_type'], "Sorted by gas type");
 }
@@ -1281,7 +1251,7 @@ function get_general_stats_function() {
 
 function get_general_stats() {
 	var request_data = {
-		'object': 'self',
+		'object': 'generic',
 		'action': 'get'
 	};
 
