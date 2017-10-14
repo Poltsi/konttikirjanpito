@@ -43,7 +43,8 @@ class DB {
 		'get_fill_id_by_key' => ['sql' => 'SELECT gas_id FROM gas_level WHERE gas_key = $1'],
 		'get_user_stats_filltype_count' => ['sql' => 'SELECT fill_type AS stat_key, SUM(cyl_count) AS stat_value FROM fills WHERE uid = $1 GROUP BY fill_type ORDER BY stat_key'],
 		'get_user_stats_gastype_count' => ['sql' => 'SELECT gl.gas_key  AS stat_key, SUM(f.cyl_count) AS stat_value FROM gas_level gl, fills f WHERE f.gas_level_id = gl.gas_id AND f.uid = $1 GROUP BY f.gas_level_id, gl.gas_key ORDER BY stat_key'],
-		'get_generic_stats' => ['sql' => 'SELECT gas_id FROM gas_level WHERE gas_key = $1'],
+		'get_generic_stats_filltype_count' => ['sql' => 'SELECT fill_type AS stat_key, SUM(cyl_count) AS stat_value FROM fills GROUP BY fill_type ORDER BY stat_key'],
+		'get_generic_stats_gastype_count' => ['sql' => 'SELECT gl.gas_key  AS stat_key, SUM(f.cyl_count) AS stat_value FROM gas_level gl, fills f WHERE f.gas_level_id = gl.gas_id GROUP BY f.gas_level_id, gl.gas_key ORDER BY stat_key'],
 		'get_user_stats' => ['sql' => 'SELECT gas_id FROM gas_level WHERE gas_key = $1']
 	];
 
@@ -232,6 +233,31 @@ class DB {
 
 	public function getGasTypeCountByUser(int $uid): array {
 		$key = 'get_user_stats_gastype_count';
+		$result = pg_execute($this->dbcon, $key, array($uid));
+		$res = pg_fetch_all($result);
+
+		if (is_null($res)) {
+			$res = array();
+		}
+
+		return $res;
+	}
+
+	public function getFillTypeCountGeneric(): array {
+		$key = 'get_generic_stats_filltype_count';
+
+		$result = pg_execute($this->dbcon, $key, array($uid));
+		$res = pg_fetch_all($result);
+
+		if (is_null($res)) {
+			$res = array();
+		}
+
+		return $res;
+	}
+
+	public function getGasTypeCountGeneric(): array {
+		$key = 'get_generic_stats_gastype_count';
 		$result = pg_execute($this->dbcon, $key, array($uid));
 		$res = pg_fetch_all($result);
 

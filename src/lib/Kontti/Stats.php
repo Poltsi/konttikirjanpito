@@ -37,7 +37,8 @@ class Stats {
 
 	public function getGenericStats(): array {
 		$arr = array();
-
+		$arr['fill_type'] = $this->db->getFillTypeCountGeneric();
+		$arr['gas_type'] = $this->db->getGasTypeCountGeneric();
 		return $arr;
 	}
 }

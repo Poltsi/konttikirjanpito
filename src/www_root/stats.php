@@ -60,6 +60,7 @@ if (!array_key_exists('uid', $_SESSION)) {
 		case 'generic':
 			$audit->log($_SESSION['uid'], 'stats-ok', 'User wants to view generic stats');
 			// TODO: Implement retrieving generic stats
+			$response['data'] = $stats->getGenericStats();
 			break;
 		default:
 			$audit->log($_SESSION['uid'], 'stats-fail', 'User sent unknown object: ' . $data['object']);
