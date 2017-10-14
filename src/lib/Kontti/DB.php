@@ -39,13 +39,16 @@ class DB {
 		'get_he_by_user' => ['sql' => 'SELECT SUM(he_vol) FROM fills WHERE uid = $1'],
 		'get_unpaid_o2_by_user' => ['sql' => 'SELECT SUM(o2_vol) FROM fills WHERE uid = $1 AND counted = FALSE'],
 		'get_unpaid_he_by_user' => ['sql' => 'SELECT SUM(he_vol) FROM fills WHERE uid = $1 AND counted = FALSE'],
-		'get_count_by_user_and_type' => ['sql' => 'SELECT SUM(f.cyl_count) FROM fills f, gas_level g WHERE f.uid = $1 AND f.gas_level_id = g.gas_id AND g.gas_key = $2'],
 		'get_fill_id_by_key' => ['sql' => 'SELECT gas_id FROM gas_level WHERE gas_key = $1'],
+		'get_user_count_and_type' => ['sql' => 'SELECT SUM(f.cyl_count) FROM fills f, gas_level g WHERE f.uid = $1 AND f.gas_level_id = g.gas_id AND g.gas_key = $2'],
 		'get_user_stats_filltype_count' => ['sql' => 'SELECT fill_type AS stat_key, SUM(cyl_count) AS stat_value FROM fills WHERE uid = $1 GROUP BY fill_type ORDER BY stat_key'],
 		'get_user_stats_gastype_count' => ['sql' => 'SELECT gl.gas_key  AS stat_key, SUM(f.cyl_count) AS stat_value FROM gas_level gl, fills f WHERE f.gas_level_id = gl.gas_id AND f.uid = $1 GROUP BY f.gas_level_id, gl.gas_key ORDER BY stat_key'],
+		'get_user_stats_vol_by_type' => ['sql' =>'SELECT SUM(o2_vol) AS o2, SUM(he_vol) AS he FROM fills WHERE uid = $1'],
+		'get_user_stats_by_cyl_type' => ['sql' =>'SELECT cyl_type AS stat_key, SUM(cyl_count) AS stat_value FROM fills WHERE uid = $1 GROUP BY cyl_type ORDER BY stat_value DESC'],
 		'get_generic_stats_filltype_count' => ['sql' => 'SELECT fill_type AS stat_key, SUM(cyl_count) AS stat_value FROM fills GROUP BY fill_type ORDER BY stat_key'],
 		'get_generic_stats_gastype_count' => ['sql' => 'SELECT gl.gas_key  AS stat_key, SUM(f.cyl_count) AS stat_value FROM gas_level gl, fills f WHERE f.gas_level_id = gl.gas_id GROUP BY f.gas_level_id, gl.gas_key ORDER BY stat_key'],
-		'get_user_stats' => ['sql' => 'SELECT gas_id FROM gas_level WHERE gas_key = $1']
+		'get_generic_stats_vol_by_type' => ['sql' =>'SELECT SUM(o2_vol) AS o2, SUM(he_vol) AS he FROM fills'],
+		'get_generic_stats_by_cyl_type' => ['sql' =>'SELECT cyl_type AS stat_key, SUM(cyl_count) AS stat_value FROM fills GROUP BY cyl_type ORDER BY stat_value DESC'],
 	];
 
 	/**
@@ -199,7 +202,7 @@ class DB {
 	}
 
 	public function getFillCountPerUser(int $uid, string $fill_type): int {
-		$key = 'get_count_by_user_and_type';
+		$key = 'get_user_count_and_type';
 		$result = pg_execute($this->dbcon, $key, array($uid, $fill_type));
 		$res = pg_fetch_row($result)[0];
 		if (is_null($res)) {
@@ -243,6 +246,18 @@ class DB {
 		return $res;
 	}
 
+	public function getGasVolumeByUser(int $uid): array {
+		$key = 'get_user_stats_vol_by_type';
+		$result = pg_execute($this->dbcon, $key, array($uid));
+		$res = pg_fetch_all($result);
+
+		if (is_null($res)) {
+			$res = array();
+		}
+
+		return $res;
+	}
+
 	public function getFillTypeCountGeneric(): array {
 		$key = 'get_generic_stats_filltype_count';
 
@@ -256,6 +271,17 @@ class DB {
 		return $res;
 	}
 
+	public function getCylTypeByUser(int $uid): array {
+		$key = 'get_user_stats_by_cyl_type';
+		$result = pg_execute($this->dbcon, $key, array($uid));
+		$res = pg_fetch_all($result);
+
+		if (is_null($res)) {
+			$res = array();
+		}
+
+		return $res;
+	}
 	public function getGasTypeCountGeneric(): array {
 		$key = 'get_generic_stats_gastype_count';
 		$result = pg_execute($this->dbcon, $key, array());
@@ -268,6 +294,29 @@ class DB {
 		return $res;
 	}
 
+	public function getGasVolumeGeneric(): array {
+		$key = 'get_generic_stats_vol_by_type';
+		$result = pg_execute($this->dbcon, $key, array());
+		$res = pg_fetch_all($result);
+
+		if (is_null($res)) {
+			$res = array();
+		}
+
+		return $res;
+	}
+
+	public function getCylTypeGeneric(): array {
+		$key = 'get_generic_stats_by_cyl_type';
+		$result = pg_execute($this->dbcon, $key, array());
+		$res = pg_fetch_all($result);
+
+		if (is_null($res)) {
+			$res = array();
+		}
+
+		return $res;
+	}
 	/**
 	 * @param string $sql
 	 * @param array $params

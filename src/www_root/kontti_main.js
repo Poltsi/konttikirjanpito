@@ -1197,8 +1197,46 @@ function get_own_stats() {
 
 function show_basic_stats(response) {
 	empty_data();
+	print_gas_consumption(response['data']['gas_volume'], 'Gas used');
 	print_stat_table(response['data']['fill_type'], "Sorted by fill type");
 	print_stat_table(response['data']['gas_type'], "Sorted by gas type");
+	print_stat_table(response['data']['cyl_type'], "Sorted by cylinder type");
+}
+
+function print_gas_consumption(arr, header) {
+	"use strict";
+	var data_elem = document.querySelector('#' + DATAAREAID);
+
+	var header_elem = document.createElement('h2');
+	header_elem.innerHTML = header;
+	data_elem.appendChild(header_elem);
+
+	var gas_table = document.createElement('table');
+	gas_table.setAttribute('border', '1');
+
+	var header_row = document.createElement('tr');
+
+	var cell1 = document.createElement('td');
+	cell1.innerHTML = "Oxygen (l)";
+	header_row.appendChild(cell1);
+
+	var cell2 = document.createElement('td');
+	cell2.innerHTML = "Helium (l)";
+	header_row.appendChild(cell2);
+	gas_table.appendChild(header_row);
+
+	var gas_row = document.createElement('tr');
+
+	var cell3 = document.createElement('td');
+	cell3.innerHTML = arr[0]['o2'];
+	gas_row.appendChild(cell3);
+
+	var cell4 = document.createElement('td');
+	cell4.innerHTML = arr[0]['he'];
+	gas_row.appendChild(cell4);
+	gas_table.appendChild(gas_row);
+
+	data_elem.appendChild(gas_table);
 }
 
 function print_stat_table(arr, header) {
