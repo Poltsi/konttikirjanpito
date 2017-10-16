@@ -345,34 +345,42 @@ function display_user_data(json) {
 
 		var o2_total_cell = document.createElement('td');
 		o2_total_cell.innerHTML = json['data'][i]['total_o2'];
+		o2_total_cell.style.textAlign = 'right';
 		data_row.appendChild(o2_total_cell);
 
 		var he_total_cell = document.createElement('td');
 		he_total_cell.innerHTML = json['data'][i]['total_he'];
+		he_total_cell.style.textAlign = 'right';
 		data_row.appendChild(he_total_cell);
 
 		var o2_unpaid_cell = document.createElement('td');
 		o2_unpaid_cell.innerHTML = json['data'][i]['unpaid_o2'];
+		o2_unpaid_cell.style.textAlign = 'right';
 		data_row.appendChild(o2_unpaid_cell);
 
 		var he_unpaid_cell = document.createElement('td');
 		he_unpaid_cell.innerHTML = json['data'][i]['unpaid_he'];
+		he_unpaid_cell.style.textAlign = 'right';
 		data_row.appendChild(he_unpaid_cell);
 
 		var count_air_cell = document.createElement('td');
 		count_air_cell.innerHTML = json['data'][i]['count_air'];
+		count_air_cell.style.textAlign = 'right';
 		data_row.appendChild(count_air_cell);
 
 		var count_nx_cell = document.createElement('td');
 		count_nx_cell.innerHTML = json['data'][i]['count_nx'];
+		count_nx_cell.style.textAlign = 'right';
 		data_row.appendChild(count_nx_cell);
 
 		var count_o2_cell = document.createElement('td');
 		count_o2_cell.innerHTML = json['data'][i]['count_o2'];
+		count_o2_cell.style.textAlign = 'right';
 		data_row.appendChild(count_o2_cell);
 
 		var count_tx_cell = document.createElement('td');
 		count_tx_cell.innerHTML = json['data'][i]['count_tx'];
+		count_tx_cell.style.textAlign = 'right';
 		data_row.appendChild(count_tx_cell);
 
 		users_table.appendChild(data_row);
@@ -1229,10 +1237,12 @@ function print_gas_consumption(arr, header) {
 
 	var cell3 = document.createElement('td');
 	cell3.innerHTML = arr[0]['o2'];
+	cell3.style.textAlign = 'right';
 	gas_row.appendChild(cell3);
 
 	var cell4 = document.createElement('td');
 	cell4.innerHTML = arr[0]['he'];
+	cell4.style.textAlign = 'right';
 	gas_row.appendChild(cell4);
 	gas_table.appendChild(gas_row);
 
@@ -1266,6 +1276,7 @@ function print_stat_table(arr, header) {
 		data_row.appendChild(key_cell);
 
 		var value_cell = document.createElement('td');
+		value_cell.style.textAlign = 'right';
 		value_cell.innerHTML = arr[i]['stat_value'];
 		data_row.appendChild(value_cell);
 
