@@ -318,70 +318,15 @@ function display_user_data(json) {
 
 	for (var i = 0; i < json['data'].length; i++) {
 		var data_row = document.createElement('tr');
-
-		var uid_cell = document.createElement('td');
-		uid_cell.innerHTML = json['data'][i]['uid'];
-		data_row.appendChild(uid_cell);
-
-		var gid_cell = document.createElement('td');
-		gid_cell.innerHTML = json['data'][i]['gid'];
-		data_row.appendChild(gid_cell);
-
-		var level_cell = document.createElement('td');
-		level_cell.innerHTML = json['data'][i]['level'];
-		data_row.appendChild(level_cell);
-
-		var login_cell = document.createElement('td');
-		login_cell.innerHTML = json['data'][i]['login'];
-		data_row.appendChild(login_cell);
-
-		var name_cell = document.createElement('td');
-		name_cell.innerHTML = json['data'][i]['name'];
-		data_row.appendChild(name_cell);
-
-		var enabled_cell = document.createElement('td');
-		enabled_cell.innerHTML = json['data'][i]['enabled'] ? 'Enabled' : 'Disabled';
-		data_row.appendChild(enabled_cell);
-
-		var o2_total_cell = document.createElement('td');
-		o2_total_cell.innerHTML = json['data'][i]['total_o2'];
-		o2_total_cell.style.textAlign = 'right';
-		data_row.appendChild(o2_total_cell);
-
-		var he_total_cell = document.createElement('td');
-		he_total_cell.innerHTML = json['data'][i]['total_he'];
-		he_total_cell.style.textAlign = 'right';
-		data_row.appendChild(he_total_cell);
-
-		var o2_unpaid_cell = document.createElement('td');
-		o2_unpaid_cell.innerHTML = json['data'][i]['unpaid_o2'];
-		o2_unpaid_cell.style.textAlign = 'right';
-		data_row.appendChild(o2_unpaid_cell);
-
-		var he_unpaid_cell = document.createElement('td');
-		he_unpaid_cell.innerHTML = json['data'][i]['unpaid_he'];
-		he_unpaid_cell.style.textAlign = 'right';
-		data_row.appendChild(he_unpaid_cell);
-
-		var count_air_cell = document.createElement('td');
-		count_air_cell.innerHTML = json['data'][i]['count_air'];
-		count_air_cell.style.textAlign = 'right';
-		data_row.appendChild(count_air_cell);
-
-		var count_nx_cell = document.createElement('td');
-		count_nx_cell.innerHTML = json['data'][i]['count_nx'];
-		count_nx_cell.style.textAlign = 'right';
-		data_row.appendChild(count_nx_cell);
-
-		var count_o2_cell = document.createElement('td');
-		count_o2_cell.innerHTML = json['data'][i]['count_o2'];
-		count_o2_cell.style.textAlign = 'right';
-		data_row.appendChild(count_o2_cell);
-
-		var count_tx_cell = document.createElement('td');
-		count_tx_cell.innerHTML = json['data'][i]['count_tx'];
-		count_tx_cell.style.textAlign = 'right';
-		data_row.appendChild(count_tx_cell);
+		console.log('Keys: ' + Object.keys(json['data'][i]));
+		Object.keys(json['data'][i]).forEach(function (key, index) {
+			console.log('Key: ' + key +' index: ' + index);
+			var val_cell = document.createElement('td');
+			val_cell.id = key + '-' + i;
+			val_cell.style.textAlign = 'right';
+			val_cell.innerHTML = json['data'][i][key];
+			data_row.appendChild(val_cell);
+		});
 
 		users_table.appendChild(data_row);
 	}
@@ -398,7 +343,7 @@ function get_users_table_header() {
 		'Level',
 		'Login',
 		'Full name',
-		'Account status',
+		'Account enabled',
 		'O2 used total (l)',
 		'He used total (l)',
 		'Unpaid O2 (l)',
