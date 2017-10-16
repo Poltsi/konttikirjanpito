@@ -42,8 +42,16 @@ class Audit {
 	 * @param string $message The audit message itself detailing what has passed
 	 */
 	public function log($uid, $type, $message) {
+		$remote = $_SERVER['REMOTE_ADDR'];
+
+		if (array_key_exists('GEOIP_ADDR', $_SERVER)) {
+			$remote = $_SERVER['GEOIP_ADDR'];
+		} elseif (array_key_exists('X-Forwarded-For', $_SERVER)) {
+			$remote = $_SERVER['X-Forwarded-For'];
+		}
+
 		if ($this->db->getState()) {
-			$this->db->addAudit($uid, $_SERVER['REMOTE_ADDR'], $type, $message);
+			$this->db->addAudit($uid, $remote, $type, $message);
 		}
 	}
 }
