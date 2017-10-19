@@ -33,7 +33,6 @@ class Audit {
 		$this->db = $db;
 	}
 
-
 	/**
 	 * log: Add an audit log to the database
 	 *
