@@ -304,6 +304,8 @@ function back_button() {
 	show_main();
 }
 
+/****************************************************** Admin ******************************************************/
+
 function display_user_data(json) {
 	var data_elem = document.querySelector('#' + DATAAREAID);
 
@@ -318,9 +320,8 @@ function display_user_data(json) {
 
 	for (var i = 0; i < json['data'].length; i++) {
 		var data_row = document.createElement('tr');
-		console.log('Keys: ' + Object.keys(json['data'][i]));
+
 		Object.keys(json['data'][i]).forEach(function (key, index) {
-			console.log('Key: ' + key +' index: ' + index);
 			var val_cell = document.createElement('td');
 			val_cell.id = key + '-' + i;
 			val_cell.style.textAlign = 'right';
@@ -328,11 +329,51 @@ function display_user_data(json) {
 			data_row.appendChild(val_cell);
 		});
 
+		var edit_cell = document.createElement('td');
+		edit_cell.id = 'edit_cell' + '-' + i;
+		edit_cell.style.textAlign = 'right';
+
+		var edit_button = document.createElement('button');
+		edit_button.innerText = 'Edit user';
+		edit_button.id = 'edit_button-' + json['data'][i]['uid'];
+		edit_button.addEventListener('click', get_edit_user_function(data_row, i + 2, json['data'][i]['uid'], 'open'));
+		edit_cell.appendChild(edit_button);
+		data_row.appendChild(edit_cell);
+
 		users_table.appendChild(data_row);
 	}
 
 	data_elem.appendChild(users_table);
 }
+
+function get_edit_user_function(data_row, row, uid, action) {
+	return function() {edit_user(data_row, row, uid, action)};
+}
+
+function edit_user(data_row, row, uid, action) {
+	var edit_button = document.querySelector('#edit_button-' + uid);
+	// Workaround to remove and replace the eventListener
+	var clone_button = edit_button.cloneNode(true);
+	edit_button.parentNode.replaceChild(clone_button, edit_button);
+
+	if (action === 'open') {
+		// First we toggle the button action to close
+		clone_button.addEventListener('click', get_edit_user_function(data_row, row, uid, 'close'));
+		// TODO: Open the edit row for the given user
+		var edit_tr = document.createElement('tr');
+		edit_tr.id = 'tr_edit_row-' + uid;
+		data_row.parentNode.insertBefore(edit_tr, data_row.nextSibling);
+		var edit_td = edit_tr.insertCell(0);
+		edit_td.colSpan = 15;
+		edit_td.innerHTML = 'This is user editor for ' + uid;
+	} else if (action === 'close') {
+		// First we toggle the button action to open
+		clone_button.addEventListener('click', get_edit_user_function(data_row, row, uid, 'open'));
+		var edit_row = document.querySelector('#tr_edit_row-' + uid);
+		edit_row.parentNode.removeChild(edit_row);
+	}
+}
+/***************************************************** /Admin ******************************************************/
 
 function get_users_table_header() {
 	var header_tr = document.createElement('tr');
@@ -359,6 +400,10 @@ function get_users_table_header() {
 		td_elem.innerHTML = field_array[i];
 		header_tr.appendChild(td_elem);
 	}
+
+	var lock_elem = document.createElement('td');
+	lock_elem.innerHTML = 'Modify user';
+	header_tr.appendChild(lock_elem);
 
 	return (header_tr);
 }
