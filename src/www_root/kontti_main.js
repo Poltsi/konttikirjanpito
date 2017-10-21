@@ -417,9 +417,11 @@ function get_user_edit_form(response) {
 	}
 
 	var sum_row = document.createElement('tr');
-	sum_row.appendChild(document.createElement('td'));
-	sum_row.appendChild(document.createElement('td'));
-	sum_row.appendChild(document.createElement('td'));
+	var total_cell = document.createElement('td');
+	total_cell.colSpan = 3;
+	total_cell.innerHTML = 'Total';
+	total_cell.style.textAlign = 'left';
+	sum_row.appendChild(total_cell);
 
 	var cyl_sum_cell = document.createElement('td');
 	cyl_sum_cell.innerHTML = counter['cyl_count'];
