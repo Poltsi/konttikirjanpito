@@ -31,4 +31,8 @@ class Admin {
 	public function __construct(DB $db) {
 		$this->db = $db;
 	}
+
+	public function get_unused_fills_by_user(int $uid): array {
+		return $this->db->get_unused_fill_by_user($uid);
+	}
 }

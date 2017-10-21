@@ -23,6 +23,7 @@ class UserManipulator {
 	private $target = null;
 	private $filter = null;
 	private $dbcon = null;
+	private $uid = null;
 
 	/**
 	 * UserManipulator constructor.
@@ -36,6 +37,10 @@ class UserManipulator {
 
 		if (array_key_exists('filter', $struct)) {
 			$this->filter = $struct['filter'];
+		}
+
+		if (array_key_exists('uid', $struct)) {
+			$this->uid = $struct['uid'];
 		}
 	}
 
@@ -71,7 +76,10 @@ class UserManipulator {
 						$arr = $this->getGasTotal($arr);
 						break;
 					case 'gas_unpaid_l':
-						$arr = $this->getGasUnpaid($arr);
+						$arr = $this->getGasUnpaidVolume($arr);
+						break;
+					case 'unpaid_fills':
+						$arr = $this->getGasUnpaidFill();
 						break;
 					case 'fill_total':
 						$arr = $this->getFillCountTotal($arr);
@@ -92,7 +100,7 @@ class UserManipulator {
 		return $arr;
 	}
 
-	private function getGasUnpaid(array $arr): array {
+	private function getGasUnpaidVolume(array $arr): array {
 		for ($i = 0; $i < count($arr); $i++) {
 			$arr[$i]['unpaid_o2'] = $this->dbcon->getUnpaidGasPerUser($arr[$i]['uid'], 'o2');
 			$arr[$i]['unpaid_he'] = $this->dbcon->getUnpaidGasPerUser($arr[$i]['uid'], 'he');
@@ -110,5 +118,9 @@ class UserManipulator {
 		}
 
 		return $arr;
+	}
+
+	private function getGasUnpaidFill(): array {
+		return array('uid' => $this->uid, 'fills' => $this->dbcon->get_unused_fill_by_user($this->uid));
 	}
 }

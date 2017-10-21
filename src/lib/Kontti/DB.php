@@ -37,6 +37,7 @@ class DB {
 		'get_user_all_by_uid' => ['sql' => 'SELECT uid, gid, login, level, name, enabled FROM users WHERE uid = $1'],
 		'get_o2_by_user' => ['sql' => 'SELECT SUM(o2_vol) FROM fills WHERE uid = $1'],
 		'get_he_by_user' => ['sql' => 'SELECT SUM(he_vol) FROM fills WHERE uid = $1'],
+		'get_unpaid_fills_by_user' => ['sql' => "SELECT fill_datetime, fill_type, cyl_type, cyl_count, o2_vol, he_vol FROM fills WHERE uid = $1 AND counted = FALSE AND fill_type = 'vid' ORDER BY fill_datetime ASC"],
 		'get_unpaid_o2_by_user' => ['sql' => 'SELECT SUM(o2_vol) FROM fills WHERE uid = $1 AND counted = FALSE'],
 		'get_unpaid_he_by_user' => ['sql' => 'SELECT SUM(he_vol) FROM fills WHERE uid = $1 AND counted = FALSE'],
 		'get_fill_id_by_key' => ['sql' => 'SELECT gas_id FROM gas_level WHERE gas_key = $1'],
@@ -317,6 +318,19 @@ class DB {
 
 		return $res;
 	}
+
+	public function get_unused_fill_by_user(int $uid): ?array {
+		$key = 'get_unpaid_fills_by_user';
+		$result = pg_execute($this->dbcon, $key, array($uid));
+		$res = pg_fetch_all($result);
+
+		if (is_null($res)) {
+			$res = array();
+		}
+
+		return $res;
+	}
+
 	/**
 	 * @param string $sql
 	 * @param array $params

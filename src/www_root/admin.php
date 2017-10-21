@@ -50,6 +50,11 @@ if (!array_key_exists('uid', $_SESSION)) {
 				$audit->log($_SESSION['uid'], 'admin-ok', 'User wants to handle user');
 				$userManipulator = new Kontti\UserManipulator($db, $data);
 				$response['data'] = $userManipulator->action();
+
+				if (count($response['data']) == 0) {
+					$response['reason'] = 'No user data retrieved';
+				}
+
 				break;
 			case 'self':
 				$audit->log($_SESSION['uid'], 'admin-ok', 'User wants to handle self');

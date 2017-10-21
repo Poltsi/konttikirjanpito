@@ -304,8 +304,6 @@ function back_button() {
 	show_main();
 }
 
-/****************************************************** Admin ******************************************************/
-
 function display_user_data(json) {
 	var data_elem = document.querySelector('#' + DATAAREAID);
 
@@ -365,7 +363,7 @@ function edit_user(data_row, row, uid, action) {
 		data_row.parentNode.insertBefore(edit_tr, data_row.nextSibling);
 		var edit_td = edit_tr.insertCell(0);
 		edit_td.colSpan = 15;
-		edit_td.innerHTML = 'This is user editor for ' + uid;
+		get_user_unpaid_fills(uid, edit_td);
 	} else if (action === 'close') {
 		// First we toggle the button action to open
 		clone_button.addEventListener('click', get_edit_user_function(data_row, row, uid, 'open'));
@@ -373,7 +371,90 @@ function edit_user(data_row, row, uid, action) {
 		edit_row.parentNode.removeChild(edit_row);
 	}
 }
-/***************************************************** /Admin ******************************************************/
+
+function get_user_edit_form(response) {
+	if (!('fills' in response['data']) || (response['data']['fills'].length === 0)) {
+		return document.createTextNode(response['reason']);
+	}
+
+	var counter = {'cyl_count': 0,
+		'o2_volume': 0,
+		'he_volume': 0
+	};
+
+	var uid = response['data']['uid'];
+	var edit_form = document.createElement('form');
+	// Store the uid
+	var uid_hidden = document.createElement('input');
+	uid_hidden.setAttribute('type', 'hidden');
+	uid_hidden.setAttribute('value', uid);
+	edit_form.appendChild(uid_hidden);
+
+	var editor_table = document.createElement('table');
+	editor_table.appendChild(get_user_edit_header());
+
+	for (var i = 0; i < response['data']['fills'].length; i++) {
+		var editor_row = document.createElement('tr');
+
+		Object.keys(response['data']['fills'][i]).forEach(function (key, index) {
+			var val_cell = document.createElement('td');
+			val_cell.id = key + '-' + i;
+			val_cell.style.textAlign = 'right';
+			val_cell.innerHTML = response['data']['fills'][i][key];
+			editor_row.appendChild(val_cell);
+		});
+
+		counter['cyl_count'] += parseInt(response['data']['fills'][i]['cyl_count']);
+		counter['o2_volume'] += parseInt(response['data']['fills'][i]['o2_vol']);
+		counter['he_volume'] += parseInt(response['data']['fills'][i]['he_vol']);
+
+		var editor_checkbox_cell = document.createElement('td');
+		var check_box = document.createElement('checkbox');
+		check_box.id = 'mark_fill-' + uid + '-' + response['data']['fills'][i]['fill_id'];
+		editor_checkbox_cell.appendChild(check_box);
+		editor_row.appendChild(editor_checkbox_cell);
+		editor_table.appendChild(editor_row);
+	}
+
+	var sum_row = document.createElement('tr');
+	sum_row.appendChild(document.createElement('td'));
+	sum_row.appendChild(document.createElement('td'));
+	sum_row.appendChild(document.createElement('td'));
+
+	var cyl_sum_cell = document.createElement('td');
+	cyl_sum_cell.innerHTML = counter['cyl_count'];
+	cyl_sum_cell.style.textAlign = 'right';
+	sum_row.appendChild(cyl_sum_cell);
+
+	var o2_sum_cell = document.createElement('td');
+	o2_sum_cell.innerHTML = counter['o2_volume'];
+	o2_sum_cell.style.textAlign = 'right';
+	sum_row.appendChild(o2_sum_cell);
+
+	var he_sum_cell = document.createElement('td');
+	he_sum_cell.innerHTML = counter['he_volume'];
+	he_sum_cell.style.textAlign = 'right';
+	sum_row.appendChild(he_sum_cell);
+
+	editor_table.appendChild(sum_row);
+
+	edit_form.appendChild(editor_table);
+
+	return (edit_form);
+}
+
+function get_user_edit_header() {
+	var header_tr = document.createElement('tr');
+	var labels = ['Date', 'Fill type', 'Cylinder type', 'Cylinder count', 'O2 volume', 'He volume'];
+
+	for (var label in labels) {
+		var cell = document.createElement('td');
+		cell.innerHTML = labels[label];
+		header_tr.appendChild(cell);
+	}
+
+	return header_tr;
+}
 
 function get_users_table_header() {
 	var header_tr = document.createElement('tr');
@@ -425,6 +506,37 @@ function get_user_data() {
 				empty_data();
 				add_info('User data retrieved');
 				display_user_data(json)
+			} else {
+				add_info('Could not get the user data');
+
+				if (json['reason'] !== null) {
+					add_info(json['reason']);
+				}
+			}
+		}
+	};
+
+	send_json_request(request_data, 'admin.php', callback);
+}
+
+function get_user_unpaid_fills(uid, parent_element) {
+	var request_data = {
+		'object': 'user',
+		'action': 'get',
+		'target': ['unpaid_fills'],
+		'uid' : uid
+	};
+
+	var callback= function (xhr) {
+		if (xhr.readyState === 4 && xhr.status === 200) {
+			var json = JSON.parse(xhr.responseText);
+			add_info('Return value: ' + json);
+
+			if (json['status'] === 'OK') {
+				empty_info();
+				// empty_data();
+				add_info('User data for edit retrieved');
+				parent_element.appendChild(get_user_edit_form(json));
 			} else {
 				add_info('Could not get the user data');
 
