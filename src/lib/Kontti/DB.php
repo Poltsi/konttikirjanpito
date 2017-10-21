@@ -37,7 +37,7 @@ class DB {
 		'get_user_all_by_uid' => ['sql' => 'SELECT uid, gid, login, level, name, enabled FROM users WHERE uid = $1'],
 		'get_o2_by_user' => ['sql' => 'SELECT SUM(o2_vol) FROM fills WHERE uid = $1'],
 		'get_he_by_user' => ['sql' => 'SELECT SUM(he_vol) FROM fills WHERE uid = $1'],
-		'get_unpaid_fills_by_user' => ['sql' => "SELECT fill_datetime, fill_type, cyl_type, cyl_count, o2_vol, he_vol FROM fills WHERE uid = $1 AND counted = FALSE AND fill_type = 'vid' ORDER BY fill_datetime ASC"],
+		'get_unpaid_fills_by_user' => ['sql' => "SELECT f.fill_datetime, g.gas_key, f.fill_type, f.cyl_type, f.cyl_count, f.o2_vol, f.he_vol FROM fills f, gas_level g WHERE f.uid = $1 AND g.gas_id = f.gas_level_id AND f.counted = FALSE AND f.fill_type = 'vid' AND gas_key IN ('o2', 'tx') ORDER BY f.fill_datetime ASC"],
 		'get_unpaid_o2_by_user' => ['sql' => 'SELECT SUM(o2_vol) FROM fills WHERE uid = $1 AND counted = FALSE'],
 		'get_unpaid_he_by_user' => ['sql' => 'SELECT SUM(he_vol) FROM fills WHERE uid = $1 AND counted = FALSE'],
 		'get_fill_id_by_key' => ['sql' => 'SELECT gas_id FROM gas_level WHERE gas_key = $1'],

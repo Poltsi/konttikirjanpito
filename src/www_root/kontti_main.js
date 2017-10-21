@@ -405,7 +405,7 @@ function get_user_edit_form(response) {
 		});
 
 		counter['cyl_count'] += parseInt(response['data']['fills'][i]['cyl_count']);
-		counter['o2_volume'] += parseInt(response['data']['fills'][i]['o2_vol']);
+		if (response['data']['fills'][i]['gas_key'] === 'o2') counter['o2_volume'] += parseInt(response['data']['fills'][i]['o2_vol']);
 		counter['he_volume'] += parseInt(response['data']['fills'][i]['he_vol']);
 
 		var editor_checkbox_cell = document.createElement('td');
@@ -418,7 +418,7 @@ function get_user_edit_form(response) {
 
 	var sum_row = document.createElement('tr');
 	var total_cell = document.createElement('td');
-	total_cell.colSpan = 3;
+	total_cell.colSpan = 4;
 	total_cell.innerHTML = 'Total';
 	total_cell.style.textAlign = 'left';
 	sum_row.appendChild(total_cell);
@@ -447,7 +447,7 @@ function get_user_edit_form(response) {
 
 function get_user_edit_header() {
 	var header_tr = document.createElement('tr');
-	var labels = ['Date', 'Fill type', 'Cylinder type', 'Cylinder count', 'O2 volume', 'He volume'];
+	var labels = ['Date', 'Gas type', 'Fill type', 'Cylinder type', 'Cylinder count', 'O2 volume', 'He volume'];
 
 	for (var label in labels) {
 		var cell = document.createElement('td');
