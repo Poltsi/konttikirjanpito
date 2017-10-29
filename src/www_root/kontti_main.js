@@ -409,9 +409,12 @@ function get_user_edit_form(response) {
 		counter['he_volume'] += parseInt(response['data']['fills'][i]['he_vol']);
 
 		var editor_checkbox_cell = document.createElement('td');
-		var check_box = document.createElement('checkbox');
+		var check_box = document.createElement('input');
+		check_box.type = 'checkbox';
 		check_box.id = 'mark_fill-' + uid + '-' + response['data']['fills'][i]['fill_id'];
 		editor_checkbox_cell.appendChild(check_box);
+		editor_checkbox_cell.style.textAlign = 'center';
+		editor_checkbox_cell.style.verticalAlign = 'middle';
 		editor_row.appendChild(editor_checkbox_cell);
 		editor_table.appendChild(editor_row);
 	}
@@ -447,10 +450,12 @@ function get_user_edit_form(response) {
 
 function get_user_edit_header() {
 	var header_tr = document.createElement('tr');
-	var labels = ['Date', 'Gas type', 'Fill type', 'Cylinder type', 'Cylinder count', 'O2 volume', 'He volume'];
+	var labels = ['Date', 'Gas type', 'Fill type', 'Cylinder type', 'Cylinder count', 'O2 volume', 'He volume', 'Mark as paid'];
 
 	for (var label in labels) {
 		var cell = document.createElement('td');
+		cell.style.padding = '10px';
+		cell.style.backgroundColor = 'grey';
 		cell.innerHTML = labels[label];
 		header_tr.appendChild(cell);
 	}
