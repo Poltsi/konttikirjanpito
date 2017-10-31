@@ -26,6 +26,7 @@ class FillTest extends \PHPUnit\Framework\TestCase {
 	protected $db;
 	protected $fill_arr = array();
 	protected $uid = 50000;
+
 	/**
 	 * Sets up the fixture, for example, opens a network connection.
 	 * This method is called before a test is executed.

@@ -74,11 +74,11 @@ class UserList {
 
 		foreach ($this->user_list as $user) {
 			$arr[] = array(
-				'uid' => $user->getUid(),
-				'gid' => $user->getGid(),
-				'login' => $user->getLogin(),
-				'level' => $user->getLevel(),
-				'name' => $user->getName(),
+				'uid'     => $user->getUid(),
+				'gid'     => $user->getGid(),
+				'login'   => $user->getLogin(),
+				'level'   => $user->getLevel(),
+				'name'    => $user->getName(),
 				'enabled' => $user->enabled());
 		}
 

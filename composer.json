@@ -1,7 +1,7 @@
 {
   "autoload": {
     "psr-4": {
-      "Kontti\\":"src/lib/Kontti",
+      "Kontti\\": "src/lib/Kontti",
       "phpunit/phpunit": "^6.0"
     }
   }

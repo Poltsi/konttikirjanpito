@@ -26,30 +26,30 @@ class DB {
 	private $state;
 
 	private $db_stmt = [
-		'put_audit' => ['sql' => 'INSERT INTO audit VALUES (NOW(), $1 , $2, $3, $4)'],
-		'get_login' => ['sql' => 'SELECT uid, enabled, level FROM users WHERE login = $1 AND password = crypt($2, salt)'],
-		'get_user_auth' => ['sql' => 'SELECT uid, gid, level, name, enabled FROM users WHERE login = $1 AND password = crypt($2, salt)'],
-		'get_min_gas_id' => ['sql' => 'SELECT min_fill_level, gas_id FROM gas_level WHERE gas_key = $1'],
-		'add_fill' => ['sql' => 'INSERT INTO fills ' .
+		'put_audit'                        => ['sql' => 'INSERT INTO audit VALUES (NOW(), $1 , $2, $3, $4)'],
+		'get_login'                        => ['sql' => 'SELECT uid, enabled, level FROM users WHERE login = $1 AND password = crypt($2, salt)'],
+		'get_user_auth'                    => ['sql' => 'SELECT uid, gid, level, name, enabled FROM users WHERE login = $1 AND password = crypt($2, salt)'],
+		'get_min_gas_id'                   => ['sql' => 'SELECT min_fill_level, gas_id FROM gas_level WHERE gas_key = $1'],
+		'add_fill'                         => ['sql' => 'INSERT INTO fills ' .
 			'(uid, fill_datetime, gas_level_id, fill_type, cyl_type, cyl_count, cyl_size, start_pressure, end_pressure, o2_start, o2_end, he_start, he_end, o2_vol, he_vol, counted) ' .
-			'VALUES ($1, now(), $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, false)'],
-		'get_all_user_uid' => ['sql' => 'SELECT uid FROM users'],
-		'get_user_all_by_uid' => ['sql' => 'SELECT uid, gid, login, level, name, enabled FROM users WHERE uid = $1'],
-		'get_o2_by_user' => ['sql' => 'SELECT SUM(o2_vol) FROM fills WHERE uid = $1'],
-		'get_he_by_user' => ['sql' => 'SELECT SUM(he_vol) FROM fills WHERE uid = $1'],
-		'get_unpaid_fills_by_user' => ['sql' => "SELECT f.fill_datetime, g.gas_key, f.fill_type, f.cyl_type, f.cyl_count, f.o2_vol, f.he_vol FROM fills f, gas_level g WHERE f.uid = $1 AND g.gas_id = f.gas_level_id AND f.counted = FALSE AND f.fill_type = 'vid' AND gas_key IN ('o2', 'tx') ORDER BY f.fill_datetime ASC"],
-		'get_unpaid_o2_by_user' => ['sql' => 'SELECT SUM(o2_vol) FROM fills WHERE uid = $1 AND counted = FALSE'],
-		'get_unpaid_he_by_user' => ['sql' => 'SELECT SUM(he_vol) FROM fills WHERE uid = $1 AND counted = FALSE'],
-		'get_fill_id_by_key' => ['sql' => 'SELECT gas_id FROM gas_level WHERE gas_key = $1'],
-		'get_user_count_and_type' => ['sql' => 'SELECT SUM(f.cyl_count) FROM fills f, gas_level g WHERE f.uid = $1 AND f.gas_level_id = g.gas_id AND g.gas_key = $2'],
-		'get_user_stats_filltype_count' => ['sql' => 'SELECT fill_type AS stat_key, SUM(cyl_count) AS stat_value FROM fills WHERE uid = $1 GROUP BY fill_type ORDER BY stat_key'],
-		'get_user_stats_gastype_count' => ['sql' => 'SELECT gl.gas_key  AS stat_key, SUM(f.cyl_count) AS stat_value FROM gas_level gl, fills f WHERE f.gas_level_id = gl.gas_id AND f.uid = $1 GROUP BY f.gas_level_id, gl.gas_key ORDER BY stat_key'],
-		'get_user_stats_vol_by_type' => ['sql' =>'SELECT SUM(o2_vol) AS o2, SUM(he_vol) AS he FROM fills WHERE uid = $1'],
-		'get_user_stats_by_cyl_type' => ['sql' =>'SELECT cyl_type AS stat_key, SUM(cyl_count) AS stat_value FROM fills WHERE uid = $1 GROUP BY cyl_type ORDER BY stat_value DESC'],
+			'VALUES ($1, now(), $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, FALSE)'],
+		'get_all_user_uid'                 => ['sql' => 'SELECT uid FROM users'],
+		'get_user_all_by_uid'              => ['sql' => 'SELECT uid, gid, login, level, name, enabled FROM users WHERE uid = $1'],
+		'get_o2_by_user'                   => ['sql' => 'SELECT SUM(o2_vol) FROM fills WHERE uid = $1'],
+		'get_he_by_user'                   => ['sql' => 'SELECT SUM(he_vol) FROM fills WHERE uid = $1'],
+		'get_unpaid_fills_by_user'         => ['sql' => "SELECT f.fill_datetime, g.gas_key, f.fill_type, f.cyl_type, f.cyl_count, f.o2_vol, f.he_vol FROM fills f, gas_level g WHERE f.uid = $1 AND g.gas_id = f.gas_level_id AND f.counted = FALSE AND f.fill_type = 'vid' AND gas_key IN ('o2', 'tx') ORDER BY f.fill_datetime ASC"],
+		'get_unpaid_o2_by_user'            => ['sql' => 'SELECT SUM(o2_vol) FROM fills WHERE uid = $1 AND counted = FALSE'],
+		'get_unpaid_he_by_user'            => ['sql' => 'SELECT SUM(he_vol) FROM fills WHERE uid = $1 AND counted = FALSE'],
+		'get_fill_id_by_key'               => ['sql' => 'SELECT gas_id FROM gas_level WHERE gas_key = $1'],
+		'get_user_count_and_type'          => ['sql' => 'SELECT SUM(f.cyl_count) FROM fills f, gas_level g WHERE f.uid = $1 AND f.gas_level_id = g.gas_id AND g.gas_key = $2'],
+		'get_user_stats_filltype_count'    => ['sql' => 'SELECT fill_type AS stat_key, SUM(cyl_count) AS stat_value FROM fills WHERE uid = $1 GROUP BY fill_type ORDER BY stat_key'],
+		'get_user_stats_gastype_count'     => ['sql' => 'SELECT gl.gas_key  AS stat_key, SUM(f.cyl_count) AS stat_value FROM gas_level gl, fills f WHERE f.gas_level_id = gl.gas_id AND f.uid = $1 GROUP BY f.gas_level_id, gl.gas_key ORDER BY stat_key'],
+		'get_user_stats_vol_by_type'       => ['sql' => 'SELECT SUM(o2_vol) AS o2, SUM(he_vol) AS he FROM fills WHERE uid = $1'],
+		'get_user_stats_by_cyl_type'       => ['sql' => 'SELECT cyl_type AS stat_key, SUM(cyl_count) AS stat_value FROM fills WHERE uid = $1 GROUP BY cyl_type ORDER BY stat_value DESC'],
 		'get_generic_stats_filltype_count' => ['sql' => 'SELECT fill_type AS stat_key, SUM(cyl_count) AS stat_value FROM fills GROUP BY fill_type ORDER BY stat_key'],
-		'get_generic_stats_gastype_count' => ['sql' => 'SELECT gl.gas_key  AS stat_key, SUM(f.cyl_count) AS stat_value FROM gas_level gl, fills f WHERE f.gas_level_id = gl.gas_id GROUP BY f.gas_level_id, gl.gas_key ORDER BY stat_key'],
-		'get_generic_stats_vol_by_type' => ['sql' =>'SELECT SUM(o2_vol) AS o2, SUM(he_vol) AS he FROM fills'],
-		'get_generic_stats_by_cyl_type' => ['sql' =>'SELECT cyl_type AS stat_key, SUM(cyl_count) AS stat_value FROM fills GROUP BY cyl_type ORDER BY stat_value DESC'],
+		'get_generic_stats_gastype_count'  => ['sql' => 'SELECT gl.gas_key  AS stat_key, SUM(f.cyl_count) AS stat_value FROM gas_level gl, fills f WHERE f.gas_level_id = gl.gas_id GROUP BY f.gas_level_id, gl.gas_key ORDER BY stat_key'],
+		'get_generic_stats_vol_by_type'    => ['sql' => 'SELECT SUM(o2_vol) AS o2, SUM(he_vol) AS he FROM fills'],
+		'get_generic_stats_by_cyl_type'    => ['sql' => 'SELECT cyl_type AS stat_key, SUM(cyl_count) AS stat_value FROM fills GROUP BY cyl_type ORDER BY stat_value DESC'],
 	];
 
 	/**
@@ -61,10 +61,10 @@ class DB {
 	 * @param $password
 	 */
 	public function __construct($hostname, $port, $database, $user, $password) {
-		$this->hostname = strlen(getenv('KONTTI_HOST',     true)) ? getenv('KONTTI_HOST', true) : $hostname;
-		$this->port     = strlen(getenv('KONTTI_PORT',     true)) ? getenv('KONTTI_PORT', true) : $port;
-		$this->database = strlen(getenv('KONTTI_DB',       true)) ? getenv('KONTTI_DB', true) : $database;
-		$this->user     = strlen(getenv('KONTTI_USER',     true)) ? getenv('KONTTI_USER', true) : $user;
+		$this->hostname = strlen(getenv('KONTTI_HOST', true)) ? getenv('KONTTI_HOST', true) : $hostname;
+		$this->port = strlen(getenv('KONTTI_PORT', true)) ? getenv('KONTTI_PORT', true) : $port;
+		$this->database = strlen(getenv('KONTTI_DB', true)) ? getenv('KONTTI_DB', true) : $database;
+		$this->user = strlen(getenv('KONTTI_USER', true)) ? getenv('KONTTI_USER', true) : $user;
 		$this->password = strlen(getenv('KONTTI_PASSWORD', true)) ? getenv('KONTTI_PASSWORD', true) : $password;
 
 		$this->connect();
@@ -283,6 +283,7 @@ class DB {
 
 		return $res;
 	}
+
 	public function getGasTypeCountGeneric(): array {
 		$key = 'get_generic_stats_gastype_count';
 		$result = pg_execute($this->dbcon, $key, array());
@@ -333,7 +334,7 @@ class DB {
 
 	/**
 	 * @param string $sql
-	 * @param array $params
+	 * @param array  $params
 	 * @return array|bool
 	 */
 	public function runSQL(string $sql, array $params): ?array {

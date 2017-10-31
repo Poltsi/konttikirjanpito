@@ -345,7 +345,9 @@ function display_user_data(json) {
 }
 
 function get_edit_user_function(data_row, row, uid, action) {
-	return function() {edit_user(data_row, row, uid, action)};
+	return function () {
+		edit_user(data_row, row, uid, action)
+	};
 }
 
 function edit_user(data_row, row, uid, action) {
@@ -377,7 +379,8 @@ function get_user_edit_form(response) {
 		return document.createTextNode(response['reason']);
 	}
 
-	var counter = {'cyl_count': 0,
+	var counter = {
+		'cyl_count': 0,
 		'o2_volume': 0,
 		'he_volume': 0
 	};
@@ -503,7 +506,7 @@ function get_user_data() {
 		'target': ['user_all', 'gas_total', 'gas_unpaid_l', 'fill_total']
 	};
 
-	var callback= function (xhr) {
+	var callback = function (xhr) {
 		if (xhr.readyState === 4 && xhr.status === 200) {
 			var json = JSON.parse(xhr.responseText);
 			add_info('Return value: ' + json);
@@ -531,10 +534,10 @@ function get_user_unpaid_fills(uid, parent_element) {
 		'object': 'user',
 		'action': 'get',
 		'target': ['unpaid_fills'],
-		'uid' : uid
+		'uid': uid
 	};
 
-	var callback= function (xhr) {
+	var callback = function (xhr) {
 		if (xhr.readyState === 4 && xhr.status === 200) {
 			var json = JSON.parse(xhr.responseText);
 			add_info('Return value: ' + json);
@@ -1413,7 +1416,7 @@ function get_general_stats() {
 		'action': 'get'
 	};
 
-	var callback = function(xhr) {
+	var callback = function (xhr) {
 		"use strict";
 		if (xhr.readyState === 4 && xhr.status === 200) {
 			var response = JSON.parse(xhr.responseText);

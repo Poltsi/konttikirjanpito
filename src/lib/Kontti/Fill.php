@@ -41,8 +41,8 @@ class Fill {
 
 	/**
 	 * Fill constructor.
-	 * @param DB $db
-	 * @param int $uid
+	 * @param DB    $db
+	 * @param int   $uid
 	 * @param array $struct
 	 */
 	public function __construct(DB $db, int $uid, array $struct) {

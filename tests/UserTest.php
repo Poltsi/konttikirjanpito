@@ -25,26 +25,6 @@ class UserTest extends \PHPUnit\Framework\TestCase {
 	protected $object;
 	protected $db;
 
-	private function insertUser(int $uid, int $gid, string $login, int $level, string $password, string $name, bool $enabled): bool {
-		$params = array($uid, $gid, $login, $level, $name, $enabled);
-		$sql = "INSERT INTO users VALUES ($1, $2, $3, $4, gen_salt('bf', 8), '', $5, $6)";
-		if (!$this->db->runSQL($sql, $params)) {return false;}
-
-		$params = array($password, $uid);
-		$sql = "UPDATE users SET password = crypt($1, salt) WHERE uid = $2";
-		if (!$this->db->runSQL($sql, $params)) {return false;}
-
-		return true;
-	}
-
-	private function removeUser(int $uid) {
-		$params = array($uid);
-		$sql = "DELETE FROM users WHERE uid = $1";
-		if (!$this->db->runSQL($sql, $params)) {return false;}
-
-		return true;
-	}
-
 	/**
 	 * @covers \Kontti\User::setUserLogin
 	 * @todo   Implement testSetUserLogin().
@@ -192,5 +172,31 @@ class UserTest extends \PHPUnit\Framework\TestCase {
 	 */
 	protected function tearDown() {
 		$this->db->close();
+	}
+
+	private function insertUser(int $uid, int $gid, string $login, int $level, string $password, string $name, bool $enabled): bool {
+		$params = array($uid, $gid, $login, $level, $name, $enabled);
+		$sql = "INSERT INTO users VALUES ($1, $2, $3, $4, gen_salt('bf', 8), '', $5, $6)";
+		if (!$this->db->runSQL($sql, $params)) {
+			return false;
+		}
+
+		$params = array($password, $uid);
+		$sql = "UPDATE users SET password = crypt($1, salt) WHERE uid = $2";
+		if (!$this->db->runSQL($sql, $params)) {
+			return false;
+		}
+
+		return true;
+	}
+
+	private function removeUser(int $uid) {
+		$params = array($uid);
+		$sql = "DELETE FROM users WHERE uid = $1";
+		if (!$this->db->runSQL($sql, $params)) {
+			return false;
+		}
+
+		return true;
 	}
 }

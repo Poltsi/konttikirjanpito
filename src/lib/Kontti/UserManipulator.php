@@ -27,7 +27,7 @@ class UserManipulator {
 
 	/**
 	 * UserManipulator constructor.
-	 * @param DB $dbcon
+	 * @param DB    $dbcon
 	 * @param array $struct
 	 */
 	public function __construct(DB $dbcon, array $struct) {
@@ -109,6 +109,10 @@ class UserManipulator {
 		return $arr;
 	}
 
+	private function getGasUnpaidFill(): array {
+		return array('uid' => $this->uid, 'fills' => $this->dbcon->get_unused_fill_by_user($this->uid));
+	}
+
 	private function getFillCountTotal(array $arr): array {
 		for ($i = 0; $i < count($arr); $i++) {
 			$arr[$i]['count_air'] = $this->dbcon->getFillCountPerUser($arr[$i]['uid'], 'air');
@@ -118,9 +122,5 @@ class UserManipulator {
 		}
 
 		return $arr;
-	}
-
-	private function getGasUnpaidFill(): array {
-		return array('uid' => $this->uid, 'fills' => $this->dbcon->get_unused_fill_by_user($this->uid));
 	}
 }

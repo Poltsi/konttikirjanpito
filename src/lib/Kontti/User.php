@@ -29,10 +29,10 @@ class User {
 
 	/* TODO: Get this from database and make into an object */
 	private $auth_level = array(
-		'air' => 10,
-		'nx' => 20,
-		'o2' => 30,
-		'tx' => 40,
+		'air'   => 10,
+		'nx'    => 20,
+		'o2'    => 30,
+		'tx'    => 40,
 		'admin' => 60);
 
 	/**

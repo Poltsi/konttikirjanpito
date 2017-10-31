@@ -37,8 +37,8 @@ class Audit {
 	 * log: Add an audit log to the database
 	 *
 	 * @param integer $uid The uid of the user, -1 if not known
-	 * @param string $type Good or bad? Identifier with a -ok or -fail suffix
-	 * @param string $message The audit message itself detailing what has passed
+	 * @param string  $type Good or bad? Identifier with a -ok or -fail suffix
+	 * @param string  $message The audit message itself detailing what has passed
 	 */
 	public function log($uid, $type, $message) {
 		$remote = $_SERVER['REMOTE_ADDR'];

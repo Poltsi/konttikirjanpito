@@ -32,8 +32,8 @@ class Stats {
 		$arr = array();
 		$arr['fill_type'] = $this->db->getFillTypeCountByUser($uid);
 		$arr['gas_type'] = $this->db->getGasTypeCountByUser($uid);
-		$arr['gas_volume'] =$this->db->getGasVolumeByUser($uid);
-		$arr['cyl_type'] =$this->db->getCylTypeByUser($uid);
+		$arr['gas_volume'] = $this->db->getGasVolumeByUser($uid);
+		$arr['cyl_type'] = $this->db->getCylTypeByUser($uid);
 		return $arr;
 	}
 
@@ -41,8 +41,8 @@ class Stats {
 		$arr = array();
 		$arr['fill_type'] = $this->db->getFillTypeCountGeneric();
 		$arr['gas_type'] = $this->db->getGasTypeCountGeneric();
-		$arr['gas_volume'] =$this->db->getGasVolumeGeneric();
-		$arr['cyl_type'] =$this->db->getCylTypeGeneric();
+		$arr['gas_volume'] = $this->db->getGasVolumeGeneric();
+		$arr['cyl_type'] = $this->db->getCylTypeGeneric();
 		return $arr;
 	}
 }
