@@ -1433,7 +1433,7 @@ function get_general_stats() {
 				}
 			}
 		}
-	}
+	};
 
 	send_json_request(request_data, 'stats.php', callback);
 }
