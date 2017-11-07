@@ -1,0 +1,26 @@
+version: '2'
+services:
+  KonttiDB:
+    image: docker-registry.intra.poltsi.fi/kontti-db:KONTTI_VERSION
+    stdin_open: true
+    domainname: kontti.dev
+    tty: true
+    ports:
+    - 15432:5432/tcp
+    labels:
+      io.rancher.scheduler.affinity:host_label: kontti_env=dev
+      io.rancher.container.hostname_override: container_name
+      io.rancher.container.pull_image: always
+  Kontti-Frontend:
+    image: docker-registry.intra.poltsi.fi/kontti-frontend:KONTTI_VERSION
+    stdin_open: true
+    domainname: kontti
+    tty: true
+    links:
+    - KonttiDB:kontti_db
+    ports:
+    - 8282:80/tcp
+    labels:
+      io.rancher.scheduler.affinity:host_label: kontti_env=dev
+      io.rancher.container.hostname_override: container_name
+      io.rancher.container.pull_image: always
