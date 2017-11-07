@@ -14,13 +14,14 @@
  *
  */
 
+include_once('../lib/constants.php');
 include_once('../lib/Kontti/DB.php');
 include_once('../lib/Kontti/Audit.php');
 include_once('../lib/Kontti/User.php');
 
 header("Content-Type: application/json");
 /* Default response is only plain ok */
-$response['status'] = 'OK';
+$response[KEY_STATUS] = STATUS_OK;
 // build a PHP variable from JSON sent using POST method
 $data = json_decode(stripslashes(file_get_contents("php://input")), true);
 
@@ -31,16 +32,16 @@ if (array_key_exists('login', $data) &&
 	array_key_exists('password', $data)) {
 
 	if (!strlen(trim($data['login'])) || !strlen(trim($data['password']))) {
-		$response['status'] = 'NOK';
-		$response['reason'] = 'Missing username or password';
+		$response[KEY_STATUS] = STATUS_NOK;
+		$response[KEY_REASON] = 'Missing username or password';
 		$audit->log(-1, 'login-fail', 'User did not provide username or password');
 	} else {
 		$user = new \Kontti\User($db);
 		// Get the user uid and whether the account is enabled
 
 		if (!$user->authenticate($data['login'], $data['password'])) {
-			$response['status'] = 'NOK';
-			$response['reason'] = 'Username or password incorrect';
+			$response[KEY_STATUS] = STATUS_NOK;
+			$response[KEY_REASON] = 'Username or password incorrect';
 			$audit->log(-1, 'login-fail', 'Login failed for user: ' . $data['login']);
 		} else {
 			session_start();
@@ -57,7 +58,7 @@ if (array_key_exists('login', $data) &&
 			$response['name'] = $_SESSION['name'];
 
 			if (!$response['enabled']) {
-				$response['reason'] = 'Account locked, you can only view your data';
+				$response[KEY_REASON] = 'Account locked, you can only view your data';
 				$audit->log($_SESSION['uid'], 'login-ok', 'Locked account for user: ' . $data['login']);
 			} else {
 				$audit->log($_SESSION['uid'], 'login-ok', 'Login succeeded for user: ' . $data['login']);
@@ -65,8 +66,8 @@ if (array_key_exists('login', $data) &&
 		}
 	}
 } else {
-	$response['status'] = 'NOK';
-	$response['reason'] = 'Missing credentials';
+	$response[KEY_STATUS] = STATUS_NOK;
+	$response[KEY_REASON] = 'Missing credentials';
 	$audit->log(-1, 'login-fail', 'No credentials were provided');
 }
 

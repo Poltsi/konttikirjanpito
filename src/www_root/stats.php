@@ -25,7 +25,7 @@ include_once('../lib/Kontti/Stats.php');
 $data = json_decode(stripslashes(file_get_contents("php://input")), true);
 /* Default response is only plain ok */
 $response = array();
-$response['status'] = 'OK';
+$response[KEY_STATUS] = STATUS_OK;
 
 $db = new \Kontti\DB('localhost', 5432, 'kontti', 'kontti', 'konttipassu');
 
@@ -35,10 +35,10 @@ $stats = new \Kontti\Stats($db);
 /* Check first if we're admins */
 if (!array_key_exists('uid', $_SESSION)) {
 	$audit->log(-1, 'stats-fail', 'Client tries to call stats functions without session');
-	$response['status'] = 'NOK';
-	$response['reason'] = 'Session expired, please log in again with user credentials';
+	$response[KEY_STATUS] = STATUS_NOK;
+	$response[KEY_REASON] = 'Session expired, please log in again with user credentials';
 } else {
-	$response['status'] = 'OK';
+	$response[KEY_STATUS] = STATUS_OK;
 
 	switch ($data['object']) {
 		case 'self':
@@ -50,8 +50,8 @@ if (!array_key_exists('uid', $_SESSION)) {
 			if (!array_key_exists('level', $_SESSION) ||
 				$_SESSION['level'] <= 40) {
 				$audit->log($_SESSION['uid'], 'stats-fail', 'User tries to access admin functionality without proper permissions');
-				$response['status'] = 'NOK';
-				$response['reason'] = 'You are not allowed to use these functions';
+				$response[KEY_STATUS] = STATUS_NOK;
+				$response[KEY_REASON] = 'You are not allowed to use these functions';
 			} else {
 				$audit->log($_SESSION['uid'], 'stats-ok', 'User wants to view user stats');
 				// TODO: Implement retrieving user stats

@@ -14,6 +14,7 @@
  *
  */
 
+include_once('../lib/constants.php');
 include_once('../lib/Kontti/DB.php');
 include_once('../lib/Kontti/Audit.php');
 include_once('../lib/Kontti/User.php');
@@ -21,7 +22,7 @@ include_once('../lib/Kontti/User.php');
 session_start();
 header("Content-Type: application/json");
 /* Default response is only plain ok */
-$response['status'] = 'OK';
+$response[KEY_STATUS] = STATUS_OK;
 // build a PHP variable from JSON sent using POST method
 $data = json_decode(stripslashes(file_get_contents("php://input")), true);
 
@@ -31,15 +32,15 @@ $audit = new \Kontti\Audit($db);
 // Check the user uid
 if (!array_key_exists('uid', $_SESSION)) {
 	$audit->log(-1, 'session-fail', 'Client tries to add fill without a session');
-	$response['status'] = 'NOK';
-	$response['reason'] = 'User session has expired';
+	$response[KEY_STATUS] = STATUS_NOK;
+	$response[KEY_REASON] = 'User session has expired';
 } else {
 	// Check that the user is not locked
 	if (!array_key_exists('enabled', $_SESSION) ||
 		!$_SESSION['enabled']) {
 		$audit->log($_SESSION['uid'], 'session-fail', 'User is locked');
-		$response['status'] = 'NOK';
-		$response['reason'] = 'User account is locked';
+		$response[KEY_STATUS] = STATUS_NOK;
+		$response[KEY_REASON] = 'User account is locked';
 	} else {
 		$i = 0;
 
@@ -48,8 +49,8 @@ if (!array_key_exists('uid', $_SESSION)) {
 			$fill_level = $db->getMinGasLevelAndID($data[$i][0]);
 
 			if ($fill_level[0] > $_SESSION['level']) {
-				$response['status'] = 'NOK';
-				$response['reason'] .= $data[$i][0] . ' fill was rejected as user is not permitted to do such fill';
+				$response[KEY_STATUS] = STATUS_NOK;
+				$response[KEY_REASON] .= $data[$i][0] . ' fill was rejected as user is not permitted to do such fill';
 				$audit->log($_SESSION['uid'], 'fill-fail', 'User attempted to submit a fill above his permission');
 			} else {
 				if ($db->addFill($_SESSION['uid'], $fill_level[1], $data[$i][1], $data[$i][2], intval($data[$i][3]),

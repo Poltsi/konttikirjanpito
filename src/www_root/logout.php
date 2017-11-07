@@ -14,6 +14,7 @@
  *
  */
 
+include_once('../lib/constants.php');
 include_once('../lib/Kontti/DB.php');
 include_once('../lib/Kontti/Audit.php');
 
@@ -21,7 +22,7 @@ session_start();
 
 header("Content-Type: application/json");
 /* Default response is only plain ok */
-$response['status'] = 'OK';
+$response[KEY_STATUS] = STATUS_OK;
 // build a PHP variable from JSON sent using POST method
 $data = json_decode(stripslashes(file_get_contents("php://input")), true);
 $db = new \Kontti\DB('localhost', 5432, 'kontti', 'kontti', 'konttipassu');
@@ -34,10 +35,11 @@ if (array_key_exists('type', $data) &&
 		$audit->log($_SESSION['uid'], 'logout-ok', 'User logged out successfully');
 		session_destroy();
 	} else {
+		$response[KEY_STATUS] = STATUS_NOK;
 		$audit->log(-1, 'logout-fail', 'No session data found');
 	}
 } else {
-	$response['reason'] = 'Missing action';
+	$response[KEY_REASON] = 'Missing action';
 	$audit->log(-1, 'logout-fail', 'Request had no type defined, or it was not logout');
 }
 

@@ -33,6 +33,11 @@ const FILLCYLO2PCNTENDPREFIX = 'cyl_o2_end_';
 const FILLCYLHEPCNTSTARTPREFIX = 'cyl_he_start_';
 const FILLCYLHEPCNTENDPREFIX = 'cyl_he_end_';
 
+const STATUS_OK = 'OK';
+const STATUS_NOK = 'NOK';
+const KEY_STATUS = 'status';
+const KEY_REASON = 'reason';
+
 /* Get our host URL*/
 var url = document.URL;
 var url_parts = url.split('/');
@@ -376,7 +381,7 @@ function edit_user(data_row, row, uid, action) {
 
 function get_user_edit_form(response) {
 	if (!('fills' in response['data']) || (response['data']['fills'].length === 0)) {
-		return document.createTextNode(response['reason']);
+		return document.createTextNode(response[KEY_REASON]);
 	}
 
 	var counter = {
@@ -511,7 +516,7 @@ function get_user_data() {
 			var json = JSON.parse(xhr.responseText);
 			add_info('Return value: ' + json);
 
-			if (json['status'] === 'OK') {
+			if (json[KEY_STATUS] === STATUS_OK) {
 				empty_info();
 				empty_data();
 				add_info('User data retrieved');
@@ -519,8 +524,8 @@ function get_user_data() {
 			} else {
 				add_info('Could not get the user data');
 
-				if (json['reason'] !== null) {
-					add_info(json['reason']);
+				if (json[KEY_REASON] !== null) {
+					add_info(json[KEY_REASON]);
 				}
 			}
 		}
@@ -542,7 +547,7 @@ function get_user_unpaid_fills(uid, parent_element) {
 			var json = JSON.parse(xhr.responseText);
 			add_info('Return value: ' + json);
 
-			if (json['status'] === 'OK') {
+			if (json[KEY_STATUS] === STATUS_OK) {
 				empty_info();
 				// empty_data();
 				add_info('User data for edit retrieved');
@@ -550,8 +555,8 @@ function get_user_unpaid_fills(uid, parent_element) {
 			} else {
 				add_info('Could not get the user data');
 
-				if (json['reason'] !== null) {
-					add_info(json['reason']);
+				if (json[KEY_REASON] !== null) {
+					add_info(json[KEY_REASON]);
 				}
 			}
 		}
@@ -827,13 +832,13 @@ function save_data() {
 		if (xhr.readyState === 4 && xhr.status === 200) {
 			var json = JSON.parse(xhr.responseText);
 
-			if (json['status'] === 'OK') {
+			if (json[KEY_STATUS] === STATUS_OK) {
 				empty_info();
 				empty_data();
 				show_main();
 				add_info('Fill data store successfully');
 			} else {
-				add_info(json['reason']);
+				add_info(json[KEY_REASON]);
 			}
 		}
 	};
@@ -1161,7 +1166,7 @@ function verify_login() {
 			var json = JSON.parse(xhr.responseText);
 			add_info('Return value: ' + json);
 
-			if (json['status'] === 'OK') {
+			if (json[KEY_STATUS] === STATUS_OK) {
 				empty_info();
 				add_info('User logged in successfully');
 				sessionStorage.setItem('kontti_mode', 'main');
@@ -1171,8 +1176,8 @@ function verify_login() {
 			} else {
 				add_info('User not logged in');
 
-				if (json['reason'] !== null) {
-					add_info(json['reason']);
+				if (json[KEY_REASON] !== null) {
+					add_info(json[KEY_REASON]);
 				}
 			}
 		}
@@ -1205,7 +1210,7 @@ function logout() {
 			var json = JSON.parse(xhr.responseText);
 			add_info('Return value: ' + json);
 
-			if (json['status'] === 'OK') {
+			if (json[KEY_STATUS] === STATUS_OK) {
 				empty_info();
 				add_info('User logged in successfully');
 				sessionStorage.clear();
@@ -1213,8 +1218,8 @@ function logout() {
 			} else {
 				add_info('Failed to log out, please contact maintainers');
 
-				if (json['reason'] !== null) {
-					add_info(json['reason']);
+				if (json[KEY_REASON] !== null) {
+					add_info(json[KEY_REASON]);
 				}
 			}
 		}
@@ -1298,15 +1303,15 @@ function get_own_stats() {
 		if (xhr.readyState === 4 && xhr.status === 200) {
 			var response = JSON.parse(xhr.responseText);
 
-			if (response['status'] === 'OK') {
+			if (response[KEY_STATUS] === STATUS_OK) {
 				// empty_info();
 				add_info('Own status retrieved');
 				show_basic_stats(response);
 			} else {
 				add_info('Failed to log out, please contact maintainers');
 
-				if (response['reason'] !== null) {
-					add_info(response['reason']);
+				if (response[KEY_REASON] !== null) {
+					add_info(response[KEY_REASON]);
 				}
 			}
 		}
@@ -1421,15 +1426,15 @@ function get_general_stats() {
 		if (xhr.readyState === 4 && xhr.status === 200) {
 			var response = JSON.parse(xhr.responseText);
 
-			if (response['status'] === 'OK') {
+			if (response[KEY_STATUS] === STATUS_OK) {
 				empty_info();
 				add_info('Generic status retrieved');
 				show_basic_stats(response);
 			} else {
 				add_info('Failed to log out, please contact maintainers');
 
-				if (response['reason'] !== null) {
-					add_info(response['reason']);
+				if (response[KEY_REASON] !== null) {
+					add_info(response[KEY_REASON]);
 				}
 			}
 		}

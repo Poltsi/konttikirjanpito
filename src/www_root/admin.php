@@ -17,6 +17,7 @@ session_start();
 
 header("Content-Type: application/json");
 
+include_once('../lib/constants.php');
 include_once('../lib/Kontti/Audit.php');
 include_once('../lib/Kontti/DB.php');
 include_once('../lib/Kontti/Admin.php');
@@ -24,7 +25,7 @@ include_once('../lib/Kontti/UserManipulator.php');
 
 $data = json_decode(stripslashes(file_get_contents("php://input")), true);
 /* Default response is only plain ok */
-$response['status'] = 'OK';
+$response[KEY_STATUS] = STATUS_OK;
 
 $db = new \Kontti\DB('localhost', 5432, 'kontti', 'kontti', 'konttipassu');
 
@@ -34,16 +35,16 @@ $admin = new \Kontti\Admin($db);
 /* Check first if we're admins */
 if (!array_key_exists('uid', $_SESSION)) {
 	$audit->log(-1, 'admin-fail', 'Client tries to call admin functions without session');
-	$response['status'] = 'NOK';
-	$response['reason'] = 'Session expired, please log in again with admin credentials';
+	$response[KEY_STATUS] = STATUS_NOK;
+	$response[KEY_REASON] = 'Session expired, please log in again with admin credentials';
 } else {
 	if (!array_key_exists('level', $_SESSION) ||
 		$_SESSION['level'] <= 40) {
 		$audit->log($_SESSION['uid'], 'admin-fail', 'User tries to access admin functionality without proper permissions');
-		$response['status'] = 'NOK';
-		$response['reason'] = 'You are not allowed to use these functions';
+		$response[KEY_STATUS] = STATUS_NOK;
+		$response[KEY_REASON] = 'You are not allowed to use these functions';
 	} else {
-		$response['status'] = 'OK';
+		$response[KEY_STATUS] = STATUS_OK;
 
 		switch ($data['object']) {
 			case 'user':
@@ -52,7 +53,7 @@ if (!array_key_exists('uid', $_SESSION)) {
 				$response['data'] = $userManipulator->action();
 
 				if (count($response['data']) == 0) {
-					$response['reason'] = 'No user data retrieved';
+					$response[KEY_REASON] = 'No user data retrieved';
 				}
 
 				break;
