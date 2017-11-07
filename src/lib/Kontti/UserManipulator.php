@@ -45,20 +45,36 @@ class UserManipulator {
 	}
 
 	public function action() {
+		$arr = null;
+
 		switch ($this->action) {
 			case 'get':
-				return $this->get();
+				$arr = $this->get();
 				break;
 			case 'set':
+				$arr = $this->set();
 				break;
 			case 'update':
+				$arr = $this->update();
 				break;
 			default:
-				return false;
+				$arr = array();
 				break;
 		}
 
-		return true;
+		return $arr;
+	}
+
+	private function set() {
+		$arr = array();
+		// TODO: implement setting values
+		return $arr;
+	}
+
+	private function update() {
+		$arr = array();
+		// TODO: implement updating values
+		return $arr;
 	}
 
 	private function get() {
@@ -84,6 +100,8 @@ class UserManipulator {
 					case 'fill_total':
 						$arr = $this->getFillCountTotal($arr);
 						break;
+					default:
+						$arr = array();
 				}
 			}
 		}
