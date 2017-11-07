@@ -186,7 +186,8 @@ class DB {
 		$key = 'get_' . $gas . '_by_user';
 		$result = pg_execute($this->dbcon, $key, array($uid));
 		$res = pg_fetch_row($result)[0];
-		if (is_null($res)) {
+
+		if (is_null($res) || !$res) {
 			$res = 0;
 		}
 		return $res;
@@ -196,7 +197,8 @@ class DB {
 		$key = 'get_unpaid_' . $gas . '_by_user';
 		$result = pg_execute($this->dbcon, $key, array($uid));
 		$res = pg_fetch_row($result)[0];
-		if (is_null($res)) {
+
+		if (is_null($res) || !$res) {
 			$res = 0;
 		}
 		return $res;
@@ -206,7 +208,8 @@ class DB {
 		$key = 'get_user_count_and_type';
 		$result = pg_execute($this->dbcon, $key, array($uid, $fill_type));
 		$res = pg_fetch_row($result)[0];
-		if (is_null($res)) {
+
+		if (is_null($res) || !$res) {
 			$res = 0;
 		}
 		return $res;
@@ -216,7 +219,8 @@ class DB {
 		$key = 'get_fill_id_by_key';
 		$result = pg_execute($this->dbcon, $key, array($fill_key));
 		$res = pg_fetch_row($result)[0];
-		if (is_null($res)) {
+
+		if (is_null($res) || !$res) {
 			$res = 0;
 		}
 		return $res;
@@ -228,7 +232,7 @@ class DB {
 		$result = pg_execute($this->dbcon, $key, array($uid));
 		$res = pg_fetch_all($result);
 
-		if (is_null($res)) {
+		if (is_null($res) || !$res) {
 			$res = array();
 		}
 
@@ -240,7 +244,7 @@ class DB {
 		$result = pg_execute($this->dbcon, $key, array($uid));
 		$res = pg_fetch_all($result);
 
-		if (is_null($res)) {
+		if (is_null($res) || !$res) {
 			$res = array();
 		}
 
@@ -252,7 +256,7 @@ class DB {
 		$result = pg_execute($this->dbcon, $key, array($uid));
 		$res = pg_fetch_all($result);
 
-		if (is_null($res)) {
+		if (is_null($res) || !$res) {
 			$res = array();
 		}
 
@@ -265,7 +269,7 @@ class DB {
 		$result = pg_execute($this->dbcon, $key, array());
 		$res = pg_fetch_all($result);
 
-		if (is_null($res)) {
+		if (is_null($res) || !$res) {
 			$res = array();
 		}
 
@@ -277,7 +281,7 @@ class DB {
 		$result = pg_execute($this->dbcon, $key, array($uid));
 		$res = pg_fetch_all($result);
 
-		if (is_null($res)) {
+		if (is_null($res) || !$res) {
 			$res = array();
 		}
 
@@ -289,7 +293,7 @@ class DB {
 		$result = pg_execute($this->dbcon, $key, array());
 		$res = pg_fetch_all($result);
 
-		if (is_null($res)) {
+		if (is_null($res) || !$res) {
 			$res = array();
 		}
 
@@ -301,7 +305,7 @@ class DB {
 		$result = pg_execute($this->dbcon, $key, array());
 		$res = pg_fetch_all($result);
 
-		if (is_null($res)) {
+		if (is_null($res) || !$res) {
 			$res = array();
 		}
 
@@ -313,7 +317,7 @@ class DB {
 		$result = pg_execute($this->dbcon, $key, array());
 		$res = pg_fetch_all($result);
 
-		if (is_null($res)) {
+		if (is_null($res) || !$res) {
 			$res = array();
 		}
 
@@ -325,7 +329,7 @@ class DB {
 		$result = pg_execute($this->dbcon, $key, array($uid));
 		$res = pg_fetch_all($result);
 
-		if (is_null($res)) {
+		if (is_null($res) || !$res) {
 			$res = array();
 		}
 
