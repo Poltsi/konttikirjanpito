@@ -30,6 +30,10 @@ publish_kontti_db: build_kontti_db
 
 bump_version:
 	echo "$(MAJOR).$(NEWMINOR)" > VERSION; \
+	cat docker-compose.yml.tmpl | \
+	sed -e 's/KONTTI_VERSION/$(MAJOR).$(NEWMINOR)/' | \
+	sed -e 's/KONTTI_REGISTRY/$(REGISTRY_HOST)/' \
+	> docker-compose.yml; \
 	git commit -s -m "* Bump version" VERSION
 
 clean:
