@@ -1,7 +1,7 @@
 version: '2'
 services:
   KonttiDB:
-    image: docker-registry.intra.poltsi.fi/kontti-db:KONTTI_VERSION
+    image: KONTTI_REGISTRY/kontti-db:KONTTI_VERSION
     stdin_open: true
     domainname: kontti.dev
     tty: true
@@ -12,7 +12,7 @@ services:
       io.rancher.container.hostname_override: container_name
       io.rancher.container.pull_image: always
   Kontti-Frontend:
-    image: docker-registry.intra.poltsi.fi/kontti-frontend:KONTTI_VERSION
+    image: KONTTI_REGISTRY/kontti-frontend:KONTTI_VERSION
     stdin_open: true
     domainname: kontti
     tty: true
