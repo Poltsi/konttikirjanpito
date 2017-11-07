@@ -28,6 +28,8 @@ publish_kontti_db: build_kontti_db
 	docker push $(REGISTRY_HOST)/kontti-db:$(VERSION)
 	docker push $(REGISTRY_HOST)/kontti-db:latest
 
+publish: publish_kontti_db publish_kontti
+
 bump_version:
 	echo "$(MAJOR).$(NEWMINOR)" > VERSION; \
 	cat docker-compose.yml.tmpl | \
