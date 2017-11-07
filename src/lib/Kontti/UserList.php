@@ -15,7 +15,7 @@
 
 namespace Kontti;
 include_once('User.php');
-include_once('Kontti/DB.php');
+include_once('DB.php');
 
 class UserList {
 	private $user_list = null;

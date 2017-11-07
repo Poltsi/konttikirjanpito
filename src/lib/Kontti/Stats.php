@@ -15,7 +15,7 @@
 
 namespace Kontti;
 
-include_once('Kontti/DB.php');
+include_once('DB.php');
 
 class Stats {
 	private $db;
