@@ -18,10 +18,10 @@ session_start();
 
 header("Content-Type: application/json");
 
-include_once('../lib/constants.php');
-include_once('../lib/Kontti/Audit.php');
-include_once('../lib/Kontti/DB.php');
-include_once('../lib/Kontti/Stats.php');
+include_once('constants.php');
+include_once('Kontti/Audit.php');
+include_once('Kontti/DB.php');
+include_once('Kontti/Stats.php');
 
 $data = json_decode(stripslashes(file_get_contents("php://input")), true);
 /* Default response is only plain ok */

@@ -14,10 +14,10 @@
  *
  */
 
-include_once('../lib/constants.php');
-include_once('../lib/Kontti/DB.php');
-include_once('../lib/Kontti/Audit.php');
-include_once('../lib/Kontti/User.php');
+include_once('constants.php');
+include_once('Kontti/DB.php');
+include_once('Kontti/Audit.php');
+include_once('Kontti/User.php');
 
 session_start();
 header("Content-Type: application/json");
