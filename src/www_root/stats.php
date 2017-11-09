@@ -18,6 +18,7 @@ session_start();
 
 header("Content-Type: application/json");
 
+include_once('../lib/constants.php');
 include_once('../lib/Kontti/Audit.php');
 include_once('../lib/Kontti/DB.php');
 include_once('../lib/Kontti/Stats.php');
