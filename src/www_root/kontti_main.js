@@ -267,13 +267,21 @@ function show_admin() {
 	var button_div = document.createElement('div');
 	button_div.id = 'admin_action';
 
-	/* List users */
-	var users_button = document.createElement('button');
-	users_button.innerHTML = 'Users';
-	users_button.id = 'users_list';
-	users_button.addEventListener('click', get_user_list_function());
-	button_div.appendChild(users_button);
+	/* Fill management */
+	var fill_mgmnt_button = document.createElement('button');
+	fill_mgmnt_button.innerHTML = 'Fill management';
+	fill_mgmnt_button.id = 'fill_management_btn';
+	fill_mgmnt_button.addEventListener('click', get_fill_mgmnt_function());
+	button_div.appendChild(fill_mgmnt_button);
 
+	/* User management */
+	var user_mgmnt_button = document.createElement('button');
+	user_mgmnt_button.innerHTML = 'User management';
+	user_mgmnt_button.id = 'user_management_btn';
+	user_mgmnt_button.addEventListener('click', get_user_mgmnt_function());
+	button_div.appendChild(user_mgmnt_button);
+
+	/* Back to fills */
 	button_div.appendChild(get_back_to_fill_button());
 	button_div.appendChild(get_logout_button());
 	data_action_elem.appendChild(button_div);
@@ -287,14 +295,20 @@ function get_back_to_fill_button() {
 	return back_button;
 }
 
-function get_user_list_function() {
+function get_fill_mgmnt_function() {
 	return (function () {
-		user_list();
+		fill_mgmnt();
 	});
 }
 
-function user_list() {
-	get_user_data();
+function get_user_mgmnt_function() {
+	return (function () {
+		user_mgmnt();
+	});
+}
+
+function user_mgmnt() {
+	
 }
 
 function get_back_button_function() {
@@ -309,11 +323,11 @@ function back_button() {
 	show_main();
 }
 
-function display_user_data(json) {
+function display_user_fill_data(json) {
 	var data_elem = document.querySelector('#' + DATAAREAID);
 
 	if (!json['data'].length) {
-		data_elem.innerHTML = 'No data available';
+		data_elem.innerHTML = 'No users available. This should not happen';
 		return;
 	}
 
@@ -337,9 +351,9 @@ function display_user_data(json) {
 		edit_cell.style.textAlign = 'right';
 
 		var edit_button = document.createElement('button');
-		edit_button.innerText = 'Edit user';
+		edit_button.innerText = 'Edit user fills';
 		edit_button.id = 'edit_button-' + json['data'][i]['uid'];
-		edit_button.addEventListener('click', get_edit_user_function(data_row, i + 2, json['data'][i]['uid'], 'open'));
+		edit_button.addEventListener('click', get_edit_user_fill_function(data_row, i + 2, json['data'][i]['uid'], 'open'));
 		edit_cell.appendChild(edit_button);
 		data_row.appendChild(edit_cell);
 
@@ -349,13 +363,13 @@ function display_user_data(json) {
 	data_elem.appendChild(users_table);
 }
 
-function get_edit_user_function(data_row, row, uid, action) {
+function get_edit_user_fill_function(data_row, row, uid, action) {
 	return function () {
-		edit_user(data_row, row, uid, action)
+		edit_user_fill(data_row, row, uid, action)
 	};
 }
 
-function edit_user(data_row, row, uid, action) {
+function edit_user_fill(data_row, row, uid, action) {
 	var edit_button = document.querySelector('#edit_button-' + uid);
 	// Workaround to remove and replace the eventListener
 	var clone_button = edit_button.cloneNode(true);
@@ -363,8 +377,8 @@ function edit_user(data_row, row, uid, action) {
 
 	if (action === 'open') {
 		// First we toggle the button action to close
-		clone_button.addEventListener('click', get_edit_user_function(data_row, row, uid, 'close'));
-		// TODO: Open the edit row for the given user
+		clone_button.addEventListener('click', get_edit_user_fill_function(data_row, row, uid, 'close'));
+		// Open the edit row for the given user
 		var edit_tr = document.createElement('tr');
 		edit_tr.id = 'tr_edit_row-' + uid;
 		data_row.parentNode.insertBefore(edit_tr, data_row.nextSibling);
@@ -373,15 +387,19 @@ function edit_user(data_row, row, uid, action) {
 		get_user_unpaid_fills(uid, edit_td);
 	} else if (action === 'close') {
 		// First we toggle the button action to open
-		clone_button.addEventListener('click', get_edit_user_function(data_row, row, uid, 'open'));
+		clone_button.addEventListener('click', get_edit_user_fill_function(data_row, row, uid, 'open'));
 		var edit_row = document.querySelector('#tr_edit_row-' + uid);
 		edit_row.parentNode.removeChild(edit_row);
 	}
 }
 
-function get_user_edit_form(response) {
-	if (!('fills' in response['data']) || (response['data']['fills'].length === 0)) {
+function get_user_fill_edit_form(response) {
+	if (!('fills' in response['data'])) {
 		return document.createTextNode(response[KEY_REASON]);
+	}
+
+	if (response['data']['fills'].length === 0) {
+		return document.createTextNode('User has no fills');
 	}
 
 	var counter = {
@@ -504,7 +522,7 @@ function get_users_table_header() {
 	return (header_tr);
 }
 
-function get_user_data() {
+function fill_mgmnt() {
 	var request_data = {
 		'object': 'user',
 		'action': 'get',
@@ -519,10 +537,10 @@ function get_user_data() {
 			if (json[KEY_STATUS] === STATUS_OK) {
 				empty_info();
 				empty_data();
-				add_info('User data retrieved');
-				display_user_data(json)
+				add_info('Fill data retrieved');
+				display_user_fill_data(json)
 			} else {
-				add_info('Could not get the user data');
+				add_info('Could not get the user fill data');
 
 				if (json[KEY_REASON] !== null) {
 					add_info(json[KEY_REASON]);
@@ -551,7 +569,7 @@ function get_user_unpaid_fills(uid, parent_element) {
 				empty_info();
 				// empty_data();
 				add_info('User data for edit retrieved');
-				parent_element.appendChild(get_user_edit_form(json));
+				parent_element.appendChild(get_user_fill_edit_form(json));
 			} else {
 				add_info('Could not get the user data');
 
