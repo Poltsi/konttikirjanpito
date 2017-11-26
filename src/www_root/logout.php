@@ -14,7 +14,7 @@
  *
  */
 
-include_once('constants.php');
+include_once('../lib/init.php');
 include_once('Kontti/DB.php');
 include_once('Kontti/Audit.php');
 
