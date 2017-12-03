@@ -19,3 +19,8 @@ const STATUS_NOK = 'NOK';
 
 const KEY_STATUS = 'status';
 const KEY_REASON = 'reason';
+
+const AIR_LEVEL = 10;
+const NX_LEVEL = 20;
+const O2_LEVEL = 30;
+const HE_LEVEL = 40;
