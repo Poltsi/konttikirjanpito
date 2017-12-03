@@ -495,8 +495,8 @@ function get_users_table_header() {
 	var field_array = [
 		'userID',
 		'GroupID',
-		'Level',
 		'Login',
+		'Level',
 		'Full name',
 		'Account enabled',
 		'O2 used total (l)',
@@ -621,7 +621,7 @@ function add_gas_fill_row(type) {
 	gas_tr.appendChild(gas_td_type);
 
 	var gas_td_level = document.createElement('td');
-	gas_td_level.appendChild(get_fill_type_select(id));
+	gas_td_level.appendChild(get_fill_type_select(id, type));
 	gas_td_level.id = 'td_' + FILLTYPEPREFIX + id;
 	gas_tr.appendChild(gas_td_level);
 
@@ -687,14 +687,28 @@ function add_gas_fill_row(type) {
 }
 
 
-function get_fill_type_select(id) {
+function get_fill_type_select(id, type) {
 	"use strict";
 	var fill_type_select = document.createElement('select');
 	fill_type_select.id = FILLTYPEPREFIX + id;
 	fill_type_select.title = 'Select type of fill';
+	var preferred = '';
+
+	/* Try to figure out which is the preferred fill type for the given gas type
+	 * TODO: May be something else but VID */
+	switch (type) {
+		case 'air':
+		case 'nx':
+		case 'o2':
+		case 'tx':
+			preferred = 'vid';
+			break;
+	}
 
 	for (var key in FILLTYPELIST) {
-		fill_type_select.options.add(new Option(FILLTYPELIST[key][0], key));
+		var op = new Option(FILLTYPELIST[key][0], key);
+		op.defaultSelected = (key === preferred);
+		fill_type_select.options.add(op);
 	}
 
 	return (fill_type_select);
