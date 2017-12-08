@@ -21,6 +21,7 @@ include_once('UserList.php');
 class UserManipulator {
 	private $action = null;
 	private $target = null;
+	private $data = null;
 	private $filter = null;
 	private $dbcon = null;
 	private $uid = null;
@@ -34,6 +35,10 @@ class UserManipulator {
 		$this->dbcon = $dbcon;
 		$this->action = $struct['action'];
 		$this->target = $struct['target'];
+
+		if (array_key_exists('data', $struct)) {
+			$this->data = $struct['data'];
+		}
 
 		if (array_key_exists('filter', $struct)) {
 			$this->filter = $struct['filter'];
@@ -74,6 +79,13 @@ class UserManipulator {
 	private function update() {
 		$arr = array();
 		// TODO: implement updating values
+		foreach ($this->target as $target) {
+			switch ($target) {
+				case 'mark_counted_fills':
+					$arr = $this->dbcon->update_fills_as_counted($this->uid, $this->data);
+					break;
+			}
+		}
 		return $arr;
 	}
 
@@ -127,9 +139,9 @@ class UserManipulator {
 		return $arr;
 	}
 
-	private function getGasUnpaidFill(): array {
-		return array('uid' => $this->uid, 'fills' => $this->dbcon->get_unused_fill_by_user($this->uid));
-	}
+   private function getGasUnpaidFill(): array {
+           return array('uid' => $this->uid, 'fills' => $this->dbcon->get_unused_fill_by_user($this->uid));
+   }
 
 	private function getFillCountTotal(array $arr): array {
 		for ($i = 0; $i < count($arr); $i++) {

@@ -15,18 +15,12 @@
  */
 
 include_once('../lib/init.php');
-include_once('Kontti/DB.php');
-include_once('Kontti/Audit.php');
-
-session_start();
 
 header("Content-Type: application/json");
 /* Default response is only plain ok */
 $response[KEY_STATUS] = STATUS_OK;
 // build a PHP variable from JSON sent using POST method
 $data = json_decode(stripslashes(file_get_contents("php://input")), true);
-$db = new \Kontti\DB('localhost', 5432, 'kontti', 'kontti', 'konttipassu');
-$audit = new \Kontti\Audit($db);
 
 if (array_key_exists('type', $data) &&
 	$data['type'] == 'logout') {

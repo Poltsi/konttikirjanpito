@@ -14,13 +14,9 @@
  * GNU General Public License for more details.
  */
 
-session_start();
-
 header("Content-Type: application/json");
 
 include_once('../lib/init.php');
-include_once('Kontti/Audit.php');
-include_once('Kontti/DB.php');
 include_once('Kontti/Stats.php');
 
 $data = json_decode(stripslashes(file_get_contents("php://input")), true);
@@ -28,9 +24,6 @@ $data = json_decode(stripslashes(file_get_contents("php://input")), true);
 $response = array();
 $response[KEY_STATUS] = STATUS_OK;
 
-$db = new \Kontti\DB('localhost', 5432, 'kontti', 'kontti', 'konttipassu');
-
-$audit = new \Kontti\Audit($db);
 $stats = new \Kontti\Stats($db);
 
 /* Check first if we're admins */

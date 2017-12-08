@@ -23,9 +23,7 @@ const DATAAREAFORMID = 'fill_form';
 const FILLROWPREFIX = 'fill_tr_';
 const FILLTYPEPREFIX = 'fill_type_';
 const GASLEVELPREFIX = 'gas_level_';
-const FILLCYLTYPEPREFIX = 'cyl_type_';
-const FILLCYLSIZEPREFIX = 'cyl_size_';
-const FILLCYLNUMPREFIX = 'cyl_num_';
+const FILLCYLIDPREFIX = 'cyl_id_';
 const FILLCYLPRESSSTARTPREFIX = 'cyl_start_pressure_';
 const FILLCYLPRESSENDPREFIX = 'cyl_end_pressure_';
 const FILLCYLO2PCNTSTARTPREFIX = 'cyl_o2_start_';
@@ -60,24 +58,15 @@ const FILLTYPELIST = {
 	'int': ['Internal', '']
 };
 
-const CYLLIST = {
-	'40cf': ['40cf/5.7l', 5.7],
-	'80cf': ['80cf/11.1l', 11.1],
-	'2l': ['2l', 2.0],
-	'3l': ['3l', 3.0],
-	'7l': ['7l', 7.0],
-	'10l': ['10l', 10.0],
-	'12l': ['12l', 12.0],
-	'15l': ['15l', 15.0],
-	'18l': ['18l', 18.0],
-	'20l': ['20l', 20.0],
-	'D7': ['D7', 14.0],
-	'D10': ['D10', 20.0],
-	'D12': ['D12', 24.0],
-	'D15': ['D15', 30.0],
-	'D18': ['D18', 36.0],
-	'D20': ['D20', 40.0],
-	'50l': ['50l', 50.0]
+const FILLEDITORFIELDS = {
+	'fill_datetime': 'Date',
+	'gas_key': 'Fill type',
+	'cyl_name': 'Cylinder type',
+	'size': 'Cylinder size',
+	'pressure': 'Nominal pressure',
+	'name': 'Cylinder name',
+	'o2_vol': 'O2 volume',
+	'he_vol': 'He volume'
 };
 
 /**
@@ -126,6 +115,8 @@ function clear_divs() {
 }
 
 function show_main() {
+	update_cylinder_list();
+
 	var main_action_elem = document.getElementById(MAINDATAACTIONID);
 	var data_area_elem = document.querySelector('#' + DATAAREAID);
 	var data_action_elem = document.querySelector('#' + DATAACTIONID);
@@ -163,11 +154,8 @@ function get_fill_table_header() {
 	header_td1.innerHTML = 'Fill type';
 	header_tr.appendChild(header_td1);
 	var header_td2 = document.createElement('td');
-	header_td2.innerHTML = 'Cylinder size';
+	header_td2.innerHTML = 'Cylinder';
 	header_tr.appendChild(header_td2);
-	var header_td3 = document.createElement('td');
-	header_td3.innerHTML = 'Amount';
-	header_tr.appendChild(header_td3);
 	var header_td4 = document.createElement('td');
 	header_td4.innerHTML = 'Start pressure';
 	header_tr.appendChild(header_td4);
@@ -295,12 +283,6 @@ function get_back_to_fill_button() {
 	return back_button;
 }
 
-function get_fill_mgmnt_function() {
-	return (function () {
-		fill_mgmnt();
-	});
-}
-
 function get_user_mgmnt_function() {
 	return (function () {
 		user_mgmnt();
@@ -308,7 +290,7 @@ function get_user_mgmnt_function() {
 }
 
 function user_mgmnt() {
-	
+	// TODO: Add user management functionality
 }
 
 function get_back_button_function() {
@@ -422,15 +404,20 @@ function get_user_fill_edit_form(response) {
 	for (var i = 0; i < response['data']['fills'].length; i++) {
 		var editor_row = document.createElement('tr');
 
-		Object.keys(response['data']['fills'][i]).forEach(function (key, index) {
+		// Object.keys(response['data']['fills'][i]).forEach(function (key, index) {
+		for (var key in FILLEDITORFIELDS) {
+			// We jump over the first which is the fill id
+			// if (index > 0) {
 			var val_cell = document.createElement('td');
 			val_cell.id = key + '-' + i;
 			val_cell.style.textAlign = 'right';
 			val_cell.innerHTML = response['data']['fills'][i][key];
 			editor_row.appendChild(val_cell);
-		});
+			// }
+			// });
+		}
 
-		counter['cyl_count'] += parseInt(response['data']['fills'][i]['cyl_count']);
+		counter['cyl_count']++;
 		if (response['data']['fills'][i]['gas_key'] === 'o2') counter['o2_volume'] += parseInt(response['data']['fills'][i]['o2_vol']);
 		counter['he_volume'] += parseInt(response['data']['fills'][i]['he_vol']);
 
@@ -467,6 +454,15 @@ function get_user_fill_edit_form(response) {
 	he_sum_cell.style.textAlign = 'right';
 	sum_row.appendChild(he_sum_cell);
 
+	var commit_cell = document.createElement('td');
+	var commit_button = document.createElement('button');
+	commit_button.addEventListener('click', get_commit_fills_function(uid));
+	commit_button.innerText = 'Commit';
+	commit_button.type = 'button';
+	commit_cell.appendChild(commit_button);
+	commit_cell.style.textAlign = 'right';
+	sum_row.appendChild(commit_cell);
+
 	editor_table.appendChild(sum_row);
 
 	edit_form.appendChild(editor_table);
@@ -474,15 +470,67 @@ function get_user_fill_edit_form(response) {
 	return (edit_form);
 }
 
+function get_commit_fills_function(uid) {
+	"use strict";
+	return (function () {
+		commit_fills(uid);
+	});
+}
+
+function commit_fills(uid) {
+	// Collect all the checkboxes for the given uid
+	var elements = document.querySelectorAll("input[id^='mark_fill-" + uid + "-']");
+	// Request json
+
+	var request_data = {
+		'object': 'user',
+		'action': 'update',
+		'target': ['mark_counted_fills'],
+		'uid': uid,
+		'data': []
+	};
+	// Go through them, checking which are marked
+	var i = 0;
+
+	for (var index = 0; index < elements.length; index++) {
+		if (elements[index].checked) {
+			var fillId = parseInt(elements[index].id.split('-')[2]);
+			request_data['data'].push({'id': fillId});
+			i++;
+		}
+	}
+
+	var callback = function (xhr) {
+		if (xhr.readyState === 4 && xhr.status === 200) {
+			var json = JSON.parse(xhr.responseText);
+			add_info('Return value: ' + json);
+
+			if (json[KEY_STATUS] === STATUS_OK) {
+				empty_info();
+				add_info('Fill data retrieved');
+				fill_mgmnt();
+			} else {
+				add_info('Could not update the fill status');
+
+				if (json[KEY_REASON] !== null) {
+					add_info(json[KEY_REASON]);
+				}
+			}
+		}
+	};
+
+	send_json_request(request_data, 'admin.php', callback);
+}
+
 function get_user_edit_header() {
 	var header_tr = document.createElement('tr');
-	var labels = ['Date', 'Gas type', 'Fill type', 'Cylinder type', 'Cylinder count', 'O2 volume', 'He volume', 'Mark as paid'];
+	var labels = ['Date', 'Fill type', 'Cylinder type', 'Cylinder name', 'Nominal pressure', 'Start pressure', 'End pressure', 'O2 volume', 'He volume', 'Mark as paid'];
 
-	for (var label in labels) {
+	for (var key in FILLEDITORFIELDS) {
 		var cell = document.createElement('td');
 		cell.style.padding = '10px';
 		cell.style.backgroundColor = 'grey';
-		cell.innerHTML = labels[label];
+		cell.innerHTML = FILLEDITORFIELDS[key];
 		header_tr.appendChild(cell);
 	}
 
@@ -522,6 +570,12 @@ function get_users_table_header() {
 	return (header_tr);
 }
 
+function get_fill_mgmnt_function() {
+	return (function () {
+		fill_mgmnt();
+	});
+}
+
 function fill_mgmnt() {
 	var request_data = {
 		'object': 'user',
@@ -538,7 +592,7 @@ function fill_mgmnt() {
 				empty_info();
 				empty_data();
 				add_info('Fill data retrieved');
-				display_user_fill_data(json)
+				display_user_fill_data(json);
 			} else {
 				add_info('Could not get the user fill data');
 
@@ -627,13 +681,8 @@ function add_gas_fill_row(type) {
 
 	var gas_td_cyl = document.createElement('td');
 	gas_td_cyl.appendChild(get_cylinder_select(id));
-	gas_td_cyl.id = 'td_' + FILLCYLSIZEPREFIX + id;
+	gas_td_cyl.id = 'td_' + FILLCYLIDPREFIX + id;
 	gas_tr.appendChild(gas_td_cyl);
-
-	var gas_td_num = document.createElement('td');
-	gas_td_num.appendChild(get_amount_select(1, 15, 'Number of cylinders', FILLCYLNUMPREFIX + id));
-	gas_td_num.id = 'td_' + FILLCYLNUMPREFIX + id;
-	gas_tr.appendChild(gas_td_num);
 
 	var n = 6;
 
@@ -721,14 +770,15 @@ function get_fill_type_select(id, type) {
 
 function get_cylinder_select(id) {
 	var cylinder_select = document.createElement('select');
-	cylinder_select.id = FILLCYLSIZEPREFIX + id;
-	cylinder_select.title = 'Select type of cylinder';
+	cylinder_select.id = FILLCYLIDPREFIX + id;
+	cylinder_select.title = 'Select cylinder';
 
-	for (var key in CYLLIST) {
-		cylinder_select.options.add(new Option(CYLLIST[key][0], key));
+	var cylinder_list = JSON.parse(sessionStorage.getItem('kontti_cylinder_list'))
+
+	for (var i = 0; i < cylinder_list.length; i++) {
+		cylinder_select.options.add(new Option(cylinder_list[i]['name'] + ' ' + cylinder_list[i]['type_name'] + ' ' + cylinder_list[i]['identifier'], cylinder_list[i]['cylinder_id']));
 	}
 
-	/* TODO: Handle the other. Show an additional field where the user may input the volume */
 	return (cylinder_select);
 }
 
@@ -889,9 +939,7 @@ function get_fill_data(id) {
 
 	data_array[0] = get_gas_level(id);
 	data_array[1] = get_fill_type(id);
-	data_array[2] = get_cylinder_size(id);
-	data_array[3] = get_cylinder_number(id);
-	data_array[4] = CYLLIST[get_cylinder_size(id)][1];
+	data_array[2] = get_cylinder_id(id);
 
 	if (data_array[0] !== 'air') {
 		data_array[5] = get_cylinder_start_pressure(id);
@@ -923,12 +971,8 @@ function get_fill_type(id) {
 	return (document.querySelector('#' + FILLTYPEPREFIX + id).value);
 }
 
-function get_cylinder_size(id) {
-	return (document.querySelector('#' + FILLCYLSIZEPREFIX + id).options[document.querySelector('#' + FILLCYLSIZEPREFIX + id).selectedIndex].value);
-}
-
-function get_cylinder_number(id) {
-	return (parseInt(document.querySelector('#' + FILLCYLNUMPREFIX + id).value));
+function get_cylinder_id(id) {
+	return (document.querySelector('#' + FILLCYLIDPREFIX + id).options[document.querySelector('#' + FILLCYLIDPREFIX + id).selectedIndex].value);
 }
 
 function get_cylinder_start_pressure(id) {
@@ -1504,3 +1548,45 @@ function send_json_request(request_data, URI, callback) {
 
 	xhr.send(json_data);
 }
+
+//////////////////// Handle cylinder list
+
+function update_cylinder_list() {
+	var request_data = {
+		'object': 'user',
+		'action': 'get',
+		'filter': 'cylinders'
+	};
+
+	var callback = function (xhr) {
+		"use strict";
+		if (xhr.readyState === 4 && xhr.status === 200) {
+			var response = JSON.parse(xhr.responseText);
+
+			if (response[KEY_STATUS] === STATUS_OK) {
+				update_user_cylinder_list(response);
+			} else {
+				add_info('Failed to retrieve list of user cylinders, have you defined any?');
+
+				if (response[KEY_REASON] !== null) {
+					add_info(response[KEY_REASON]);
+				}
+			}
+		}
+	};
+
+	send_json_request(request_data, 'cylinder_list.php', callback);
+}
+
+function update_user_cylinder_list(response) {
+	var cylinder_list = [];
+
+	for (var i = 0; i < response['data'].length; i++) {
+		cylinder_list.push(response['data'][i]);
+	}
+
+	sessionStorage.setItem('kontti_cylinder_list', JSON.stringify(cylinder_list));
+
+}
+
+////////////////////\\\\\\\\\\\\\\\\\\\\\

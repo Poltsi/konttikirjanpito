@@ -31,25 +31,28 @@ class DB {
 		'get_user_auth'                    => ['sql' => 'SELECT uid, gid, level, name, enabled FROM users WHERE login = $1 AND password = crypt($2, salt)'],
 		'get_min_gas_id'                   => ['sql' => 'SELECT min_fill_level, gas_id FROM gas_level WHERE gas_key = $1'],
 		'add_fill'                         => ['sql' => 'INSERT INTO fills ' .
-			'(uid, fill_datetime, gas_level_id, fill_type, cyl_type, cyl_count, cyl_size, start_pressure, end_pressure, o2_start, o2_end, he_start, he_end, o2_vol, he_vol, counted) ' .
-			'VALUES ($1, now(), $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, FALSE)'],
+			'(uid, fill_datetime, gas_level_id, cylinder_id, fill_type, start_pressure, end_pressure, o2_start, o2_end, he_start, he_end, o2_vol, he_vol, counted) ' .
+			'VALUES ($1, now(), $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, FALSE)'],
 		'get_all_user_uid'                 => ['sql' => 'SELECT uid FROM users'],
 		'get_user_all_by_uid'              => ['sql' => 'SELECT uid, gid, login, level, name, enabled FROM users WHERE uid = $1'],
 		'get_o2_by_user'                   => ['sql' => 'SELECT SUM(o2_vol) FROM fills WHERE uid = $1'],
 		'get_he_by_user'                   => ['sql' => 'SELECT SUM(he_vol) FROM fills WHERE uid = $1'],
-		'get_unpaid_fills_by_user'         => ['sql' => "SELECT f.fill_datetime, g.gas_key, f.fill_type, f.cyl_type, f.cyl_count, f.o2_vol, f.he_vol FROM fills f, gas_level g WHERE f.uid = $1 AND g.gas_id = f.gas_level_id AND f.counted = FALSE AND f.fill_type = 'vid' AND gas_key IN ('o2', 'tx') ORDER BY f.fill_datetime ASC"],
+		'get_unpaid_fills_by_user'         => ['sql' => "SELECT f.fill_id, f.fill_datetime, g.gas_key, ct.name AS cyl_name, c.name, ct.pressure, ct.size, f.cylinder_id, f.o2_vol, f.he_vol FROM fills f, gas_level g, cylinder_types ct, cylinders c WHERE f.uid = $1 AND f.cylinder_id = c.cylinder_id AND c.type_id = ct.type_id AND g.gas_id = f.gas_level_id AND f.counted = FALSE AND f.fill_type = 'vid' AND gas_key IN ('o2', 'tx') ORDER BY f.fill_datetime ASC"],
 		'get_unpaid_o2_by_user'            => ['sql' => "SELECT SUM(o2_vol) FROM fills WHERE gas_level_id = " . O2_LEVEL . " AND fill_type = 'vid' AND uid = $1 AND counted = FALSE"],
 		'get_unpaid_he_by_user'            => ['sql' => "SELECT SUM(he_vol) FROM fills WHERE gas_level_id = " . HE_LEVEL . " AND fill_type = 'vid' AND uid = $1 AND counted = FALSE"],
 		'get_fill_id_by_key'               => ['sql' => 'SELECT gas_id FROM gas_level WHERE gas_key = $1'],
-		'get_user_count_and_type'          => ['sql' => 'SELECT SUM(f.cyl_count) FROM fills f, gas_level g WHERE f.uid = $1 AND f.gas_level_id = g.gas_id AND g.gas_key = $2'],
-		'get_user_stats_filltype_count'    => ['sql' => 'SELECT fill_type AS stat_key, SUM(cyl_count) AS stat_value FROM fills WHERE uid = $1 GROUP BY fill_type ORDER BY stat_key'],
-		'get_user_stats_gastype_count'     => ['sql' => 'SELECT gl.gas_key  AS stat_key, SUM(f.cyl_count) AS stat_value FROM gas_level gl, fills f WHERE f.gas_level_id = gl.gas_id AND f.uid = $1 GROUP BY f.gas_level_id, gl.gas_key ORDER BY stat_key'],
+		'get_user_count_and_type'          => ['sql' => 'SELECT COUNT(f.*) FROM fills f, gas_level g WHERE f.uid = $1 AND f.gas_level_id = g.gas_id AND g.gas_key = $2'],
+		'get_user_stats_filltype_count'    => ['sql' => 'SELECT fill_type AS stat_key, COUNT(cylinder_id) AS stat_value FROM fills WHERE uid = $1 GROUP BY fill_type ORDER BY stat_key'],
+		'get_user_stats_gastype_count'     => ['sql' => 'SELECT gl.gas_key  AS stat_key, COUNT(f.cylinder_id) AS stat_value FROM gas_level gl, fills f WHERE f.gas_level_id = gl.gas_id AND f.uid = $1 GROUP BY f.gas_level_id, gl.gas_key ORDER BY stat_key'],
 		'get_user_stats_vol_by_type'       => ['sql' => 'SELECT SUM(o2_vol) AS o2, SUM(he_vol) AS he FROM fills WHERE uid = $1'],
-		'get_user_stats_by_cyl_type'       => ['sql' => 'SELECT cyl_type AS stat_key, SUM(cyl_count) AS stat_value FROM fills WHERE uid = $1 GROUP BY cyl_type ORDER BY stat_value DESC'],
-		'get_generic_stats_filltype_count' => ['sql' => 'SELECT fill_type AS stat_key, SUM(cyl_count) AS stat_value FROM fills GROUP BY fill_type ORDER BY stat_key'],
-		'get_generic_stats_gastype_count'  => ['sql' => 'SELECT gl.gas_key  AS stat_key, SUM(f.cyl_count) AS stat_value FROM gas_level gl, fills f WHERE f.gas_level_id = gl.gas_id GROUP BY f.gas_level_id, gl.gas_key ORDER BY stat_key'],
+		'get_user_stats_by_cyl_type'       => ['sql' =>	'SELECT ct.name AS stat_key, COUNT(f.cylinder_id) AS stat_value FROM fills f, cylinders c, cylinder_types ct WHERE f.uid = $1 AND f.cylinder_id = c.cylinder_id AND c.type_id = ct.type_id GROUP BY ct.name ORDER BY stat_value DESC'],
+		'get_generic_stats_filltype_count' => ['sql' => 'SELECT fill_type AS stat_key, COUNT(cylinder_id) AS stat_value FROM fills GROUP BY fill_type ORDER BY stat_key'],
+		'get_generic_stats_gastype_count'  => ['sql' => 'SELECT gl.gas_key  AS stat_key, COUNT(f.cylinder_id) AS stat_value FROM gas_level gl, fills f WHERE f.gas_level_id = gl.gas_id GROUP BY f.gas_level_id, gl.gas_key ORDER BY stat_key'],
 		'get_generic_stats_vol_by_type'    => ['sql' => 'SELECT SUM(o2_vol) AS o2, SUM(he_vol) AS he FROM fills'],
-		'get_generic_stats_by_cyl_type'    => ['sql' => 'SELECT cyl_type AS stat_key, SUM(cyl_count) AS stat_value FROM fills GROUP BY cyl_type ORDER BY stat_value DESC'],
+		'get_generic_stats_by_cyl_type'    => ['sql' => 'SELECT ct.name AS stat_key, COUNT(f.cylinder_id) AS stat_value FROM fills f, cylinders c, cylinder_types ct WHERE   f.cylinder_id = c.cylinder_id AND   c.type_id = ct.type_id GROUP BY ct.name ORDER BY stat_value DESC'],
+		'get_cylinders_by_user'            => ['sql' => 'SELECT c.cylinder_id, c.type_id, c.name, c.identifier, c.added, ct.label, ct.name AS type_name, ct.pressure, ct.size FROM cylinders c, cylinder_types ct WHERE ct.type_id = c.type_id AND c.user_id = $1 ORDER BY c.cylinder_id ASC'],
+		'get_cylinders'                    => ['sql' => 'SELECT c.user_id, u.login, u.level, cylinder_id, c.type_id, c.name, c.identifier, c.added, ct.label, ct.name AS type_name, ct.pressure, ct.size FROM cylinders c, cylinder_types ct, users u WHERE u.uid = c.user_id AND ct.type_id = c.type_id ORDER BY c.cylinder_id ASC'],
+		'get_cylinder_data'                => ['sql' => 'SELECT c.user_id, c.name, c.identifier, ct.size, ct.pressure, ct.name AS type_name FROM cylinders c, cylinder_types ct WHERE ct.type_id = c.type_id AND c.cylinder_id = $1'],
 	];
 
 	/**
@@ -110,15 +113,26 @@ class DB {
 		pg_execute($this->dbcon, $key, array($uid, $remote_address, $type, $message));
 	}
 
-	public function authenticate(string $login, $password): array {
+	/**
+	 * authenticate: Authenticate the user by the given login and password combination
+	 * @param string $login
+	 * @param string $password
+	 * @return array|null
+	 */
+
+	public function authenticate(string $login, $password): ?array {
 		$key = 'get_user_auth';
 		$result = pg_execute($this->dbcon, $key, array($login, $password));
 
 		if (!$result) {
-			return array();
+			return NULL;
 		}
 
-		return pg_fetch_row($result);
+		$arr = pg_fetch_row($result);
+
+		if (is_bool($arr)) {return null;}
+
+		return $arr;
 	}
 
 	public function getUserDataByUID(int $uid): array {
@@ -144,14 +158,19 @@ class DB {
 	}
 
 	public function addFill(int $uid, int $level, string $fill_type,
-	                        string $cyl_type, int $cyl_count, float $cyl_size,
+	                        int $cylinder_id,
 	                        int $start_pressure, int $end_pressure,
 	                        int $o2_start, int $o2_end,
 	                        int $he_start, int $he_end,
 	                        int $o2_vol, int $he_vol): bool {
 		$key = 'add_fill';
-		$result = pg_execute($this->dbcon, $key, array($uid, $level, $fill_type,
-			$cyl_type, $cyl_count, $cyl_size,
+		/*
+		'add_fill'                         => ['sql' => 'INSERT INTO fills ' .
+			'(uid, fill_datetime, gas_level_id, cylinder_id, fill_type, start_pressure, end_pressure, o2_start, o2_end, he_start, he_end, o2_vol, he_vol, counted) ' .
+			'VALUES ($1, now(), $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, FALSE)'],
+		 */
+		$result = pg_execute($this->dbcon, $key, array($uid, $level,
+			$cylinder_id, $fill_type,
 			$start_pressure, $end_pressure,
 			$o2_start, $o2_end,
 			$he_start, $he_end,
@@ -336,12 +355,87 @@ class DB {
 		return $res;
 	}
 
+	public function update_fills_as_counted(int $uid, array $list): ?bool {
+		$val_arr = array();
+
+		for ($i = 0; $i < count($list); $i++) {
+			array_push($val_arr, $list[$i]['id']);
+		}
+
+		$sqlString = 'UPDATE fills SET counted = TRUE, counted_date = NOW() WHERE  fill_id IN (' . implode(',', $val_arr) . ') AND uid = ' . $uid;
+
+		return $this->putSQL($sqlString);
+	}
+
+	////////// CYLINDERS  \\\\\\\\\\
+	public function get_cylinder_data(int $cyl_id): array {
+		$key = 'get_cylinder_data';
+		$result = pg_execute($this->dbcon, $key, array($cyl_id));
+		$res = pg_fetch_all($result)[0];
+
+		if (is_null($res) || !$res) {
+			$res = array();
+		}
+
+		return $res;
+	}
+
+	public function get_user_cylinders(int $uid): array {
+		$key = 'get_cylinders_by_user';
+		$result = pg_execute($this->dbcon, $key, array($uid));
+		$res = pg_fetch_all($result);
+
+		if (is_null($res) || !$res) {
+			$res = array();
+		}
+
+		return $res;
+	}
+
+	public function get_all_cylinders(): array {
+		$key = 'get_cylinders';
+		$result = pg_execute($this->dbcon, $key, array());
+		$res = pg_fetch_all($result);
+
+		if (is_null($res) || !$res) {
+			$res = array();
+		}
+
+		return $res;
+	}
+
 	/**
 	 * @param string $sql
 	 * @param array  $params
 	 * @return array|bool
 	 */
+
+	// TODO: There's something fundamentaly broken with this function, which results in an invisible 500 server error
+
 	public function runSQL(string $sql, array $params): ?array {
-		return pg_query_params($this->dbcon, $sql, $params);
+		$res = pg_query_params($this->dbcon, $sql, $params);
+		$result = pg_fetch_all($res);
+
+		if ($result == FALSE) {
+			print("FALSE");
+		} elseif ( is_null($result)) {
+			print('NULL');
+		} else {
+			$num = count($result);
+
+			for ($i = 0; $i < $num; $i++) {
+				print('Val: ' . $result[$i]);
+			}
+		}
+
+		return $result;
+	}
+
+	public function putSQL(string $sql): bool {
+		$res = pg_query($this->dbcon, $sql);
+
+		if ($res) {return true;}
+
+		return false;
 	}
 }

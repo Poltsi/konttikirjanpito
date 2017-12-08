@@ -53,7 +53,7 @@ class User {
 	public function authenticate($login, $password): bool {
 		$user_data = $this->dbcon->authenticate($login, $password);
 
-		if (!count($user_data)) {
+		if (($user_data == NULL) || !count($user_data)) {
 			$this->user_authenticated = false;
 			return false;
 		} else {
