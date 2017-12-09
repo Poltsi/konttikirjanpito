@@ -314,3 +314,50 @@ INSERT INTO cylinder_types VALUES (236,'D20-300','D20-300', 300, 40.0, NOW());
 INSERT INTO cylinder_types VALUES (237,'40l-300','40l-300', 300, 40.0, NOW());
 INSERT INTO cylinder_types VALUES (238,'50l-300','50l-300', 300, 50.0, NOW());
 INSERT INTO cylinder_types VALUES (239,'80l-300','80l-300', 300, 80.0, NOW());
+
+-- Certificates
+
+CREATE TABLE certificates
+(
+  cert_id SERIAL PRIMARY KEY NOT NULL,
+  user_id INT NOT NULL,
+  org_id INT NOT NULL,
+  type VARCHAR(128) NOT NULL,
+  instructor VARCHAR(128) NOT NULL,
+  name VARCHAR(128) NOT NULL,
+  serial_ident VARCHAR(128) NOT NULL,
+  added TIMESTAMP WITH TIME ZONE
+);
+
+CREATE UNIQUE INDEX certificates_serial_ident_idx ON certificates (serial_ident);
+COMMENT ON TABLE certificates IS 'List of certificates each user has';
+
+ALTER TABLE cylinder_types OWNER TO kontti;
+
+-- Certification organizations
+CREATE TABLE certification_org
+(
+  org_id SERIAL PRIMARY KEY NOT NULL,
+  name VARCHAR(128) NOT NULL,
+  added TIMESTAMP WITH TIME ZONE
+);
+
+CREATE UNIQUE INDEX cert_org_idx ON certification_org (name);
+COMMENT ON TABLE certification_org IS 'list of certification organizations';
+
+ALTER TABLE certification_org OWNER TO kontti;
+
+INSERT INTO certification_org (name, added) VALUES
+  ('BSAC', NOW()),
+  ('CMAS', NOW()),
+  ('GUE', NOW()),
+  ('IANTD', NOW()),
+  ('IART', NOW()),
+  ('NACD', NOW()),
+  ('NAUI', NOW()),
+  ('PADI', NOW()),
+  ('RESA', NOW()),
+  ('SDI', NOW()),
+  ('SSI', NOW()),
+  ('TDI', NOW()),
+  ('UTD', NOW());
