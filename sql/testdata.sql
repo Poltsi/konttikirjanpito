@@ -15,6 +15,32 @@ UPDATE users SET password = crypt('teeso', salt) WHERE uid = 5;
 
 SELECT pg_catalog.setval('users_uid_seq', 6, FALSE);
 
+-- Certificates
+INSERT INTO certificates (user_id, org_id, type, instructor, instructor_serial, name, serial_ident, added) VALUES
+  (2, 8, 'rec', 'Hessu Hassu', 'AAA-111','Open Water Diver', '111-AAA', NOW()),
+  (2, 8, 'rec', 'Hessu Hassu', 'AAA-111','Advanced Open Water Diver', '222-AAA', NOW()),
+  (2, 8, 'rec', 'Toivo Usko',  'BBB-111','Nitrox', '111-BBB', NOW()),
+  (2, 8, 'rec', 'Toivo Usko',  'BBB-111','NX Gasfiller', '222-BBB', NOW()),
+  (3, 8, 'rec', 'Toivo Usko',  'BBB-111','OWD', '222-BBB', NOW()),
+  (3, 2, 'rec', 'Takku Penttu', 'CCC-111', 'P2', '111-CCC', NOW()),
+  (3, 8, 'rec', 'Toivo Usko',  'BBB-111','NX Gasfiller', '333-BBB', NOW()),
+  (4, 8, 'rec', 'Hessu Hassu', 'AAA-111','Open Water Diver', '333-AAA', NOW()),
+  (5, 3, 'rec', 'Jarrod Jablonski', '1', 'Recreational diver 1', 'A', NOW()),
+  (5, 3, 'rec', 'Jarrod Jablonski', '1', 'Recreational diver 2', 'B', NOW()),
+  (5, 3, 'rec', 'Jarrod Jablonski', '1', 'Recreational diver 3', 'C', NOW()),
+  (5, 3, 'rec', 'Jarrod Jablonski', '1', 'Doubles drysuit', 'D', NOW()),
+  (5, 3, 'rec', 'Jarrod Jablonski', '1', 'Gas blender', 'E', NOW()),
+  (5, 3, 'rec', 'Jarrod Jablonski', '1', 'Fundamentals', 'F', NOW()),
+  (5, 1, 'tec', 'Martyn Farr', 'A', 'Sport mixed gas diver', '1', NOW()),
+  (5, 1, 'tec', 'Martyn Farr', 'A', 'Explorer mixed gas diver', '2', NOW()),
+  (5, 1, 'tec', 'Martyn Farr', 'A', 'Advanced mixed gas diver', '3', NOW()),
+  (5, 4, 'ccr', 'Martin Wälden', 'B', 'MOD 1', 'A1', NOW()),
+  (5, 4, 'ccr', 'Martin Wälden', 'B', 'MOD 2', 'A2', NOW()),
+  (5, 4, 'ccr', 'Martin Wälden', 'B', 'MOD 3', 'A3', NOW()),
+  (5, 4, 'cave', 'Todde Robson', 'C', 'Cavern', 'A4', NOW()),
+  (5, 4, 'cave', 'Todde Robson', 'C', 'Intro to cave', 'A5', NOW()),
+  (5, 4, 'cave', 'Todde Robson', 'C', 'Full cave', 'A6', NOW());
+
 -- Cylinders
 
 INSERT INTO cylinders VALUES ( 1, 2, 112, '12-232', '56789', NOW());

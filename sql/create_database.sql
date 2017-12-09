@@ -324,12 +324,12 @@ CREATE TABLE certificates
   org_id INT NOT NULL,
   type VARCHAR(128) NOT NULL,
   instructor VARCHAR(128) NOT NULL,
+  instructor_serial VARCHAR(128) NOT NULL,
   name VARCHAR(128) NOT NULL,
   serial_ident VARCHAR(128) NOT NULL,
   added TIMESTAMP WITH TIME ZONE
 );
 
-CREATE UNIQUE INDEX certificates_serial_ident_idx ON certificates (serial_ident);
 COMMENT ON TABLE certificates IS 'List of certificates each user has';
 
 ALTER TABLE cylinder_types OWNER TO kontti;
