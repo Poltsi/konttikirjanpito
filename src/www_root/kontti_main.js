@@ -99,6 +99,9 @@ function display_action_buttons() {
 		case 'admin':
 			show_admin();
 			break;
+		case 'user_settings':
+			show_user_settings();
+			break;
 		case 'logout':
 			break;
 		default:
@@ -219,6 +222,7 @@ function get_main_action_buttons() {
 	stats_button.addEventListener('click', get_stats_function());
 	button_div.appendChild(stats_button);
 
+	button_div.appendChild(get_user_settings_button());
 	button_div.appendChild(get_logout_button());
 	return (button_div);
 }
@@ -232,6 +236,181 @@ function get_logout_button() {
 	logout_button.style = 'float: right';
 	return logout_button;
 }
+
+/*************************************************** USER SETTINGS ***************************************************/
+
+function get_user_settings_button() {
+	/* Logout button */
+	var user_settings_button = document.createElement('button');
+	user_settings_button.id = 'user_settings';
+	user_settings_button.innerHTML = 'User settings';
+	user_settings_button.addEventListener('click', get_user_settings_function());
+	return user_settings_button;
+}
+
+/**
+ * get_user_settings_function: Return a reference to the logout function
+ * @returns {Function}
+ */
+
+function get_user_settings_function() {
+	return (function () {
+		user_settings();
+	});
+}
+
+function user_settings() {
+	sessionStorage.setItem('kontti_mode', 'user_settings');
+	display_action_buttons();
+	// TODO: Empty the main div
+}
+
+function show_user_settings() {
+	/* TODO: Populate the action div */
+	var data_action_elem = document.querySelector('#' + MAINDATAACTIONID);
+	var button_div = document.createElement('div');
+	button_div.id = 'stats_action';
+
+	/* Show user settings */
+	var own_button = document.createElement('button');
+	own_button.innerHTML = 'User settings';
+	own_button.id = 'own_settings';
+	own_button.addEventListener('click', get_own_settings_function());
+	button_div.appendChild(own_button);
+
+	/* Show user cylinders */
+	var user_cylinder_button = document.createElement('button');
+	user_cylinder_button.innerHTML = 'Manage cylinders';
+	user_cylinder_button.id = 'manage_cylinder_list';
+	user_cylinder_button.addEventListener('click', get_manage_cylinder_function());
+	button_div.appendChild(user_cylinder_button);
+
+	/* Show user certificates */
+	var user_certificate_button = document.createElement('button');
+	user_certificate_button.innerHTML = 'Manage certificates';
+	user_certificate_button.id = 'manage_certificate_list';
+	user_certificate_button.addEventListener('click', get_manage_certificate_function());
+	button_div.appendChild(user_certificate_button);
+
+	button_div.appendChild(get_back_to_fill_button());
+	button_div.appendChild(get_user_settings_button());
+	button_div.appendChild(get_logout_button());
+
+	data_action_elem.appendChild(button_div);
+}
+
+function get_own_settings_function() {
+	return (function () {
+		own_settings();
+	});
+}
+
+function get_manage_cylinder_function() {
+	return (function () {
+		manage_cylinder();
+	});
+}
+
+function get_manage_certificate_function() {
+	return (function () {
+		manage_certificate();
+	});
+}
+
+function own_settings() {
+	var request_data = {
+		'object': 'user',
+		'action': 'get',
+		'target': ['user_settings']
+	};
+
+	var callback = function (xhr) {
+		if (xhr.readyState === 4 && xhr.status === 200) {
+			var json = JSON.parse(xhr.responseText);
+			add_info('Return value: ' + json);
+
+			if (json[KEY_STATUS] === STATUS_OK) {
+				empty_info();
+				empty_data();
+				update_user_settings(json);
+				update_user_cylinder_list(json);
+				update_user_certificate_list(json);
+				add_info('User settings retrieved' + JSON.stringify(json));
+				display_user_settings();
+			} else {
+				add_info('Could not get user settings');
+
+				if (json[KEY_REASON] !== null) {
+					add_info(json[KEY_REASON]);
+				}
+			}
+		}
+	};
+
+	send_json_request(request_data, 'settings.php', callback);
+}
+
+function manage_cylinder() {
+}
+
+function manage_certificate() {
+}
+
+function display_user_settings() {
+	console.log('Settings: ' + sessionStorage.getItem('kontti_settings'))
+	var settings = JSON.parse(sessionStorage.getItem('kontti_settings'));
+	var data_elem = document.querySelector('#' + DATAAREAID);
+
+	var settings_table = document.createElement('table');
+	settings_table.setAttribute('border', '1');
+
+	var settings_header = document.createElement('tr');
+	var settings_key_cell = document.createElement('th');
+	settings_key_cell.innerHTML = 'Field';
+	var settings_value_cell = document.createElement('th');
+	settings_value_cell.innerHTML = 'Value';
+
+	settings_header.appendChild(settings_key_cell);
+	settings_header.appendChild(settings_value_cell);
+
+	settings_table.appendChild(settings_header);
+
+	var editable_fields = ['name'];
+
+	Object.keys(settings).forEach(function(key, index) {
+		var setting_row = document.createElement('tr');
+		var field_cell = document.createElement('td');
+		field_cell.id = 'personal_' + key;
+		field_cell.style.textAlign = 'right';
+		field_cell.innerHTML = key;
+
+		var val_cell = document.createElement('td');
+		val_cell.id = 'personal_' + key;
+		val_cell.style.textAlign = 'right';
+
+		if (editable_fields.indexOf(key) > -1) {
+			var input_field = document.createElement('input');
+			input_field.setAttribute('value', settings[key]);
+			input_field.setAttribute('type', 'text');
+			input_field.setAttribute('id', 'personal_editable-' + key);
+			val_cell.appendChild(input_field);
+		} else {
+			val_cell.innerHTML = settings[key];
+		}
+
+		setting_row.appendChild(field_cell);
+		setting_row.appendChild(val_cell);
+		settings_table.appendChild(setting_row);
+	});
+
+	data_elem.appendChild(settings_table);
+}
+
+function update_user_settings(response) {
+	sessionStorage.setItem('kontti_settings', JSON.stringify(response['data']['personal']));
+}
+
+/*************************************************** USER SETTINGS ***************************************************/
 
 /******************************************************  ADMIN  ******************************************************/
 /**
@@ -271,6 +450,7 @@ function show_admin() {
 
 	/* Back to fills */
 	button_div.appendChild(get_back_to_fill_button());
+	button_div.appendChild(get_user_settings_button());
 	button_div.appendChild(get_logout_button());
 	data_action_elem.appendChild(button_div);
 }
@@ -1354,11 +1534,10 @@ function show_stats() {
 	}
 
 	button_div.appendChild(get_back_to_fill_button());
+	button_div.appendChild(get_user_settings_button());
 	button_div.appendChild(get_logout_button());
 
-
 	data_action_elem.appendChild(button_div);
-
 }
 
 //----------------------------------- Own stats
@@ -1581,12 +1760,24 @@ function update_cylinder_list() {
 function update_user_cylinder_list(response) {
 	var cylinder_list = [];
 
-	for (var i = 0; i < response['data'].length; i++) {
-		cylinder_list.push(response['data'][i]);
+	for (var i = 0; i < response['data']['cylinders'].length; i++) {
+		cylinder_list.push(response['data']['cylinders'][i]);
 	}
 
 	sessionStorage.setItem('kontti_cylinder_list', JSON.stringify(cylinder_list));
+}
 
+////////////////////\\\\\\\\\\\\\\\\\\\\\
+//////////////////// Handle certificate list
+
+function update_user_certificate_list(response) {
+	var certificate_list = [];
+
+	for (var i = 0; i < response['data']['certificates'].length; i++) {
+		certificate_list.push(response['data']['certificates'][i]);
+	}
+
+	sessionStorage.setItem('kontti_certificate_list', JSON.stringify(certificate_list));
 }
 
 ////////////////////\\\\\\\\\\\\\\\\\\\\\
