@@ -418,6 +418,7 @@ function manage_cylinder_settings() {
 		'type_id': ['Type ID', false],
 		'name': ['Name', true],
 		'identifier': ['Serial', true],
+		'inspection_date': ['Inspected', true],
 		'added': ['Added', false],
 		'label': ['Type', true],
 		'pressure': ['Pressure', false],
@@ -460,6 +461,8 @@ function manage_cylinder_settings() {
 					}
 
 					data_cell.appendChild(input_field);
+				} else if (key === 'inspection_date') {
+					data_cell.appendChild(get_year_date_selector(cyl_id, cylinders[i][key]));
 				} else {
 					var input_field = document.createElement('input');
 					input_field.setAttribute('value', cylinders[i][key]);
@@ -487,6 +490,45 @@ function update_user_settings(response) {
 	sessionStorage.setItem('kontti_settings', JSON.stringify(response['data']['personal']));
 }
 
+function get_year_date_selector(cyl_id, fulldate) {
+	// Get the year and month from date, the Date-object does not understand YYYY-MM-DD format so we do it manually
+	var year = parseInt(fulldate.split('-')[0]);
+	var month = parseInt(fulldate.split('-')[1]);
+
+	var year_date_div = document.createElement('div');
+	var year_field = document.createElement('select');
+	year_field.setAttribute('id', 'cylinder_editable-inspection_year-' + '-' + cyl_id);
+	year_field.title = 'Select year';
+
+	for (var i = 1990; i <= (new Date()).getFullYear(); i++) {
+		var opt = new Option(i, i);
+
+		if (i == year) {
+			opt.selected = true;
+		}
+
+		year_field.options.add(opt);
+	}
+
+
+	var month_field = document.createElement('select');
+	month_field.setAttribute('id', 'cylinder_editable-inspection_month-' + '-' + cyl_id);
+	month_field.title = 'Select month';
+
+	for (var j = 1; j < 13; j++) {
+		var opt = new Option(j, j);
+
+		if (j == month) {
+			opt.selected = true;
+		}
+
+		month_field.options.add(opt);
+	}
+
+	year_date_div.appendChild(year_field);
+	year_date_div.appendChild(month_field);
+	return year_date_div;
+}
 /*************************************************** USER SETTINGS ***************************************************/
 
 /******************************************************  ADMIN  ******************************************************/
