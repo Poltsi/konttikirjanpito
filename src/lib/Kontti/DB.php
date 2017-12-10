@@ -53,6 +53,7 @@ class DB {
 		'get_cylinders_by_user'            => ['sql' => 'SELECT c.cylinder_id, c.type_id, c.name, c.identifier, c.added, ct.label, ct.name AS type_name, ct.pressure, ct.size FROM cylinders c, cylinder_types ct WHERE ct.type_id = c.type_id AND c.user_id = $1 ORDER BY c.cylinder_id ASC'],
 		'get_cylinders'                    => ['sql' => 'SELECT c.user_id, u.login, u.level, cylinder_id, c.type_id, c.name, c.identifier, c.added, ct.label, ct.name AS type_name, ct.pressure, ct.size FROM cylinders c, cylinder_types ct, users u WHERE u.uid = c.user_id AND ct.type_id = c.type_id ORDER BY c.cylinder_id ASC'],
 		'get_cylinder_data'                => ['sql' => 'SELECT c.user_id, c.name, c.identifier, ct.size, ct.pressure, ct.name AS type_name FROM cylinders c, cylinder_types ct WHERE ct.type_id = c.type_id AND c.cylinder_id = $1'],
+		'get_cylinder_types'               => ['sql' => 'SELECT type_id, label, name, pressure, size, added FROM cylinder_types ORDER BY label DESC'],
 		'get_certificates_by_user'         => ['sql' => 'SELECT c.cert_id, c.type, c.instructor, c.name, c.serial_ident, co.org_id, co.name FROM certificates c, certification_org co WHERE c.org_id = co.org_id AND user_id = $1'],
 	];
 
@@ -408,6 +409,18 @@ class DB {
 
 	public function get_all_cylinders(): array {
 		$key = 'get_cylinders';
+		$result = pg_execute($this->dbcon, $key, array());
+		$res = pg_fetch_all($result);
+
+		if (is_null($res) || !$res) {
+			$res = array();
+		}
+
+		return $res;
+	}
+
+	public function get_user_cylinder_types(): array {
+		$key = 'get_cylinder_types';
 		$result = pg_execute($this->dbcon, $key, array());
 		$res = pg_fetch_all($result);
 

@@ -118,7 +118,9 @@ function clear_divs() {
 }
 
 function show_main() {
+	// Retrieve and store some generic data
 	update_cylinder_list();
+	update_cylinder_types();
 
 	var main_action_elem = document.getElementById(MAINDATAACTIONID);
 	var data_area_elem = document.querySelector('#' + DATAAREAID);
@@ -274,22 +276,22 @@ function show_user_settings() {
 	/* Show user settings */
 	var own_button = document.createElement('button');
 	own_button.innerHTML = 'User settings';
-	own_button.id = 'own_settings';
-	own_button.addEventListener('click', get_own_settings_function());
+	own_button.id = 'manage_settings';
+	own_button.addEventListener('click', get_settings_function('user'));
 	button_div.appendChild(own_button);
 
 	/* Show user cylinders */
 	var user_cylinder_button = document.createElement('button');
 	user_cylinder_button.innerHTML = 'Manage cylinders';
 	user_cylinder_button.id = 'manage_cylinder_list';
-	user_cylinder_button.addEventListener('click', get_manage_cylinder_function());
+	user_cylinder_button.addEventListener('click', get_settings_function('cylinder'));
 	button_div.appendChild(user_cylinder_button);
 
 	/* Show user certificates */
 	var user_certificate_button = document.createElement('button');
 	user_certificate_button.innerHTML = 'Manage certificates';
 	user_certificate_button.id = 'manage_certificate_list';
-	user_certificate_button.addEventListener('click', get_manage_certificate_function());
+	user_certificate_button.addEventListener('click', get_settings_function('certificate'));
 	button_div.appendChild(user_certificate_button);
 
 	button_div.appendChild(get_back_to_fill_button());
@@ -299,25 +301,30 @@ function show_user_settings() {
 	data_action_elem.appendChild(button_div);
 }
 
-function get_own_settings_function() {
-	return (function () {
-		own_settings();
-	});
+function get_settings_function(type) {
+	switch (type) {
+		case 'user':
+			return function () {
+				manage_settings(function () {
+					manage_user_settings();
+				});
+			};
+		case 'cylinder':
+			return function () {
+				manage_settings( function () {
+					manage_cylinder_settings();
+				});
+			};
+		case 'certificate':
+			return function () {
+				manage_settings(function () {
+					manage_certificate_settings();
+				});
+			};
+	}
 }
 
-function get_manage_cylinder_function() {
-	return (function () {
-		manage_cylinder();
-	});
-}
-
-function get_manage_certificate_function() {
-	return (function () {
-		manage_certificate();
-	});
-}
-
-function own_settings() {
+function manage_settings(func) {
 	var request_data = {
 		'object': 'user',
 		'action': 'get',
@@ -335,8 +342,8 @@ function own_settings() {
 				update_user_settings(json);
 				update_user_cylinder_list(json);
 				update_user_certificate_list(json);
-				add_info('User settings retrieved' + JSON.stringify(json));
-				display_user_settings();
+				add_info('User settings retrieved');
+				func();
 			} else {
 				add_info('Could not get user settings');
 
@@ -350,14 +357,7 @@ function own_settings() {
 	send_json_request(request_data, 'settings.php', callback);
 }
 
-function manage_cylinder() {
-}
-
-function manage_certificate() {
-}
-
-function display_user_settings() {
-	console.log('Settings: ' + sessionStorage.getItem('kontti_settings'))
+function manage_user_settings() {
 	var settings = JSON.parse(sessionStorage.getItem('kontti_settings'));
 	var data_elem = document.querySelector('#' + DATAAREAID);
 
@@ -404,6 +404,83 @@ function display_user_settings() {
 	});
 
 	data_elem.appendChild(settings_table);
+}
+
+function manage_cylinder_settings() {
+	var cylinders = JSON.parse(sessionStorage.getItem('kontti_cylinder_list'));
+	var data_elem = document.querySelector('#' + DATAAREAID);
+
+	var settings_table = document.createElement('table');
+	settings_table.setAttribute('border', '1');
+
+	var header_fields = {
+		'cylinder_id': ['Cylinder ID', false],
+		'type_id': ['Type ID', false],
+		'name': ['Name', true],
+		'identifier': ['Serial', true],
+		'added': ['Added', false],
+		'label': ['Type', true],
+		'pressure': ['Pressure', false],
+		'size': ['Size', false]};
+
+	var settings_header = document.createElement('tr');
+
+	Object.keys(header_fields).forEach(function(key) {
+		var header_cell = document.createElement('th');
+		header_cell.innerHTML = header_fields[key][0];
+		settings_header.appendChild(header_cell);
+	});
+
+	settings_table.appendChild(settings_header);
+
+	for (var i = 0; i < cylinders.length; i++) {
+		var cyl_id = cylinders[i]['cylinder_id'];
+		var setting_row = document.createElement('tr');
+
+		Object.keys(header_fields).forEach(function(key) {
+			var data_cell = document.createElement('td');
+
+			if (header_fields[key][1]) {
+				// We show a drop down for cylinder type
+				if (key === 'label') {
+					var input_field = document.createElement('select');
+					input_field.setAttribute('id', 'cylinder_editable-' + cylinders[i][key] + '-' + cyl_id);
+					input_field.title = 'Select cylinder';
+
+					var cylinder_type_list = JSON.parse(sessionStorage.getItem('kontti_cylinder_type_list'));
+
+					for (var j = 0; j < cylinder_type_list.length; j++) {
+						var opt = new Option(cylinder_type_list[j]['name'], cylinder_type_list[j]['type_id']);
+
+						if (cylinder_type_list[j]['type_id'] === cylinders[i]['type_id']) {
+							opt.selected = true;
+						}
+
+						input_field.options.add(opt);
+					}
+
+					data_cell.appendChild(input_field);
+				} else {
+					var input_field = document.createElement('input');
+					input_field.setAttribute('value', cylinders[i][key]);
+					input_field.setAttribute('type', 'text');
+					input_field.setAttribute('id', 'cylinder_editable-' + cylinders[i][key] + '-' + cyl_id);
+					data_cell.appendChild(input_field);
+				}
+			} else {
+				data_cell.innerHTML = cylinders[i][key];
+			}
+
+			setting_row.appendChild(data_cell);
+		});
+
+		settings_table.appendChild(setting_row);
+	}
+
+	data_elem.appendChild(settings_table);
+}
+
+function manage_certificate_settings() {
 }
 
 function update_user_settings(response) {
@@ -1765,6 +1842,40 @@ function update_user_cylinder_list(response) {
 	}
 
 	sessionStorage.setItem('kontti_cylinder_list', JSON.stringify(cylinder_list));
+}
+
+function update_cylinder_types() {
+	var request_data = {
+		'object': 'cylinder',
+		'action': 'get'
+	};
+
+	var callback = function (xhr) {
+		"use strict";
+		if (xhr.readyState === 4 && xhr.status === 200) {
+			var response = JSON.parse(xhr.responseText);
+
+			if (response[KEY_STATUS] === STATUS_OK) {
+				store_cylinder_types(response);
+			} else {
+				add_info('Failed to retrieve list of cylinder types. Problems with the network?');
+
+				if (response[KEY_REASON] !== null) {
+					add_info(response[KEY_REASON]);
+				}
+			}
+		}
+	};
+
+	send_json_request(request_data, 'cylinder_types.php', callback);
+}
+
+function store_cylinder_types(response) {
+	if (response['data']['cylinder_types'].length > 0) {
+		sessionStorage.setItem('kontti_cylinder_type_list', JSON.stringify(response['data']['cylinder_types']));
+	} else {
+		sessionStorage.setItem('kontti_cylinder_type_list', false);
+	}
 }
 
 ////////////////////\\\\\\\\\\\\\\\\\\\\\
