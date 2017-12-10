@@ -119,7 +119,7 @@ function clear_divs() {
 
 function show_main() {
 	// Retrieve and store some generic data
-	update_cylinder_list();
+	fetch_cylinder_list();
 	update_cylinder_types();
 
 	var main_action_elem = document.getElementById(MAINDATAACTIONID);
@@ -410,8 +410,8 @@ function manage_cylinder_settings() {
 	var cylinders = JSON.parse(sessionStorage.getItem('kontti_cylinder_list'));
 	var data_elem = document.querySelector('#' + DATAAREAID);
 
-	var settings_table = document.createElement('table');
-	settings_table.setAttribute('border', '1');
+	var cylinder_table = document.createElement('table');
+	cylinder_table.setAttribute('border', '1');
 
 	var header_fields = {
 		'cylinder_id': ['Cylinder ID', false],
@@ -436,7 +436,7 @@ function manage_cylinder_settings() {
 	action_cell.innerHTML = 'Action';
 	settings_header.appendChild(action_cell);
 
-	settings_table.appendChild(settings_header);
+	cylinder_table.appendChild(settings_header);
 
 	for (var i = 0; i < cylinders.length; i++) {
 		var cyl_id = cylinders[i]['cylinder_id'];
@@ -490,14 +490,48 @@ function manage_cylinder_settings() {
 		action_row_cell.appendChild(action_button);
 		setting_row.appendChild(action_row_cell);
 
-		settings_table.appendChild(setting_row);
+		cylinder_table.appendChild(setting_row);
 	}
 
-	data_elem.appendChild(settings_table);
+	// Finally add the main editing row
+	var edit_row = document.createElement('tr');
+	var edit_cell = document.createElement('td');
+	edit_cell.setAttribute('colspan', '10');
+
+	var add_row_button = document.createElement('button');
+	add_row_button.innerHTML = 'Add cylinder';
+	add_row_button.addEventListener('click', get_add_cylinder_function(cylinder_table, header_fields));
+	edit_cell.appendChild(add_row_button);
+
+	var update_button = document.createElement('button');
+	update_button.innerHTML = 'Update cylinders';
+	update_button.addEventListener('click', get_update_cylinder_list_function(cylinder_table));
+	edit_cell.appendChild(update_button);
+
+	edit_row.appendChild(edit_cell);
+	cylinder_table.appendChild(edit_row);
+
+	data_elem.appendChild(cylinder_table);
 }
 
 function get_remove_cylinder_function(cyl_id) {
 	return function(){remove_cylinder(cyl_id);};
+}
+
+function get_update_cylinder_list_function(table) {
+	return function(){update_cylinder_list(table);};
+}
+
+function update_cylinder_list(table) {
+
+}
+
+function get_add_cylinder_function(table, field_list) {
+	return function(){add_cylinder(table, field_list);};
+}
+
+function add_cylinder(table, field_list) {
+
 }
 
 function remove_cylinder(cyl_id) {
@@ -1871,7 +1905,7 @@ function send_json_request(request_data, URI, callback) {
 
 //////////////////// Handle cylinder list
 
-function update_cylinder_list() {
+function fetch_cylinder_list() {
 	var request_data = {
 		'object': 'user',
 		'action': 'get',
