@@ -168,6 +168,7 @@ CREATE TABLE cylinders
   type_id INT NOT NULL,
   name VARCHAR(128) NOT NULL,
   identifier VARCHAR(128) NOT NULL,
+  inspection_date TIMESTAMP WITH TIME ZONE,
   added TIMESTAMP WITH TIME ZONE
 );
 

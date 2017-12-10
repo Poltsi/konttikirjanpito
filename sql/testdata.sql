@@ -43,25 +43,25 @@ INSERT INTO certificates (user_id, org_id, type, instructor, instructor_serial, 
 
 -- Cylinders
 
-INSERT INTO cylinders VALUES ( 1, 2, 112, '12-232', '56789', NOW());
-INSERT INTO cylinders VALUES ( 2, 2, 211, '10-300', '67890', NOW());
-INSERT INTO cylinders VALUES ( 3, 2, 13, '15-200', 'a1234', NOW());
-INSERT INTO cylinders VALUES ( 4, 3, 12, 'Paikkari-12', 'a2345', NOW());
-INSERT INTO cylinders VALUES ( 5, 3, 6, 'Happi-5', 'a3456', NOW());
-INSERT INTO cylinders VALUES ( 6, 3, 133, 'Tupla-12', 'a4567', NOW());
-INSERT INTO cylinders VALUES ( 7, 3, 1, 'NX-50', 'a5678', NOW());
-INSERT INTO cylinders VALUES ( 8, 4, 12, 'Possu-1', 'a6789', NOW());
-INSERT INTO cylinders VALUES ( 9, 4, 12, 'Possu-2', 'a7890', NOW());
-INSERT INTO cylinders VALUES (10, 5, 203, 'O2-1', 'b5678', NOW());
-INSERT INTO cylinders VALUES (11, 5, 203, 'O2-2', 'b6789', NOW());
-INSERT INTO cylinders VALUES (12, 5, 203, 'O2-3', 'b7890', NOW());
-INSERT INTO cylinders VALUES (13, 5, 203, 'Dil-1', 'c1234', NOW());
-INSERT INTO cylinders VALUES (14, 5, 203, 'Dil-2', 'c2345', NOW());
-INSERT INTO cylinders VALUES (15, 5, 2, 'TX-10/70', 'c3456', NOW());
-INSERT INTO cylinders VALUES (16, 5, 2, 'TX-16/50', 'c4567', NOW());
-INSERT INTO cylinders VALUES (17, 5, 2, 'TX-21/35', 'c5678', NOW());
-INSERT INTO cylinders VALUES (18, 5, 2, 'NX50', 'c6789', NOW());
-INSERT INTO cylinders VALUES (19, 5, 8, 'O2', 'c7890', NOW());
+INSERT INTO cylinders (user_id, type_id, name, identifier, inspection_date, added) VALUES (2, 112, '12-232',       '56789', '2013-01-01 00:00:00', NOW());
+INSERT INTO cylinders (user_id, type_id, name, identifier, inspection_date, added) VALUES (2, 211, '10-300',       '67890', '2012-02-03 00:00:00', NOW());
+INSERT INTO cylinders (user_id, type_id, name, identifier, inspection_date, added) VALUES (2, 13,   '15-200',      'a1234', '2011-03-06 00:00:00', NOW());
+INSERT INTO cylinders (user_id, type_id, name, identifier, inspection_date, added) VALUES (3, 12,   'Paikkari-12', 'a2345', '2008-04-08 00:00:00', NOW());
+INSERT INTO cylinders (user_id, type_id, name, identifier, inspection_date, added) VALUES (3, 6,    'Happi-5',     'a3456', '2013-05-11 00:00:00', NOW());
+INSERT INTO cylinders (user_id, type_id, name, identifier, inspection_date, added) VALUES (3, 133,  'Tupla-12',    'a4567', '2015-06-09 00:00:00', NOW());
+INSERT INTO cylinders (user_id, type_id, name, identifier, inspection_date, added) VALUES (3, 1,    'NX-50',       'a5678', '2012-07-14 00:00:00', NOW());
+INSERT INTO cylinders (user_id, type_id, name, identifier, inspection_date, added) VALUES (4, 12,   'Possu-1',     'a6789', '2012-08-15 00:00:00', NOW());
+INSERT INTO cylinders (user_id, type_id, name, identifier, inspection_date, added) VALUES (4, 12,   'Possu-2',     'a7890', '2011-09-18 00:00:00', NOW());
+INSERT INTO cylinders (user_id, type_id, name, identifier, inspection_date, added) VALUES (5, 203,  'O2-1',        'b5678', '2001-10-20 00:00:00', NOW());
+INSERT INTO cylinders (user_id, type_id, name, identifier, inspection_date, added) VALUES (5, 203,  'O2-2',        'b6789', '2011-11-21 00:00:00', NOW());
+INSERT INTO cylinders (user_id, type_id, name, identifier, inspection_date, added) VALUES (5, 203,  'O2-3',        'b7890', '2012-12-22 00:00:00', NOW());
+INSERT INTO cylinders (user_id, type_id, name, identifier, inspection_date, added) VALUES (5, 203,  'Dil-1',       'c1234', '2014-01-23 00:00:00', NOW());
+INSERT INTO cylinders (user_id, type_id, name, identifier, inspection_date, added) VALUES (5, 203,  'Dil-2',       'c2345', '2012-02-24 00:00:00', NOW());
+INSERT INTO cylinders (user_id, type_id, name, identifier, inspection_date, added) VALUES (5, 2,    'TX-10/70',    'c3456', '2009-03-25 00:00:00', NOW());
+INSERT INTO cylinders (user_id, type_id, name, identifier, inspection_date, added) VALUES (5, 2,    'TX-16/50',    'c4567', '2016-04-27 00:00:00', NOW());
+INSERT INTO cylinders (user_id, type_id, name, identifier, inspection_date, added) VALUES (5, 2,    'TX-21/35',    'c5678', '2012-05-28 00:00:00', NOW());
+INSERT INTO cylinders (user_id, type_id, name, identifier, inspection_date, added) VALUES (5, 2,    'NX50',        'c6789', '2013-06-29 00:00:00', NOW());
+INSERT INTO cylinders (user_id, type_id, name, identifier, inspection_date, added) VALUES (5, 8,    'O2',          'c7890', '2014-07-30 00:00:00', NOW());
 
 -- Fills
 
