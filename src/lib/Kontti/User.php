@@ -27,6 +27,9 @@ class User {
 	private $user_authenticated;
 	private $dbcon;
 
+	private $cylinders;
+	private $certificates;
+
 	/* TODO: Get this from database and make into an object */
 	private $auth_level = array(
 		'air'   => 10,
@@ -41,6 +44,8 @@ class User {
 	 */
 	public function __construct(DB $dbcon) {
 		$this->dbcon = $dbcon;
+		$this->cylinders = array();
+		$this->certificates = array();
 	}
 
 	/**
@@ -83,7 +88,23 @@ class User {
 			$this->user_enabled = $user_data[5] === 'f' ? 0 : 1;
 		}
 
+		$this->certificates = $this->dbcon->get_user_certificates($this->user_uid);
+		$this->cylinders = $this->dbcon->get_user_cylinders($this->user_uid);
 		return true;
+	}
+
+	public function getSettings(): array {
+		$arr = array();
+		$arr['personal']['gid'] = $this->user_gid;
+		$arr['personal']['level'] = $this->user_level;
+		$arr['personal']['login'] = $this->user_login;
+		$arr['personal']['name'] = $this->user_name;
+		$arr['personal']['enabled'] = $this->user_enabled;
+
+		$arr['cylinders'] = $this->cylinders;
+		$arr['certificates'] = $this->certificates;
+
+		return $arr;
 	}
 
 	/**
