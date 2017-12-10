@@ -418,7 +418,7 @@ function manage_cylinder_settings() {
 		'type_id': ['Type ID', false],
 		'name': ['Name', true],
 		'identifier': ['Serial', true],
-		'inspection_date': ['Inspected', true],
+		'inspection_date': ['Inspected (year, month)', true],
 		'added': ['Added', false],
 		'label': ['Type', true],
 		'pressure': ['Pressure', false],
@@ -432,11 +432,16 @@ function manage_cylinder_settings() {
 		settings_header.appendChild(header_cell);
 	});
 
+	var action_cell = document.createElement('th');
+	action_cell.innerHTML = 'Action';
+	settings_header.appendChild(action_cell);
+
 	settings_table.appendChild(settings_header);
 
 	for (var i = 0; i < cylinders.length; i++) {
 		var cyl_id = cylinders[i]['cylinder_id'];
 		var setting_row = document.createElement('tr');
+		setting_row.setAttribute('id', 'cylinder_row-' + cyl_id);
 
 		Object.keys(header_fields).forEach(function(key) {
 			var data_cell = document.createElement('td');
@@ -477,10 +482,27 @@ function manage_cylinder_settings() {
 			setting_row.appendChild(data_cell);
 		});
 
+		var action_row_cell = document.createElement('td');
+		var action_button = document.createElement('button');
+		action_button.innerText = 'Remove cylinder';
+		action_button.setAttribute('id', 'cylinder_editable-remove_button-' + cyl_id);
+		action_button.addEventListener('click', get_remove_cylinder_function(cyl_id));
+		action_row_cell.appendChild(action_button);
+		setting_row.appendChild(action_row_cell);
+
 		settings_table.appendChild(setting_row);
 	}
 
 	data_elem.appendChild(settings_table);
+}
+
+function get_remove_cylinder_function(cyl_id) {
+	return function(){remove_cylinder(cyl_id);};
+}
+
+function remove_cylinder(cyl_id) {
+	var cyl_row = document.querySelector('#cylinder_row-' + cyl_id);
+	cyl_row.parentNode.removeChild(cyl_row);
 }
 
 function manage_certificate_settings() {
@@ -503,7 +525,7 @@ function get_year_date_selector(cyl_id, fulldate) {
 	for (var i = 1990; i <= (new Date()).getFullYear(); i++) {
 		var opt = new Option(i, i);
 
-		if (i == year) {
+		if (i === year) {
 			opt.selected = true;
 		}
 
@@ -518,7 +540,7 @@ function get_year_date_selector(cyl_id, fulldate) {
 	for (var j = 1; j < 13; j++) {
 		var opt = new Option(j, j);
 
-		if (j == month) {
+		if (j === month) {
 			opt.selected = true;
 		}
 
