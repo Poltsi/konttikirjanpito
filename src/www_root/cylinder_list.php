@@ -30,11 +30,11 @@ if (!array_key_exists('uid', $_SESSION)) {
 	switch ($data['object']) {
 		case 'user':
 			$audit->log($_SESSION['uid'], 'cylinder_list-ok', 'Fetching cylinders for user: ' .  $_SESSION['uid']);
-			$response['data'] = $db->get_user_cylinders($_SESSION['uid']);
+			$response['data']['cylinders'] = $db->get_user_cylinders($_SESSION['uid']);
 			break;
 		case 'all':
 			$audit->log($_SESSION['uid'], 'cylinder_list-ok', 'Fetching all cylinders');
-			$response['data'] = $db->get_all_cylinders($_SESSION['uid']);
+			$response['data']['cylinders'] = $db->get_all_cylinders();
 			break;
 		default:
 			$audit->log($_SESSION['uid'], 'cylinder_list-fail', 'Unknown object');
