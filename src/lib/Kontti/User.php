@@ -29,6 +29,7 @@ class User {
 
 	private $cylinders;
 	private $certificates;
+	private $certificate_org;
 
 	/* TODO: Get this from database and make into an object */
 	private $auth_level = array(
@@ -46,6 +47,7 @@ class User {
 		$this->dbcon = $dbcon;
 		$this->cylinders = array();
 		$this->certificates = array();
+		$this->certificate_org = array();
 	}
 
 	/**
@@ -88,8 +90,9 @@ class User {
 			$this->user_enabled = $user_data[5] === 'f' ? 0 : 1;
 		}
 
-		$this->certificates = $this->dbcon->get_user_certificates($this->user_uid);
 		$this->cylinders = $this->dbcon->get_user_cylinders($this->user_uid);
+		$this->certificates = $this->dbcon->get_user_certificates($this->user_uid);
+		$this->certificate_org = $this->dbcon->get_certificate_organization();
 		return true;
 	}
 
@@ -103,6 +106,7 @@ class User {
 
 		$arr['cylinders'] = $this->cylinders;
 		$arr['certificates'] = $this->certificates;
+		$arr['certificate_org'] = $this->certificate_org;
 
 		return $arr;
 	}

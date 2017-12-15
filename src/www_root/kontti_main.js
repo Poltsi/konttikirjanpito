@@ -47,10 +47,11 @@ var next_id = 0;
  *  1. Name
  *  2. Button color
  */
-const TYPELIST = [[10, 'air', 'Air fill', '#99CC99'],
-	[20, 'nx', 'Nitrox fill', '#9999CC'],
-	[30, 'o2', 'Oxygen fill', '#9999FF'],
-	[40, 'tx', 'Trimix fill', '#CC99CC']];
+const TYPELIST = {
+	10: ['air', 'Air fill', '#99CC99'],
+	20: [ 'nx', 'Nitrox fill', '#9999CC'],
+	30: [ 'o2', 'Oxygen fill', '#9999FF'],
+	40: [ 'tx', 'Trimix fill', '#CC99CC']};
 
 const FILLTYPELIST = {
 	'pp': ['Prepaid', ''],
@@ -196,16 +197,16 @@ function get_main_action_buttons() {
 	button_div.width = '100%';
 
 	if (sessionStorage.getItem('kontti_enabled') === '1') {
-		for (var i = 0; i < TYPELIST.length; i++) {
-			if (parseInt(sessionStorage.getItem('kontti_level')) >= TYPELIST[i][0]) {
+		Object.keys(TYPELIST).forEach(function(key, index) {
+			if (parseInt(sessionStorage.getItem('kontti_level')) >= key) {
 				var fill_button = document.createElement('button');
-				fill_button.id = TYPELIST[i][1] + '_fill_button';
-				fill_button.style.backgroundColor = TYPELIST[i][3];
-				fill_button.innerHTML = TYPELIST[i][2];
-				fill_button.addEventListener('click', get_show_fill_ref(TYPELIST[i][1]));
+				fill_button.id = TYPELIST[key][1] + '_fill_button';
+				fill_button.style.backgroundColor = TYPELIST[key][2];
+				fill_button.innerHTML = TYPELIST[key][1];
+				fill_button.addEventListener('click', get_show_fill_ref(TYPELIST[key][0]));
 				button_div.appendChild(fill_button);
 			}
-		}
+		});
 	}
 
 	/* Admin button */
@@ -342,6 +343,7 @@ function manage_settings(func) {
 				update_user_settings(json);
 				update_user_cylinder_list(json);
 				update_user_certificate_list(json);
+				update_certificate_org_list(json);
 				add_info('User settings retrieved');
 				func();
 			} else {
@@ -375,25 +377,35 @@ function manage_user_settings() {
 
 	settings_table.appendChild(settings_header);
 
-	var editable_fields = ['name'];
+	var header_fields = {
+		'gid': ['Group ID', false],
+		'level': ['Fill level', false],
+		'login': ['Login', false],
+		'name': ['Name', true],
+		'enabled': ['Account state', false]};
 
 	Object.keys(settings).forEach(function(key, index) {
 		var setting_row = document.createElement('tr');
 		var field_cell = document.createElement('td');
 		field_cell.id = 'personal_' + key;
 		field_cell.style.textAlign = 'right';
-		field_cell.innerHTML = key;
+		field_cell.innerHTML = header_fields[key][0];
 
 		var val_cell = document.createElement('td');
 		val_cell.id = 'personal_' + key;
 		val_cell.style.textAlign = 'right';
 
-		if (editable_fields.indexOf(key) > -1) {
+		if (header_fields[key][1]) {
 			var input_field = document.createElement('input');
 			input_field.setAttribute('value', settings[key]);
 			input_field.setAttribute('type', 'text');
 			input_field.setAttribute('id', 'personal_editable-' + key);
 			val_cell.appendChild(input_field);
+		} else if (key === 'enabled') {
+			val_cell.innerHTML = settings[key] == 1 ? 'Enabled': 'Locked';
+		} else if (key === 'level') {
+			val_cell.innerHTML = TYPELIST[settings[key]][1];
+
 		} else {
 			val_cell.innerHTML = settings[key];
 		}
@@ -403,8 +415,29 @@ function manage_user_settings() {
 		settings_table.appendChild(setting_row);
 	});
 
+	// Finally add the main editing row
+	var edit_row = document.createElement('tr');
+	var edit_cell = document.createElement('td');
+	edit_cell.setAttribute('colspan', '2');
+
+	var update_button = document.createElement('button');
+	update_button.innerHTML = 'Update settings';
+	update_button.addEventListener('click', get_update_settings_function(settings_table));
+	edit_cell.appendChild(update_button);
+
+	edit_row.appendChild(edit_cell);
+	settings_table.appendChild(edit_row);
 	data_elem.appendChild(settings_table);
 }
+
+function get_update_settings_function(table) {
+	return function() {update_settings(table);};
+}
+
+function update_settings(table) {
+
+}
+
 
 function manage_cylinder_settings() {
 	var cylinders = JSON.parse(sessionStorage.getItem('kontti_cylinder_list'));
@@ -534,12 +567,133 @@ function add_cylinder(table, field_list) {
 
 }
 
-function remove_cylinder(cyl_id) {
-	var cyl_row = document.querySelector('#cylinder_row-' + cyl_id);
-	cyl_row.parentNode.removeChild(cyl_row);
+function manage_certificate_settings() {
+	var certificates = JSON.parse(sessionStorage.getItem('kontti_certificate_list'));
+	var data_elem = document.querySelector('#' + DATAAREAID);
+
+	var certificate_table = document.createElement('table');
+	certificate_table.setAttribute('border', '1');
+
+	var header_fields = {
+		'cert_id': ['Certificate ID', false],
+		'type': ['Type (rec/tec/cave/other)', true],
+		'name': ['Organization', true],
+		'serial_ident': ['Certificate serial', true],
+		'instructor': ['Instructor', true]};
+
+	var settings_header = document.createElement('tr');
+
+	Object.keys(header_fields).forEach(function(key) {
+		var header_cell = document.createElement('th');
+		header_cell.innerHTML = header_fields[key][0];
+		settings_header.appendChild(header_cell);
+	});
+
+	var action_cell = document.createElement('th');
+	action_cell.innerHTML = 'Action';
+	settings_header.appendChild(action_cell);
+
+	certificate_table.appendChild(settings_header);
+
+	for (var i = 0; i < certificates.length; i++) {
+		var cert_id = certificates[i]['cert_id'];
+		var setting_row = document.createElement('tr');
+		setting_row.setAttribute('id', 'certificate_row-' + cert_id);
+
+		Object.keys(header_fields).forEach(function(key) {
+			var data_cell = document.createElement('td');
+
+			if (header_fields[key][1]) {
+				// We show a drop down for organizations
+				if (key === 'name') {
+					var input_field = document.createElement('select');
+					input_field.setAttribute('id', 'certificate_editable-' + certificates[i][key] + '-' + cert_id);
+					input_field.title = 'Select organization';
+
+					var cert_org_list = JSON.parse(sessionStorage.getItem('kontti_cert_org_list'));
+
+					for (var j = 0; j < cert_org_list.length; j++) {
+						var opt = new Option(cert_org_list[j]['name'], cert_org_list[j]['org_id']);
+
+						if (cert_org_list[j]['org_id'] === certificates[i]['org_id']) {
+							opt.selected = true;
+						}
+
+						input_field.options.add(opt);
+					}
+
+					data_cell.appendChild(input_field);
+				} else if (key === 'type') {
+					var input_field = document.createElement('select');
+					input_field.setAttribute('id', 'certificate_editable-' + certificates[i][key] + '-' + cert_id);
+					input_field.title = 'Select type of certificate';
+
+					var cert_type_list = ['rec', 'tec', 'cave', 'other'];
+
+					for (var j = 0; j < cert_type_list.length; j++) {
+						var opt = new Option(cert_type_list[j], cert_type_list[j]);
+
+						if (cert_type_list[j] === certificates[i]['org_id']) {
+							opt.selected = true;
+						}
+
+						input_field.options.add(opt);
+					}
+
+					data_cell.appendChild(input_field);
+				} else {
+					var input_field = document.createElement('input');
+					input_field.setAttribute('value', certificates[i][key]);
+					input_field.setAttribute('type', 'text');
+					input_field.setAttribute('id', 'certificate_editable-' + certificates[i][key] + '-' + cert_id);
+					data_cell.appendChild(input_field);
+				}
+			} else {
+				data_cell.innerHTML = certificates[i][key];
+			}
+
+			setting_row.appendChild(data_cell);
+		});
+
+		var action_row_cell = document.createElement('td');
+		var action_button = document.createElement('button');
+		action_button.innerText = 'Remove certificate';
+		action_button.setAttribute('id', 'certificate_editable-remove_button-' + cert_id);
+		action_button.addEventListener('click', get_remove_certificate_function(cert_id));
+		action_row_cell.appendChild(action_button);
+		setting_row.appendChild(action_row_cell);
+
+		certificate_table.appendChild(setting_row);
+	}
+
+	// Finally add the main editing row
+	var edit_row = document.createElement('tr');
+	var edit_cell = document.createElement('td');
+	edit_cell.setAttribute('colspan', '10');
+
+	var add_row_button = document.createElement('button');
+	add_row_button.innerHTML = 'Add cylinder';
+	add_row_button.addEventListener('click', get_add_cylinder_function(certificate_table, header_fields));
+	edit_cell.appendChild(add_row_button);
+
+	var update_button = document.createElement('button');
+	update_button.innerHTML = 'Update cylinders';
+	update_button.addEventListener('click', get_update_cylinder_list_function(certificate_table));
+	edit_cell.appendChild(update_button);
+
+	edit_row.appendChild(edit_cell);
+	certificate_table.appendChild(edit_row);
+
+	data_elem.appendChild(certificate_table);
 }
 
-function manage_certificate_settings() {
+function get_remove_certificate_function(cert_id) {
+	return function(){remove_certificate(cert_id);};
+}
+
+function remove_certificate(cert_id) {
+	var cert_row = document.querySelector('#certificate_row-' + cert_id);
+	cert_row.parentNode.removeChild(cert_row);
 }
 
 function update_user_settings(response) {
@@ -1987,6 +2141,16 @@ function update_user_certificate_list(response) {
 	}
 
 	sessionStorage.setItem('kontti_certificate_list', JSON.stringify(certificate_list));
+}
+
+function update_certificate_org_list(response) {
+	var cert_org_list = [];
+
+	for (var i = 0; i < response['data']['certificate_org'].length; i++) {
+		cert_org_list.push(response['data']['certificate_org'][i]);
+	}
+
+	sessionStorage.setItem('kontti_cert_org_list', JSON.stringify(cert_org_list));
 }
 
 ////////////////////\\\\\\\\\\\\\\\\\\\\\

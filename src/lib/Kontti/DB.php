@@ -55,6 +55,7 @@ class DB {
 		'get_cylinder_data'                => ['sql' => 'SELECT c.user_id, c.name, c.identifier, c.inspection_date, ct.size, ct.pressure, ct.name AS type_name FROM cylinders c, cylinder_types ct WHERE ct.type_id = c.type_id AND c.cylinder_id = $1'],
 		'get_cylinder_types'               => ['sql' => 'SELECT type_id, label, name, pressure, size, added FROM cylinder_types ORDER BY label DESC'],
 		'get_certificates_by_user'         => ['sql' => 'SELECT c.cert_id, c.type, c.instructor, c.name, c.serial_ident, co.org_id, co.name FROM certificates c, certification_org co WHERE c.org_id = co.org_id AND user_id = $1'],
+		'get_certification_organizations'  => ['sql' => 'SELECT org_id, name, added FROM certification_org ORDER BY name'],
 	];
 
 	/**
@@ -373,6 +374,18 @@ class DB {
 	public function get_user_certificates(int $uid): array {
 		$key = 'get_certificates_by_user';
 		$result = pg_execute($this->dbcon, $key, array($uid));
+		$res = pg_fetch_all($result);
+
+		if (is_null($res) || !$res) {
+			$res = array();
+		}
+
+		return $res;
+	}
+
+	public function get_certificate_organization(): array {
+		$key = 'get_certification_organizations';
+		$result = pg_execute($this->dbcon, $key, array());
 		$res = pg_fetch_all($result);
 
 		if (is_null($res) || !$res) {
