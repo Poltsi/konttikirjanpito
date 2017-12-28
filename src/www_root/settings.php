@@ -35,7 +35,19 @@ if (!array_key_exists('uid', $_SESSION)) {
 		$response[KEY_STATUS] = STATUS_NOK;
 		$response[KEY_REASON] = 'Failed to retrieve user data';
 	} else {
-		$response['data'] = $user->getSettings();
+		switch ($data['action']) {
+			case 'get':
+				$response['data'] = $user->getSettings();
+				break;
+			case 'set':
+				if ($user->setSettings($data['data'], $response)) {
+					$response[KEY_REASON] = 'Stored user information';
+				} else {
+					$response[KEY_STATUS] = STATUS_NOK;
+					$response[KEY_REASON] = 'Failed to store user information';
+				}
+				break;
+		}
 	}
 }
 

@@ -378,40 +378,30 @@ function manage_user_settings() {
 	settings_table.appendChild(settings_header);
 
 	var header_fields = {
-		'gid': ['Group ID', false],
-		'level': ['Fill level', false],
-		'login': ['Login', false],
-		'name': ['Name', true],
-		'enabled': ['Account state', false]};
+		'gid':     ['Group ID', 'text', false],
+		'level':   ['Fill level', 'fill_level', false],
+		'login':   ['Login', 'text', false],
+		'name':    ['Name', 'text', true],
+		'enabled': ['Account state', 'enabled', false]};
 
-	Object.keys(settings).forEach(function(key, index) {
+	Object.keys(settings).forEach(function(key) {
 		var setting_row = document.createElement('tr');
 		var field_cell = document.createElement('td');
 		field_cell.id = 'personal_' + key;
 		field_cell.style.textAlign = 'right';
 		field_cell.innerHTML = header_fields[key][0];
 
-		var val_cell = document.createElement('td');
-		val_cell.id = 'personal_' + key;
-		val_cell.style.textAlign = 'right';
-
-		if (header_fields[key][1]) {
-			var input_field = document.createElement('input');
-			input_field.setAttribute('value', settings[key]);
-			input_field.setAttribute('type', 'text');
-			input_field.setAttribute('id', 'personal_editable-' + key);
-			val_cell.appendChild(input_field);
-		} else if (key === 'enabled') {
-			val_cell.innerHTML = settings[key] == 1 ? 'Enabled': 'Locked';
-		} else if (key === 'level') {
-			val_cell.innerHTML = TYPELIST[settings[key]][1];
-
-		} else {
-			val_cell.innerHTML = settings[key];
-		}
+		var data_cell = document.createElement('td');
+		data_cell.appendChild(get_form_element(
+			header_fields[key],
+			settings,
+			settings[key],
+			'personal_editable-' + key,
+			'User info'));
+		data_cell.style.textAlign = 'right';
 
 		setting_row.appendChild(field_cell);
-		setting_row.appendChild(val_cell);
+		setting_row.appendChild(data_cell);
 		settings_table.appendChild(setting_row);
 	});
 
@@ -422,7 +412,7 @@ function manage_user_settings() {
 
 	var update_button = document.createElement('button');
 	update_button.innerHTML = 'Update settings';
-	update_button.addEventListener('click', get_update_settings_function(settings_table));
+	update_button.addEventListener('click', get_update_settings_function(settings_table, header_fields));
 	edit_cell.appendChild(update_button);
 
 	edit_row.appendChild(edit_cell);
@@ -430,14 +420,128 @@ function manage_user_settings() {
 	data_elem.appendChild(settings_table);
 }
 
-function get_update_settings_function(table) {
-	return function() {update_settings(table);};
+function get_update_settings_function(table, fields) {
+	return function() {update_settings(table, fields);};
 }
 
-function update_settings(table) {
+function update_settings(table, fields) {
+	var request_data = {
+		'object': 'user',
+		'action': 'set',
+		'target': ['settings'],
+		'data': {}
+	};
 
+	Object.keys(fields).forEach(function(key) {
+		if (fields[key][2]) {
+			request_data['data'][key] = document.querySelector('#personal_editable-' + key).value;
+		}
+	});
+
+	var callback = function (xhr) {
+		if (xhr.readyState === 4 && xhr.status === 200) {
+			var json = JSON.parse(xhr.responseText);
+			add_info('Return value: ' + json);
+
+			if (json[KEY_STATUS] === STATUS_OK) {
+				empty_info();
+				// empty_data();
+				add_info('User settings updated');
+			} else {
+				add_info('Problems updating settings');
+
+				if (json[KEY_REASON] !== null) {
+					add_info(json[KEY_REASON]);
+				}
+			}
+		}
+	};
+
+	send_json_request(request_data, 'settings.php', callback);
 }
 
+function get_form_element(struct, list, value, id, title) {
+	console.log('Creating type: ' + struct[1] + ' with value: ' + value);
+	console.log('list: ' + JSON.stringify(list));
+	var editable = struct[2];
+
+	var input_field = null;
+
+	switch (struct[1]) {
+		case 'text':
+			if (!editable) {
+				return (document.createTextNode(value));
+			}
+
+			input_field = document.createElement('input');
+			input_field.setAttribute('value', value);
+			break;
+		case 'integer':
+		case 'decimal':
+			if (!editable) {
+				return (document.createTextNode(value));
+			}
+
+			input_field = document.createElement('input');
+			input_field.setAttribute('type', 'number');
+			break;
+		case 'cylinder':
+			if (!editable) {
+				return (document.createTextNode(value));
+			}
+
+			input_field = document.createElement('select');
+
+			for (var i = 0; i < list.length; i++) {
+				var opt = new Option(list[i]['name'], list[i]['type_id']);
+
+				if (list[i]['label'] === value) {
+					opt.selected = true;
+				}
+
+				input_field.options.add(opt);
+			}
+
+			break;
+		case 'certificate':
+			break;
+		case 'fill_level':
+			if (!editable) {
+				return (document.createTextNode(TYPELIST[value][0]));
+			}
+
+			break;
+		case 'enabled':
+			if (!editable) {
+				return (document.createTextNode((value === 1 ? 'Enabled' : 'Disabled')));
+			}
+
+			input_field = document.createTextNode((value === 1 ? 'Enabled' : 'Disabled'));
+			break;
+		case 'level':
+			if (!editable) {
+				return (document.createTextNode(value));
+			}
+
+			return (document.createTextNode(TYPELIST[list[key]][1]));
+//		case '':
+//			break;
+		case 'yearmonth':
+			input_field = get_year_date_selector(id, value);
+			break;
+		case 'datetime':
+			input_field = document.createElement('input');
+			input_field.setAttribute('type', 'datetime-local');
+			input_field.setAttribute('value', value);
+			break;
+		default:
+			console.log('Unknown form type: ' + struct[1]);
+	}
+
+	input_field.setAttribute('id', id);
+	input_field.title = title;
+	return input_field;
+}
 
 function manage_cylinder_settings() {
 	var cylinders = JSON.parse(sessionStorage.getItem('kontti_cylinder_list'));
@@ -447,15 +551,15 @@ function manage_cylinder_settings() {
 	cylinder_table.setAttribute('border', '1');
 
 	var header_fields = {
-		'cylinder_id': ['Cylinder ID', false],
-		'type_id': ['Type ID', false],
-		'name': ['Name', true],
-		'identifier': ['Serial', true],
-		'inspection_date': ['Inspected (year, month)', true],
-		'added': ['Added', false],
-		'label': ['Type', true],
-		'pressure': ['Pressure', false],
-		'size': ['Size', false]};
+		'cylinder_id':     ['Cylinder ID', 'text', false],
+		'type_id':         ['Type ID', 'text', false],
+		'name':            ['Name', 'text', true],
+		'identifier':      ['Serial', 'text', true],
+		'inspection_date': ['Inspected (year, month)', 'yearmonth', true],
+		'added':           ['Added', 'datetime', false],
+		'label':           ['Type', 'cylinder', true],
+		'pressure':        ['Pressure', 'integer', false],
+		'size':            ['Size', 'decimal', false]};
 
 	var settings_header = document.createElement('tr');
 
@@ -478,39 +582,12 @@ function manage_cylinder_settings() {
 
 		Object.keys(header_fields).forEach(function(key) {
 			var data_cell = document.createElement('td');
-
-			if (header_fields[key][1]) {
-				// We show a drop down for cylinder type
-				if (key === 'label') {
-					var input_field = document.createElement('select');
-					input_field.setAttribute('id', 'cylinder_editable-' + cylinders[i][key] + '-' + cyl_id);
-					input_field.title = 'Select cylinder';
-
-					var cylinder_type_list = JSON.parse(sessionStorage.getItem('kontti_cylinder_type_list'));
-
-					for (var j = 0; j < cylinder_type_list.length; j++) {
-						var opt = new Option(cylinder_type_list[j]['name'], cylinder_type_list[j]['type_id']);
-
-						if (cylinder_type_list[j]['type_id'] === cylinders[i]['type_id']) {
-							opt.selected = true;
-						}
-
-						input_field.options.add(opt);
-					}
-
-					data_cell.appendChild(input_field);
-				} else if (key === 'inspection_date') {
-					data_cell.appendChild(get_year_date_selector(cyl_id, cylinders[i][key]));
-				} else {
-					var input_field = document.createElement('input');
-					input_field.setAttribute('value', cylinders[i][key]);
-					input_field.setAttribute('type', 'text');
-					input_field.setAttribute('id', 'cylinder_editable-' + cylinders[i][key] + '-' + cyl_id);
-					data_cell.appendChild(input_field);
-				}
-			} else {
-				data_cell.innerHTML = cylinders[i][key];
-			}
+			data_cell.appendChild(get_form_element(
+				header_fields[key],
+				JSON.parse(sessionStorage.getItem('kontti_cylinder_type_list')),
+				cylinders[i][key],
+				'cylinder_editable-' + cylinders[i][key] + '-' + cyl_id,
+				'Select cylinder'));
 
 			setting_row.appendChild(data_cell);
 		});
@@ -564,7 +641,15 @@ function get_add_cylinder_function(table, field_list) {
 }
 
 function add_cylinder(table, field_list) {
+	var new_row = document.createElement('tr');
 
+	Object.keys(field_list).forEach(function(key) {
+		var header_cell = document.createElement('td');
+		header_cell.innerHTML = field_list[key][0];
+		new_row.appendChild(header_cell);
+	});
+
+	table.appendChild(new_row);
 }
 
 function manage_certificate_settings() {
@@ -633,7 +718,7 @@ function manage_certificate_settings() {
 					for (var j = 0; j < cert_type_list.length; j++) {
 						var opt = new Option(cert_type_list[j], cert_type_list[j]);
 
-						if (cert_type_list[j] === certificates[i]['org_id']) {
+						if (cert_type_list[j] === certificates[i]['type']) {
 							opt.selected = true;
 						}
 
@@ -672,13 +757,13 @@ function manage_certificate_settings() {
 	edit_cell.setAttribute('colspan', '10');
 
 	var add_row_button = document.createElement('button');
-	add_row_button.innerHTML = 'Add cylinder';
-	add_row_button.addEventListener('click', get_add_cylinder_function(certificate_table, header_fields));
+	add_row_button.innerHTML = 'Add certificate';
+	add_row_button.addEventListener('click', get_add_certificate_function(certificate_table, header_fields));
 	edit_cell.appendChild(add_row_button);
 
 	var update_button = document.createElement('button');
-	update_button.innerHTML = 'Update cylinders';
-	update_button.addEventListener('click', get_update_cylinder_list_function(certificate_table));
+	update_button.innerHTML = 'Update certificates';
+	update_button.addEventListener('click', get_update_certificate_list_function(certificate_table));
 	edit_cell.appendChild(update_button);
 
 	edit_row.appendChild(edit_cell);
@@ -696,18 +781,34 @@ function remove_certificate(cert_id) {
 	cert_row.parentNode.removeChild(cert_row);
 }
 
+function get_update_certificate_list_function(table) {
+	return function(){update_certificate_list(table);};
+}
+
+function update_certificate_list(table) {
+
+}
+
+function get_add_certificate_function(table, field_list) {
+	return function(){add_certificate(table, field_list);};
+}
+
+function add_certificate(table, field_list) {
+
+}
+
 function update_user_settings(response) {
 	sessionStorage.setItem('kontti_settings', JSON.stringify(response['data']['personal']));
 }
 
-function get_year_date_selector(cyl_id, fulldate) {
+function get_year_date_selector(id, fulldate) {
 	// Get the year and month from date, the Date-object does not understand YYYY-MM-DD format so we do it manually
 	var year = parseInt(fulldate.split('-')[0]);
 	var month = parseInt(fulldate.split('-')[1]);
 
 	var year_date_div = document.createElement('div');
 	var year_field = document.createElement('select');
-	year_field.setAttribute('id', 'cylinder_editable-inspection_year-' + '-' + cyl_id);
+	year_field.setAttribute('id', id + '-year');
 	year_field.title = 'Select year';
 
 	for (var i = 1990; i <= (new Date()).getFullYear(); i++) {
@@ -722,7 +823,7 @@ function get_year_date_selector(cyl_id, fulldate) {
 
 
 	var month_field = document.createElement('select');
-	month_field.setAttribute('id', 'cylinder_editable-inspection_month-' + '-' + cyl_id);
+	month_field.setAttribute('id', id + '-month');
 	month_field.title = 'Select month';
 
 	for (var j = 1; j < 13; j++) {

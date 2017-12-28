@@ -56,6 +56,11 @@ class DB {
 		'get_cylinder_types'               => ['sql' => 'SELECT type_id, label, name, pressure, size, added FROM cylinder_types ORDER BY label DESC'],
 		'get_certificates_by_user'         => ['sql' => 'SELECT c.cert_id, c.type, c.instructor, c.name, c.serial_ident, co.org_id, co.name FROM certificates c, certification_org co WHERE c.org_id = co.org_id AND user_id = $1'],
 		'get_certification_organizations'  => ['sql' => 'SELECT org_id, name, added FROM certification_org ORDER BY name'],
+		'update_user_settings'             => ['sql' => 'UPDATE users SET level = $2, name =  $3, enabled = $4 WHERE uid = $1'],
+		'update_user_salt'                 => ['sql' => 'UPDATE users SET salt = gen_salt(\'bf\', 8) WHERE uid = $1'],
+		'update_user_password'             => ['sql' => 'UPDATE users SET password = crypt($1, salt)'],
+		'get_user_id_by_login'             => ['sql' => 'SELECT uid FROM users WHERE login = $1'],
+		'add_user'                         => ['sql' => 'INSERT INTO users (login, level, name, enabled) VALUES ($1, $2, $3, $4)'],
 	];
 
 	/**
@@ -442,6 +447,50 @@ class DB {
 		}
 
 		return $res;
+	}
+
+	public function update_user_settings($uid, $level, $name, $enabled): bool {
+		$key = 'update_user_settings';
+
+		$result = pg_execute($this->dbcon, $key, array($uid, $level, $name, $enabled));
+		if (is_null($result) || !$result) {
+			return false;
+		}
+
+		return true;
+	}
+
+	public function update_user_password($uid, $password): bool {
+		$key = 'update_user_salt';
+		$result = pg_execute($this->dbcon, $key, array($uid));
+
+		if (is_null($result) || !$result) {
+			return false;
+		}
+
+		$key = 'update_user_password';
+		$result = pg_execute($this->dbcon, $key, array($uid, $password));
+
+		if (is_null($result) || !$result) {
+			return false;
+		}
+
+		return true;
+	}
+
+	public function add_user($login, $name, $level, $enabled, $password): bool {
+		$key = 'add_user';
+		$result = pg_execute($this->dbcon, $key, array($login, $level, $name, $enabled));
+
+		if (is_null($result) || !$result) {
+			return false;
+		}
+
+		// Get the uid of the new user
+		$key = 'get_user_id_by_login';
+		$result = pg_execute($this->dbcon, $key, array($login));
+
+		return $this->update_user_password($result[0], $password);
 	}
 
 	/**
