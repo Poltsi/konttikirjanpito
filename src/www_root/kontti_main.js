@@ -1072,7 +1072,7 @@ function get_user_fill_edit_form(response) {
 
 	var sum_row = document.createElement('tr');
 	var total_cell = document.createElement('td');
-	total_cell.colSpan = 4;
+	total_cell.colSpan = 5;
 	total_cell.innerHTML = 'Total';
 	total_cell.style.textAlign = 'left';
 	sum_row.appendChild(total_cell);
@@ -1162,7 +1162,6 @@ function commit_fills(uid) {
 
 function get_user_edit_header() {
 	var header_tr = document.createElement('tr');
-	var labels = ['Date', 'Fill type', 'Cylinder type', 'Cylinder name', 'Nominal pressure', 'Start pressure', 'End pressure', 'O2 volume', 'He volume', 'Mark as paid'];
 
 	for (var key in FILLEDITORFIELDS) {
 		var cell = document.createElement('td');
@@ -1171,6 +1170,12 @@ function get_user_edit_header() {
 		cell.innerHTML = FILLEDITORFIELDS[key];
 		header_tr.appendChild(cell);
 	}
+
+	var edit_cell = document.createElement('td');
+	edit_cell.style.padding = '10px';
+	edit_cell.style.backgroundColor = 'grey';
+	edit_cell.innerHTML = 'Mark as paid';
+	header_tr.appendChild(edit_cell);
 
 	return header_tr;
 }
