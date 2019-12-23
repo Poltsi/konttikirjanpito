@@ -21,11 +21,17 @@ class User {
 	private $user_uid;
 	private $user_gid;
 	private $user_login;
+	private $new_password;
+	private $old_password;
 	private $user_level;
 	private $user_name;
 	private $user_enabled;
 	private $user_authenticated;
 	private $dbcon;
+
+	private $cylinders;
+	private $certificates;
+	private $certificate_org;
 
 	/* TODO: Get this from database and make into an object */
 	private $auth_level = array(
@@ -41,6 +47,11 @@ class User {
 	 */
 	public function __construct(DB $dbcon) {
 		$this->dbcon = $dbcon;
+		$this->cylinders = array();
+		$this->certificates = array();
+		$this->certificate_org = array();
+		$this->new_password = '';
+		$this->old_password = '';
 	}
 
 	/**
@@ -53,11 +64,12 @@ class User {
 	public function authenticate($login, $password): bool {
 		$user_data = $this->dbcon->authenticate($login, $password);
 
-		if (!count($user_data)) {
+		if (($user_data == NULL) || !count($user_data)) {
 			$this->user_authenticated = false;
 			return false;
 		} else {
 			$this->user_login = $login;
+			$this->old_password = $password;
 			$this->user_uid = $user_data[0];
 			$this->user_gid = $user_data[1];
 			$this->user_level = $user_data[2];
@@ -83,7 +95,75 @@ class User {
 			$this->user_enabled = $user_data[5] === 'f' ? 0 : 1;
 		}
 
+		$this->cylinders = $this->dbcon->get_user_cylinders($this->user_uid);
+		$this->certificates = $this->dbcon->get_user_certificates($this->user_uid);
+		$this->certificate_org = $this->dbcon->get_certificate_organization();
 		return true;
+	}
+
+	private function save(): bool {
+		$retval = false;
+
+		if ($retval = $this->dbcon->update_user_settings(
+			$this->user_uid,
+			$this->user_level,
+			$this->user_name,
+			$this->user_enabled)) {
+			if ($this->new_password != $this->old_password &&
+				$this->new_password != '') {
+				$retval = $this->dbcon->update_user_password($this->user_uid, $this->new_password);
+			}
+		}
+
+		return $retval;
+	}
+
+	public function getSettings(): array {
+		$arr = array();
+		$arr['personal']['gid'] = $this->user_gid;
+		$arr['personal']['level'] = $this->user_level;
+		$arr['personal']['login'] = $this->user_login;
+		$arr['personal']['name'] = $this->user_name;
+		$arr['personal']['enabled'] = $this->user_enabled;
+
+		$arr['cylinders'] = $this->cylinders;
+		$arr['certificates'] = $this->certificates;
+		$arr['certificate_org'] = $this->certificate_org;
+
+		return $arr;
+	}
+
+	public function setSettings(array $settings, $response): bool {
+		$response['data'] = array();
+		$response['data']['updated_fields'] = array();
+
+		foreach ($settings as $key => $value) {
+			switch ($key) {
+				case 'level':
+					$this->user_level = $value;
+					$response['data']['updated_fields'][] = $key;
+					break;
+				case 'enabled':
+					$this->user_enabled = $value;
+					$response['data']['updated_fields'][] = $key;
+					break;
+				case 'name':
+					$this->user_name =  $value;
+					$response['data']['updated_fields'][] = $key;
+					break;
+				case 'login':
+					$this->user_login = $value;
+					$response['data']['updated_fields'][] = $key;
+					break;
+				case 'password':
+					if (!$this->dbcon->authenticate($this->user_login, $settings['old_password'])) {return false;}
+					$this->new_password =  $value;
+					$response['data']['updated_fields'][] = $key;
+					break;
+			}
+		}
+
+		return $this->save();
 	}
 
 	/**

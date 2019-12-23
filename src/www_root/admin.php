@@ -13,24 +13,18 @@
  * GNU General Public License for more details.
  */
 
-session_start();
-
 header("Content-Type: application/json");
 
 include_once('../lib/init.php');
-include_once('Kontti/Audit.php');
-include_once('Kontti/DB.php');
+
 include_once('Kontti/Admin.php');
 include_once('Kontti/UserManipulator.php');
+
+$admin = new \Kontti\Admin($db);
 
 $data = json_decode(stripslashes(file_get_contents("php://input")), true);
 /* Default response is only plain ok */
 $response[KEY_STATUS] = STATUS_OK;
-
-$db = new \Kontti\DB('localhost', 5432, 'kontti', 'kontti', 'konttipassu');
-
-$audit = new \Kontti\Audit($db);
-$admin = new \Kontti\Admin($db);
 
 /* Check first if we're admins */
 if (!array_key_exists('uid', $_SESSION)) {
@@ -44,8 +38,6 @@ if (!array_key_exists('uid', $_SESSION)) {
 		$response[KEY_STATUS] = STATUS_NOK;
 		$response[KEY_REASON] = 'You are not allowed to use these functions';
 	} else {
-		$response[KEY_STATUS] = STATUS_OK;
-
 		switch ($data['object']) {
 			case 'user':
 				$audit->log($_SESSION['uid'], 'admin-ok', 'User wants to handle user');
@@ -59,7 +51,7 @@ if (!array_key_exists('uid', $_SESSION)) {
 				break;
 			case 'self':
 				$audit->log($_SESSION['uid'], 'admin-ok', 'User wants to handle self');
-				// TODO: Implement manipulatong self
+				// TODO: Implement manipulating self
 				break;
 			default:
 				$audit->log($_SESSION['uid'], 'admin-fail', 'User sent unknown action: ' . $data['action']);

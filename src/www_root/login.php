@@ -15,8 +15,6 @@
  */
 
 include_once('../lib/init.php');
-include_once('Kontti/DB.php');
-include_once('Kontti/Audit.php');
 include_once('Kontti/User.php');
 
 header("Content-Type: application/json");
@@ -24,9 +22,6 @@ header("Content-Type: application/json");
 $response[KEY_STATUS] = STATUS_OK;
 // build a PHP variable from JSON sent using POST method
 $data = json_decode(stripslashes(file_get_contents("php://input")), true);
-
-$db = new \Kontti\DB('localhost', 5432, 'kontti', 'kontti', 'konttipassu');
-$audit = new \Kontti\Audit($db);
 
 if (array_key_exists('login', $data) &&
 	array_key_exists('password', $data)) {
@@ -44,7 +39,6 @@ if (array_key_exists('login', $data) &&
 			$response[KEY_REASON] = 'Username or password incorrect';
 			$audit->log(-1, 'login-fail', 'Login failed for user: ' . $data['login']);
 		} else {
-			session_start();
 			$_SESSION['last_time'] = time();
 			$_SESSION['login_time'] = time();
 			$_SESSION['uid'] = $user->getUid();
