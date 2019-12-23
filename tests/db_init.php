@@ -15,7 +15,7 @@
 
 namespace Kontti;
 
-include_once('/data/poltsi/konttikirjanpito/src/lib/Kontti/DB.php');
+include_once('Kontti/DB.php');
 
 function get_for_test_DB(): DB {
 	return new DB('localhost', 5432, 'kontti', 'kontti', 'konttipassu');

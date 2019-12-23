@@ -1,7 +1,7 @@
 FROM pcentos7:7.4.1708
 RUN yum -y install yum-utils && \
     yum -y install https://rpms.remirepo.net/enterprise/remi-release-7.rpm && \
-    yum-config-manager --enable remi-php72 && \
+    yum-config-manager --enable remi-php73 && \
     yum -y update && yum -y install php php-pgsql && \
     rm -rf /var/www/html/*
 COPY src/www_root /var/www/html/

@@ -37,11 +37,11 @@ const KEY_STATUS = 'status';
 const KEY_REASON = 'reason';
 
 /* Get our host URL*/
-var url = document.URL;
-var url_parts = url.split('/');
-var baseUrl = url_parts[0] + '//' + url_parts[2] + '/';
+const url = document.URL;
+const url_parts = url.split('/');
+const baseUrl = url_parts[0] + '//' + url_parts[2] + '/';
 
-var next_id = 0;
+let next_id = 0;
 /* Types of fills, fields are:
  *  0. key
  *  1. Name
@@ -77,7 +77,7 @@ const FILLEDITORFIELDS = {
 
 function display_action_buttons() {
 	/* TODO: Retrieve the session data */
-	var mode = sessionStorage.getItem('kontti_mode');
+	let mode = sessionStorage.getItem('kontti_mode');
 
 	if (mode === null) {
 		mode = 'login';
@@ -110,11 +110,11 @@ function display_action_buttons() {
 }
 
 function clear_divs() {
-	var main_action_elem = document.querySelector('#' + MAINDATAACTIONID);
+	const main_action_elem = document.querySelector('#' + MAINDATAACTIONID);
 	main_action_elem.innerHTML = '';
-	var data_area_elem = document.querySelector('#' + DATAAREAID);
+	const data_area_elem = document.querySelector('#' + DATAAREAID);
 	data_area_elem.innerHTML = '';
-	var data_action_elem = document.querySelector('#' + DATAACTIONID);
+	const data_action_elem = document.querySelector('#' + DATAACTIONID);
 	data_action_elem.innerHTML = '';
 }
 
@@ -123,17 +123,17 @@ function show_main() {
 	fetch_cylinder_list();
 	update_cylinder_types();
 
-	var main_action_elem = document.getElementById(MAINDATAACTIONID);
-	var data_area_elem = document.querySelector('#' + DATAAREAID);
-	var data_action_elem = document.querySelector('#' + DATAACTIONID);
+	const main_action_elem = document.getElementById(MAINDATAACTIONID);
+	const data_area_elem = document.querySelector('#' + DATAAREAID);
+	const data_action_elem = document.querySelector('#' + DATAACTIONID);
 	main_action_elem.innerHTML = '';
 	main_action_elem.appendChild(get_main_action_buttons());
 
 	/* Add the fill form to the main field div */
-	var fill_form = document.createElement('form');
+	const fill_form = document.createElement('form');
 	fill_form.id = DATAAREAFORMID;
 
-	var fill_form_table = document.createElement('table');
+	const fill_form_table = document.createElement('table');
 	fill_form_table.appendChild(get_fill_table_header());
 	fill_form_table.id = DATAAREATABLEID;
 	fill_form_table.setAttribute('border', '1');
@@ -151,36 +151,36 @@ function show_main() {
  */
 
 function get_fill_table_header() {
-	var header_tr = document.createElement('tr');
+	const header_tr = document.createElement('tr');
 	header_tr.id = 'tr_header';
-	var header_td0 = document.createElement('td');
+	const header_td0 = document.createElement('td');
 	header_td0.innerHTML = '# and type';
 	header_tr.appendChild(header_td0);
-	var header_td1 = document.createElement('td');
+	const header_td1 = document.createElement('td');
 	header_td1.innerHTML = 'Fill type';
 	header_tr.appendChild(header_td1);
-	var header_td2 = document.createElement('td');
+	const header_td2 = document.createElement('td');
 	header_td2.innerHTML = 'Cylinder';
 	header_tr.appendChild(header_td2);
-	var header_td4 = document.createElement('td');
+	const header_td4 = document.createElement('td');
 	header_td4.innerHTML = 'Start pressure';
 	header_tr.appendChild(header_td4);
-	var header_td5 = document.createElement('td');
+	const header_td5 = document.createElement('td');
 	header_td5.innerHTML = 'End pressure';
 	header_tr.appendChild(header_td5);
-	var header_td6 = document.createElement('td');
+	const header_td6 = document.createElement('td');
 	header_td6.innerHTML = 'Oxygen % at start';
 	header_tr.appendChild(header_td6);
-	var header_td7 = document.createElement('td');
+	const header_td7 = document.createElement('td');
 	header_td7.innerHTML = 'Oxygen % at end';
 	header_tr.appendChild(header_td7);
-	var header_td8 = document.createElement('td');
+	const header_td8 = document.createElement('td');
 	header_td8.innerHTML = 'Helium % at start';
 	header_tr.appendChild(header_td8);
-	var header_td9 = document.createElement('td');
+	const header_td9 = document.createElement('td');
 	header_td9.innerHTML = 'Helium % at end';
 	header_tr.appendChild(header_td9);
-	var header_td10 = document.createElement('td');
+	const header_td10 = document.createElement('td');
 	header_td10.innerHTML = 'Remove';
 	header_tr.appendChild(header_td10);
 	return (header_tr);
@@ -192,14 +192,14 @@ function get_fill_table_header() {
  */
 
 function get_main_action_buttons() {
-	var button_div = document.createElement('div');
+	const button_div = document.createElement('div');
 	button_div.id = 'main_action';
 	button_div.width = '100%';
 
 	if (sessionStorage.getItem('kontti_enabled') === '1') {
 		Object.keys(TYPELIST).forEach(function(key, index) {
 			if (parseInt(sessionStorage.getItem('kontti_level')) >= key) {
-				var fill_button = document.createElement('button');
+				const fill_button = document.createElement('button');
 				fill_button.id = TYPELIST[key][1] + '_fill_button';
 				fill_button.style.backgroundColor = TYPELIST[key][2];
 				fill_button.innerHTML = TYPELIST[key][1];
@@ -211,7 +211,7 @@ function get_main_action_buttons() {
 
 	/* Admin button */
 	if (sessionStorage.getItem('kontti_level') > 40) {
-		var admin_button = document.createElement('button');
+		const admin_button = document.createElement('button');
 		admin_button.innerHTML = 'Admin';
 		admin_button.id = 'admin';
 		admin_button.addEventListener('click', get_admin_function());
@@ -219,7 +219,7 @@ function get_main_action_buttons() {
 	}
 
 	/* Stats button */
-	var stats_button = document.createElement('button');
+	const stats_button = document.createElement('button');
 	stats_button.innerHTML = 'Statistics';
 	stats_button.id = 'stats';
 	stats_button.addEventListener('click', get_stats_function());
@@ -232,7 +232,7 @@ function get_main_action_buttons() {
 
 function get_logout_button() {
 	/* Logout button */
-	var logout_button = document.createElement('button');
+	const logout_button = document.createElement('button');
 	logout_button.id = 'logout';
 	logout_button.innerHTML = 'Logout';
 	logout_button.addEventListener('click', get_logout_function());
@@ -244,7 +244,7 @@ function get_logout_button() {
 
 function get_user_settings_button() {
 	/* Logout button */
-	var user_settings_button = document.createElement('button');
+	const user_settings_button = document.createElement('button');
 	user_settings_button.id = 'user_settings';
 	user_settings_button.innerHTML = 'User settings';
 	user_settings_button.addEventListener('click', get_user_settings_function());
@@ -270,26 +270,26 @@ function user_settings() {
 
 function show_user_settings() {
 	/* TODO: Populate the action div */
-	var data_action_elem = document.querySelector('#' + MAINDATAACTIONID);
-	var button_div = document.createElement('div');
+	const data_action_elem = document.querySelector('#' + MAINDATAACTIONID);
+	const button_div = document.createElement('div');
 	button_div.id = 'stats_action';
 
 	/* Show user settings */
-	var own_button = document.createElement('button');
+	const own_button = document.createElement('button');
 	own_button.innerHTML = 'User settings';
 	own_button.id = 'manage_settings';
 	own_button.addEventListener('click', get_settings_function('user'));
 	button_div.appendChild(own_button);
 
 	/* Show user cylinders */
-	var user_cylinder_button = document.createElement('button');
+	const user_cylinder_button = document.createElement('button');
 	user_cylinder_button.innerHTML = 'Manage cylinders';
 	user_cylinder_button.id = 'manage_cylinder_list';
 	user_cylinder_button.addEventListener('click', get_settings_function('cylinder'));
 	button_div.appendChild(user_cylinder_button);
 
 	/* Show user certificates */
-	var user_certificate_button = document.createElement('button');
+	const user_certificate_button = document.createElement('button');
 	user_certificate_button.innerHTML = 'Manage certificates';
 	user_certificate_button.id = 'manage_certificate_list';
 	user_certificate_button.addEventListener('click', get_settings_function('certificate'));
@@ -326,15 +326,15 @@ function get_settings_function(type) {
 }
 
 function manage_settings(func) {
-	var request_data = {
+	const request_data = {
 		'object': 'user',
 		'action': 'get',
 		'target': ['user_settings']
 	};
 
-	var callback = function (xhr) {
+	const callback = function (xhr) {
 		if (xhr.readyState === 4 && xhr.status === 200) {
-			var json = JSON.parse(xhr.responseText);
+			const json = JSON.parse(xhr.responseText);
 			add_info('Return value: ' + json);
 
 			if (json[KEY_STATUS] === STATUS_OK) {
@@ -360,16 +360,16 @@ function manage_settings(func) {
 }
 
 function manage_user_settings() {
-	var settings = JSON.parse(sessionStorage.getItem('kontti_settings'));
-	var data_elem = document.querySelector('#' + DATAAREAID);
+	const settings = JSON.parse(sessionStorage.getItem('kontti_settings'));
+	const data_elem = document.querySelector('#' + DATAAREAID);
 
-	var settings_table = document.createElement('table');
+	const settings_table = document.createElement('table');
 	settings_table.setAttribute('border', '1');
 
-	var settings_header = document.createElement('tr');
-	var settings_key_cell = document.createElement('th');
+	const settings_header = document.createElement('tr');
+	const settings_key_cell = document.createElement('th');
 	settings_key_cell.innerHTML = 'Field';
-	var settings_value_cell = document.createElement('th');
+	const settings_value_cell = document.createElement('th');
 	settings_value_cell.innerHTML = 'Value';
 
 	settings_header.appendChild(settings_key_cell);
@@ -377,22 +377,24 @@ function manage_user_settings() {
 
 	settings_table.appendChild(settings_header);
 
-	var header_fields = {
-		'gid':     ['Group ID', 'text', false],
-		'level':   ['Fill level', 'fill_level', false],
-		'login':   ['Login', 'text', false],
-		'name':    ['Name', 'text', true],
-		'enabled': ['Account state', 'enabled', false]};
+	const header_fields = {
+		'gid': ['Group ID', 'text', false],
+		'level': ['Fill level', 'fill_level', false],
+		'login': ['Login', 'text', false],
+		'name': ['Name', 'text', true],
+		'enabled': ['Account state', 'enabled', false]
+	};
 
 	Object.keys(settings).forEach(function(key) {
-		var setting_row = document.createElement('tr');
-		var field_cell = document.createElement('td');
+		const setting_row = document.createElement('tr');
+		const field_cell = document.createElement('td');
 		field_cell.id = 'personal_' + key;
 		field_cell.style.textAlign = 'right';
 		field_cell.innerHTML = header_fields[key][0];
 
-		var data_cell = document.createElement('td');
+		const data_cell = document.createElement('td');
 		data_cell.appendChild(get_form_element(
+			key,
 			header_fields[key],
 			settings,
 			settings[key],
@@ -406,11 +408,11 @@ function manage_user_settings() {
 	});
 
 	// Finally add the main editing row
-	var edit_row = document.createElement('tr');
-	var edit_cell = document.createElement('td');
+	const edit_row = document.createElement('tr');
+	const edit_cell = document.createElement('td');
 	edit_cell.setAttribute('colspan', '2');
 
-	var update_button = document.createElement('button');
+	const update_button = document.createElement('button');
 	update_button.innerHTML = 'Update settings';
 	update_button.addEventListener('click', get_update_settings_function(settings_table, header_fields));
 	edit_cell.appendChild(update_button);
@@ -425,7 +427,7 @@ function get_update_settings_function(table, fields) {
 }
 
 function update_settings(table, fields) {
-	var request_data = {
+	const request_data = {
 		'object': 'user',
 		'action': 'set',
 		'target': ['settings'],
@@ -438,9 +440,9 @@ function update_settings(table, fields) {
 		}
 	});
 
-	var callback = function (xhr) {
+	const callback = function (xhr) {
 		if (xhr.readyState === 4 && xhr.status === 200) {
-			var json = JSON.parse(xhr.responseText);
+			const json = JSON.parse(xhr.responseText);
 			add_info('Return value: ' + json);
 
 			if (json[KEY_STATUS] === STATUS_OK) {
@@ -460,10 +462,10 @@ function update_settings(table, fields) {
 	send_json_request(request_data, 'settings.php', callback);
 }
 
-function get_form_element(struct, list, value, id, title) {
-	var editable = struct[2];
+function get_form_element(key, struct, list, value, id, title) {
+	const editable = struct[2];
 
-	var input_field = null;
+	let input_field = null;
 
 	switch (struct[1]) {
 		case 'text':
@@ -490,8 +492,8 @@ function get_form_element(struct, list, value, id, title) {
 
 			input_field = document.createElement('select');
 
-			for (var i = 0; i < list.length; i++) {
-				var opt = new Option(list[i]['name'], list[i]['type_id']);
+			for (let i = 0; i < list.length; i++) {
+				const opt = new Option(list[i]['name'], list[i]['type_id']);
 
 				if (list[i]['label'] === value) {
 					opt.selected = true;
@@ -540,54 +542,59 @@ function get_form_element(struct, list, value, id, title) {
 			console.log('Unknown form type: ' + struct[1]);
 	}
 
-	input_field.setAttribute('id', id);
-	input_field.title = title;
+	if (input_field != null) {
+		input_field.setAttribute('id', id);
+		input_field.title = title;
+	}
+
 	return input_field;
 }
 
 function manage_cylinder_settings() {
-	var cylinders = JSON.parse(sessionStorage.getItem('kontti_cylinder_list'));
-	var data_elem = document.querySelector('#' + DATAAREAID);
+	const cylinders = JSON.parse(sessionStorage.getItem('kontti_cylinder_list'));
+	const data_elem = document.querySelector('#' + DATAAREAID);
 
-	var cylinder_table = document.createElement('table');
+	const cylinder_table = document.createElement('table');
 	cylinder_table.setAttribute('border', '1');
 
-	var header_fields = {
-		'cylinder_id':     ['Cylinder ID', 'text', false],
-		'type_id':         ['Type ID', 'text', false],
-		'name':            ['Name', 'text', true],
-		'identifier':      ['Serial', 'text', true],
+	const header_fields = {
+		'cylinder_id': ['Cylinder ID', 'text', false],
+		'type_id': ['Type ID', 'text', false],
+		'name': ['Name', 'text', true],
+		'identifier': ['Serial', 'text', true],
 		'inspection_date': ['Inspected (year, month)', 'yearmonth', true],
-		'added':           ['Added', 'datetime', false],
-		'label':           ['Type', 'cylinder', true],
-		'pressure':        ['Pressure', 'integer', false],
-		'size':            ['Size', 'decimal', false]};
+		'added': ['Added', 'datetime', false],
+		'label': ['Type', 'cylinder', true],
+		'pressure': ['Pressure', 'integer', false],
+		'size': ['Size', 'decimal', false]
+	};
 
-	var settings_header = document.createElement('tr');
+	const settings_header = document.createElement('tr');
 
 	Object.keys(header_fields).forEach(function(key) {
-		var header_cell = document.createElement('th');
+		const header_cell = document.createElement('th');
 		header_cell.innerHTML = header_fields[key][0];
 		settings_header.appendChild(header_cell);
 	});
 
-	var action_cell = document.createElement('th');
+	const action_cell = document.createElement('th');
 	action_cell.innerHTML = 'Action';
 	settings_header.appendChild(action_cell);
 
 	cylinder_table.appendChild(settings_header);
-	var cyl_count = {counter: 0};
+	const cyl_count = {counter: 0};
 
 	for (cyl_count.counter = 0; cyl_count.counter < cylinders.length; cyl_count.counter++) {
-		var cyl_id = cylinders[cyl_count.counter]['cylinder_id'];
-		var setting_row = document.createElement('tr');
-		var row_id = 'cylinder_editable_row-' + cyl_count.counter;
+		const cyl_id = cylinders[cyl_count.counter]['cylinder_id'];
+		const setting_row = document.createElement('tr');
+		const row_id = 'cylinder_editable_row-' + cyl_count.counter;
 
 		setting_row.setAttribute('id', row_id);
 
 		Object.keys(header_fields).forEach(function(key) {
-			var data_cell = document.createElement('td');
+			const data_cell = document.createElement('td');
 			data_cell.appendChild(get_form_element(
+				key,
 				header_fields[key],
 				JSON.parse(sessionStorage.getItem('kontti_cylinder_type_list')),
 				cylinders[cyl_count.counter][key],
@@ -597,8 +604,8 @@ function manage_cylinder_settings() {
 			setting_row.appendChild(data_cell);
 		});
 
-		var action_row_cell = document.createElement('td');
-		var action_button = document.createElement('button');
+		const action_row_cell = document.createElement('td');
+		const action_button = document.createElement('button');
 		action_button.innerText = 'Remove cylinder';
 		action_button.setAttribute('id', 'cylinder_editable-remove_button-' + cyl_count.counter);
 		action_button.addEventListener('click', get_remove_cylinder_function(row_id));
@@ -609,16 +616,16 @@ function manage_cylinder_settings() {
 	}
 
 	// Finally add the main editing row
-	var edit_row = document.createElement('tr');
-	var edit_cell = document.createElement('td');
+	const edit_row = document.createElement('tr');
+	const edit_cell = document.createElement('td');
 	edit_cell.setAttribute('colspan', '10');
 
-	var add_row_button = document.createElement('button');
+	const add_row_button = document.createElement('button');
 	add_row_button.innerHTML = 'Add cylinder';
 	add_row_button.addEventListener('click', get_add_cylinder_function(cylinder_table, header_fields, cyl_count));
 	edit_cell.appendChild(add_row_button);
 
-	var update_button = document.createElement('button');
+	const update_button = document.createElement('button');
 	update_button.innerHTML = 'Update cylinders';
 	update_button.addEventListener('click', get_update_cylinder_list_function(cylinder_table, header_fields));
 	edit_cell.appendChild(update_button);
@@ -638,7 +645,7 @@ function get_update_cylinder_list_function(table, field_list) {
 }
 
 function update_cylinder_list(table, field_list) {
-
+	// TODO Add functionality
 }
 
 function get_add_cylinder_function(table, field_list, cyl_count) {
@@ -647,19 +654,20 @@ function get_add_cylinder_function(table, field_list, cyl_count) {
 
 function remove_cylinder(id) {
 	console.log('ID: ' + id);
-	var action_row = document.querySelector('#' + id);
+	const action_row = document.querySelector('#' + id);
 	action_row.parentNode.removeChild(action_row);
 }
 
 function add_cylinder(table, field_list, cyl_count) {
-	var action_row = document.querySelector('#cylinder_editable_action_row');
-	var new_row = document.createElement('tr');
-	var row_id = 'cylinder_editable_row-' + cyl_count.counter;
+	const action_row = document.querySelector('#cylinder_editable_action_row');
+	const new_row = document.createElement('tr');
+	const row_id = 'cylinder_editable_row-' + cyl_count.counter;
 	new_row.setAttribute('id', row_id);
 
 	Object.keys(field_list).forEach(function(key) {
-		var cyl_cell = document.createElement('td');
+		const cyl_cell = document.createElement('td');
 		cyl_cell.appendChild(get_form_element(
+			key,
 			field_list[key],
 			JSON.parse(sessionStorage.getItem('kontti_cylinder_type_list')),
 			'',
@@ -668,8 +676,8 @@ function add_cylinder(table, field_list, cyl_count) {
 		new_row.appendChild(cyl_cell);
 	});
 
-	var action_row_cell = document.createElement('td');
-	var action_button = document.createElement('button');
+	const action_row_cell = document.createElement('td');
+	const action_button = document.createElement('button');
 	action_button.innerText = 'Remove cylinder';
 	action_button.setAttribute('id', 'cylinder_editable-remove_button-' + cyl_count.counter);
 	action_button.addEventListener('click', get_remove_cylinder_function(row_id));
@@ -681,52 +689,56 @@ function add_cylinder(table, field_list, cyl_count) {
 }
 
 function manage_certificate_settings() {
-	var certificates = JSON.parse(sessionStorage.getItem('kontti_certificate_list'));
-	var data_elem = document.querySelector('#' + DATAAREAID);
+	const certificates = JSON.parse(sessionStorage.getItem('kontti_certificate_list'));
+	const data_elem = document.querySelector('#' + DATAAREAID);
 
-	var certificate_table = document.createElement('table');
+	const certificate_table = document.createElement('table');
 	certificate_table.setAttribute('border', '1');
 
-	var header_fields = {
+	const header_fields = {
 		'cert_id': ['Certificate ID', false],
 		'type': ['Type (rec/tec/cave/other)', true],
 		'name': ['Organization', true],
 		'serial_ident': ['Certificate serial', true],
-		'instructor': ['Instructor', true]};
+		'instructor': ['Instructor', true]
+	};
 
-	var settings_header = document.createElement('tr');
+	const settings_header = document.createElement('tr');
 
 	Object.keys(header_fields).forEach(function(key) {
-		var header_cell = document.createElement('th');
+		const header_cell = document.createElement('th');
 		header_cell.innerHTML = header_fields[key][0];
 		settings_header.appendChild(header_cell);
 	});
 
-	var action_cell = document.createElement('th');
+	const action_cell = document.createElement('th');
 	action_cell.innerHTML = 'Action';
 	settings_header.appendChild(action_cell);
 
 	certificate_table.appendChild(settings_header);
 
-	for (var i = 0; i < certificates.length; i++) {
-		var cert_id = certificates[i]['cert_id'];
-		var setting_row = document.createElement('tr');
+	for (let i = 0; i < certificates.length; i++) {
+		const cert_id = certificates[i]['cert_id'];
+		const setting_row = document.createElement('tr');
 		setting_row.setAttribute('id', 'certificate_row-' + cert_id);
 
 		Object.keys(header_fields).forEach(function(key) {
-			var data_cell = document.createElement('td');
+			let opt;
+			let j;
+			let input_field;
+			const data_cell = document.createElement('td');
 
 			if (header_fields[key][1]) {
 				// We show a drop down for organizations
 				if (key === 'name') {
-					var input_field = document.createElement('select');
+					input_field = document.createElement('select');
 					input_field.setAttribute('id', 'certificate_editable-' + certificates[i][key] + '-' + cert_id);
 					input_field.title = 'Select organization';
 
-					var cert_org_list = JSON.parse(sessionStorage.getItem('kontti_cert_org_list'));
+					const cert_org_list = JSON.parse(sessionStorage.getItem('kontti_cert_org_list'));
 
-					for (var j = 0; j < cert_org_list.length; j++) {
-						var opt = new Option(cert_org_list[j]['name'], cert_org_list[j]['org_id']);
+					for (j = 0; j < cert_org_list.length; j++) {
+						opt = new Option(cert_org_list[j]['name'], cert_org_list[j]['org_id']);
 
 						if (cert_org_list[j]['org_id'] === certificates[i]['org_id']) {
 							opt.selected = true;
@@ -737,14 +749,14 @@ function manage_certificate_settings() {
 
 					data_cell.appendChild(input_field);
 				} else if (key === 'type') {
-					var input_field = document.createElement('select');
+					input_field = document.createElement('select');
 					input_field.setAttribute('id', 'certificate_editable-' + certificates[i][key] + '-' + cert_id);
 					input_field.title = 'Select type of certificate';
 
-					var cert_type_list = ['rec', 'tec', 'cave', 'other'];
+					const cert_type_list = ['rec', 'tec', 'cave', 'other'];
 
-					for (var j = 0; j < cert_type_list.length; j++) {
-						var opt = new Option(cert_type_list[j], cert_type_list[j]);
+					for (j = 0; j < cert_type_list.length; j++) {
+						opt = new Option(cert_type_list[j], cert_type_list[j]);
 
 						if (cert_type_list[j] === certificates[i]['type']) {
 							opt.selected = true;
@@ -755,7 +767,7 @@ function manage_certificate_settings() {
 
 					data_cell.appendChild(input_field);
 				} else {
-					var input_field = document.createElement('input');
+					input_field = document.createElement('input');
 					input_field.setAttribute('value', certificates[i][key]);
 					input_field.setAttribute('type', 'text');
 					input_field.setAttribute('id', 'certificate_editable-' + certificates[i][key] + '-' + cert_id);
@@ -768,8 +780,8 @@ function manage_certificate_settings() {
 			setting_row.appendChild(data_cell);
 		});
 
-		var action_row_cell = document.createElement('td');
-		var action_button = document.createElement('button');
+		const action_row_cell = document.createElement('td');
+		const action_button = document.createElement('button');
 		action_button.innerText = 'Remove certificate';
 		action_button.setAttribute('id', 'certificate_editable-remove_button-' + cert_id);
 		action_button.addEventListener('click', get_remove_certificate_function(cert_id));
@@ -780,16 +792,16 @@ function manage_certificate_settings() {
 	}
 
 	// Finally add the main editing row
-	var edit_row = document.createElement('tr');
-	var edit_cell = document.createElement('td');
+	const edit_row = document.createElement('tr');
+	const edit_cell = document.createElement('td');
 	edit_cell.setAttribute('colspan', '10');
 
-	var add_row_button = document.createElement('button');
+	const add_row_button = document.createElement('button');
 	add_row_button.innerHTML = 'Add certificate';
 	add_row_button.addEventListener('click', get_add_certificate_function(certificate_table, header_fields));
 	edit_cell.appendChild(add_row_button);
 
-	var update_button = document.createElement('button');
+	const update_button = document.createElement('button');
 	update_button.innerHTML = 'Update certificates';
 	update_button.addEventListener('click', get_update_certificate_list_function(certificate_table));
 	edit_cell.appendChild(update_button);
@@ -805,7 +817,7 @@ function get_remove_certificate_function(cert_id) {
 }
 
 function remove_certificate(cert_id) {
-	var cert_row = document.querySelector('#certificate_row-' + cert_id);
+	const cert_row = document.querySelector('#certificate_row-' + cert_id);
 	cert_row.parentNode.removeChild(cert_row);
 }
 
@@ -822,7 +834,7 @@ function get_add_certificate_function(table, field_list) {
 }
 
 function add_certificate(table, field_list) {
-
+	// TODO Add functionality
 }
 
 function update_user_settings(response) {
@@ -830,17 +842,18 @@ function update_user_settings(response) {
 }
 
 function get_year_date_selector(id, fulldate) {
-	// Get the year and month from date, the Date-object does not understand YYYY-MM-DD format so we do it manually
-	var year = parseInt(fulldate.split('-')[0]);
-	var month = parseInt(fulldate.split('-')[1]);
+	let opt;
+// Get the year and month from date, the Date-object does not understand YYYY-MM-DD format so we do it manually
+	const year = parseInt(fulldate.split('-')[0]);
+	const month = parseInt(fulldate.split('-')[1]);
 
-	var year_date_div = document.createElement('div');
-	var year_field = document.createElement('select');
+	const year_date_div = document.createElement('div');
+	const year_field = document.createElement('select');
 	year_field.setAttribute('id', id + '-year');
 	year_field.title = 'Select year';
 
-	for (var i = 1990; i <= (new Date()).getFullYear(); i++) {
-		var opt = new Option(i, i);
+	for (let i = 1990; i <= (new Date()).getFullYear(); i++) {
+		opt = new Option(i, i);
 
 		if (i === year) {
 			opt.selected = true;
@@ -850,12 +863,12 @@ function get_year_date_selector(id, fulldate) {
 	}
 
 
-	var month_field = document.createElement('select');
+	const month_field = document.createElement('select');
 	month_field.setAttribute('id', id + '-month');
 	month_field.title = 'Select month';
 
-	for (var j = 1; j < 13; j++) {
-		var opt = new Option(j, j);
+	for (let j = 1; j < 13; j++) {
+		opt = new Option(j, j);
 
 		if (j === month) {
 			opt.selected = true;
@@ -888,19 +901,19 @@ function admin() {
 
 function show_admin() {
 	/* TODO: Populate the action div */
-	var data_action_elem = document.querySelector('#' + MAINDATAACTIONID);
-	var button_div = document.createElement('div');
+	const data_action_elem = document.querySelector('#' + MAINDATAACTIONID);
+	const button_div = document.createElement('div');
 	button_div.id = 'admin_action';
 
 	/* Fill management */
-	var fill_mgmnt_button = document.createElement('button');
+	const fill_mgmnt_button = document.createElement('button');
 	fill_mgmnt_button.innerHTML = 'Fill management';
 	fill_mgmnt_button.id = 'fill_management_btn';
 	fill_mgmnt_button.addEventListener('click', get_fill_mgmnt_function());
 	button_div.appendChild(fill_mgmnt_button);
 
 	/* User management */
-	var user_mgmnt_button = document.createElement('button');
+	const user_mgmnt_button = document.createElement('button');
 	user_mgmnt_button.innerHTML = 'User management';
 	user_mgmnt_button.id = 'user_management_btn';
 	user_mgmnt_button.addEventListener('click', get_user_mgmnt_function());
@@ -914,7 +927,7 @@ function show_admin() {
 }
 
 function get_back_to_fill_button() {
-	var back_button = document.createElement('button');
+	const back_button = document.createElement('button');
 	back_button.innerHTML = 'Back to fill';
 	back_button.id = 'back';
 	back_button.addEventListener('click', get_back_button_function());
@@ -944,33 +957,33 @@ function back_button() {
 }
 
 function display_user_fill_data(json) {
-	var data_elem = document.querySelector('#' + DATAAREAID);
+	const data_elem = document.querySelector('#' + DATAAREAID);
 
 	if (!json['data'].length) {
 		data_elem.innerHTML = 'No users available. This should not happen';
 		return;
 	}
 
-	var users_table = document.createElement('table');
+	const users_table = document.createElement('table');
 	users_table.setAttribute('border', '1');
 	users_table.appendChild(get_users_table_header());
 
-	for (var i = 0; i < json['data'].length; i++) {
-		var data_row = document.createElement('tr');
+	for (let i = 0; i < json['data'].length; i++) {
+		const data_row = document.createElement('tr');
 
 		Object.keys(json['data'][i]).forEach(function (key, index) {
-			var val_cell = document.createElement('td');
+			const val_cell = document.createElement('td');
 			val_cell.id = key + '-' + i;
 			val_cell.style.textAlign = 'right';
 			val_cell.innerHTML = json['data'][i][key];
 			data_row.appendChild(val_cell);
 		});
 
-		var edit_cell = document.createElement('td');
+		const edit_cell = document.createElement('td');
 		edit_cell.id = 'edit_cell' + '-' + i;
 		edit_cell.style.textAlign = 'right';
 
-		var edit_button = document.createElement('button');
+		const edit_button = document.createElement('button');
 		edit_button.innerText = 'Edit user fills';
 		edit_button.id = 'edit_button-' + json['data'][i]['uid'];
 		edit_button.addEventListener('click', get_edit_user_fill_function(data_row, i + 2, json['data'][i]['uid'], 'open'));
@@ -990,25 +1003,25 @@ function get_edit_user_fill_function(data_row, row, uid, action) {
 }
 
 function edit_user_fill(data_row, row, uid, action) {
-	var edit_button = document.querySelector('#edit_button-' + uid);
+	const edit_button = document.querySelector('#edit_button-' + uid);
 	// Workaround to remove and replace the eventListener
-	var clone_button = edit_button.cloneNode(true);
+	const clone_button = edit_button.cloneNode(true);
 	edit_button.parentNode.replaceChild(clone_button, edit_button);
 
 	if (action === 'open') {
 		// First we toggle the button action to close
 		clone_button.addEventListener('click', get_edit_user_fill_function(data_row, row, uid, 'close'));
 		// Open the edit row for the given user
-		var edit_tr = document.createElement('tr');
+		const edit_tr = document.createElement('tr');
 		edit_tr.id = 'tr_edit_row-' + uid;
 		data_row.parentNode.insertBefore(edit_tr, data_row.nextSibling);
-		var edit_td = edit_tr.insertCell(0);
+		const edit_td = edit_tr.insertCell(0);
 		edit_td.colSpan = 15;
 		get_user_unpaid_fills(uid, edit_td);
 	} else if (action === 'close') {
 		// First we toggle the button action to open
 		clone_button.addEventListener('click', get_edit_user_fill_function(data_row, row, uid, 'open'));
-		var edit_row = document.querySelector('#tr_edit_row-' + uid);
+		const edit_row = document.querySelector('#tr_edit_row-' + uid);
 		edit_row.parentNode.removeChild(edit_row);
 	}
 }
@@ -1022,31 +1035,31 @@ function get_user_fill_edit_form(response) {
 		return document.createTextNode('User has no fills');
 	}
 
-	var counter = {
+	const counter = {
 		'cyl_count': 0,
 		'o2_volume': 0,
 		'he_volume': 0
 	};
 
-	var uid = response['data']['uid'];
-	var edit_form = document.createElement('form');
+	const uid = response['data']['uid'];
+	const edit_form = document.createElement('form');
 	// Store the uid
-	var uid_hidden = document.createElement('input');
+	const uid_hidden = document.createElement('input');
 	uid_hidden.setAttribute('type', 'hidden');
 	uid_hidden.setAttribute('value', uid);
 	edit_form.appendChild(uid_hidden);
 
-	var editor_table = document.createElement('table');
+	const editor_table = document.createElement('table');
 	editor_table.appendChild(get_user_edit_header());
 
-	for (var i = 0; i < response['data']['fills'].length; i++) {
-		var editor_row = document.createElement('tr');
+	for (let i = 0; i < response['data']['fills'].length; i++) {
+		const editor_row = document.createElement('tr');
 
 		// Object.keys(response['data']['fills'][i]).forEach(function (key, index) {
-		for (var key in FILLEDITORFIELDS) {
+		for (let key in FILLEDITORFIELDS) {
 			// We jump over the first which is the fill id
 			// if (index > 0) {
-			var val_cell = document.createElement('td');
+			const val_cell = document.createElement('td');
 			val_cell.id = key + '-' + i;
 			val_cell.style.textAlign = 'right';
 			val_cell.innerHTML = response['data']['fills'][i][key];
@@ -1059,8 +1072,8 @@ function get_user_fill_edit_form(response) {
 		if (response['data']['fills'][i]['gas_key'] === 'o2') counter['o2_volume'] += parseInt(response['data']['fills'][i]['o2_vol']);
 		counter['he_volume'] += parseInt(response['data']['fills'][i]['he_vol']);
 
-		var editor_checkbox_cell = document.createElement('td');
-		var check_box = document.createElement('input');
+		const editor_checkbox_cell = document.createElement('td');
+		const check_box = document.createElement('input');
 		check_box.type = 'checkbox';
 		check_box.id = 'mark_fill-' + uid + '-' + response['data']['fills'][i]['fill_id'];
 		editor_checkbox_cell.appendChild(check_box);
@@ -1070,30 +1083,30 @@ function get_user_fill_edit_form(response) {
 		editor_table.appendChild(editor_row);
 	}
 
-	var sum_row = document.createElement('tr');
-	var total_cell = document.createElement('td');
+	const sum_row = document.createElement('tr');
+	const total_cell = document.createElement('td');
 	total_cell.colSpan = 5;
 	total_cell.innerHTML = 'Total';
 	total_cell.style.textAlign = 'left';
 	sum_row.appendChild(total_cell);
 
-	var cyl_sum_cell = document.createElement('td');
+	const cyl_sum_cell = document.createElement('td');
 	cyl_sum_cell.innerHTML = counter['cyl_count'];
 	cyl_sum_cell.style.textAlign = 'right';
 	sum_row.appendChild(cyl_sum_cell);
 
-	var o2_sum_cell = document.createElement('td');
+	const o2_sum_cell = document.createElement('td');
 	o2_sum_cell.innerHTML = counter['o2_volume'];
 	o2_sum_cell.style.textAlign = 'right';
 	sum_row.appendChild(o2_sum_cell);
 
-	var he_sum_cell = document.createElement('td');
+	const he_sum_cell = document.createElement('td');
 	he_sum_cell.innerHTML = counter['he_volume'];
 	he_sum_cell.style.textAlign = 'right';
 	sum_row.appendChild(he_sum_cell);
 
-	var commit_cell = document.createElement('td');
-	var commit_button = document.createElement('button');
+	const commit_cell = document.createElement('td');
+	const commit_button = document.createElement('button');
 	commit_button.addEventListener('click', get_commit_fills_function(uid));
 	commit_button.innerText = 'Commit';
 	commit_button.type = 'button';
@@ -1117,10 +1130,10 @@ function get_commit_fills_function(uid) {
 
 function commit_fills(uid) {
 	// Collect all the checkboxes for the given uid
-	var elements = document.querySelectorAll("input[id^='mark_fill-" + uid + "-']");
+	const elements = document.querySelectorAll("input[id^='mark_fill-" + uid + "-']");
 	// Request json
 
-	var request_data = {
+	const request_data = {
 		'object': 'user',
 		'action': 'update',
 		'target': ['mark_counted_fills'],
@@ -1128,19 +1141,19 @@ function commit_fills(uid) {
 		'data': []
 	};
 	// Go through them, checking which are marked
-	var i = 0;
+	let i = 0;
 
-	for (var index = 0; index < elements.length; index++) {
+	for (let index = 0; index < elements.length; index++) {
 		if (elements[index].checked) {
-			var fillId = parseInt(elements[index].id.split('-')[2]);
+			const fillId = parseInt(elements[index].id.split('-')[2]);
 			request_data['data'].push({'id': fillId});
 			i++;
 		}
 	}
 
-	var callback = function (xhr) {
+	const callback = function (xhr) {
 		if (xhr.readyState === 4 && xhr.status === 200) {
-			var json = JSON.parse(xhr.responseText);
+			const json = JSON.parse(xhr.responseText);
 			add_info('Return value: ' + json);
 
 			if (json[KEY_STATUS] === STATUS_OK) {
@@ -1161,17 +1174,17 @@ function commit_fills(uid) {
 }
 
 function get_user_edit_header() {
-	var header_tr = document.createElement('tr');
+	const header_tr = document.createElement('tr');
 
-	for (var key in FILLEDITORFIELDS) {
-		var cell = document.createElement('td');
+	for (let key in FILLEDITORFIELDS) {
+		const cell = document.createElement('td');
 		cell.style.padding = '10px';
 		cell.style.backgroundColor = 'grey';
 		cell.innerHTML = FILLEDITORFIELDS[key];
 		header_tr.appendChild(cell);
 	}
 
-	var edit_cell = document.createElement('td');
+	const edit_cell = document.createElement('td');
 	edit_cell.style.padding = '10px';
 	edit_cell.style.backgroundColor = 'grey';
 	edit_cell.innerHTML = 'Mark as paid';
@@ -1181,9 +1194,9 @@ function get_user_edit_header() {
 }
 
 function get_users_table_header() {
-	var header_tr = document.createElement('tr');
+	const header_tr = document.createElement('tr');
 	header_tr.id = 'tr_header';
-	var field_array = [
+	const field_array = [
 		'userID',
 		'GroupID',
 		'Login',
@@ -1200,13 +1213,13 @@ function get_users_table_header() {
 		'Tx fills'
 	];
 
-	for (var i = 0; i < field_array.length; i++) {
-		var td_elem = document.createElement('td');
+	for (let i = 0; i < field_array.length; i++) {
+		const td_elem = document.createElement('td');
 		td_elem.innerHTML = field_array[i];
 		header_tr.appendChild(td_elem);
 	}
 
-	var lock_elem = document.createElement('td');
+	const lock_elem = document.createElement('td');
 	lock_elem.innerHTML = 'Modify user';
 	header_tr.appendChild(lock_elem);
 
@@ -1220,15 +1233,15 @@ function get_fill_mgmnt_function() {
 }
 
 function fill_mgmnt() {
-	var request_data = {
+	const request_data = {
 		'object': 'user',
 		'action': 'get',
 		'target': ['user_all', 'gas_total', 'gas_unpaid_l', 'fill_total']
 	};
 
-	var callback = function (xhr) {
+	const callback = function (xhr) {
 		if (xhr.readyState === 4 && xhr.status === 200) {
-			var json = JSON.parse(xhr.responseText);
+			const json = JSON.parse(xhr.responseText);
 			add_info('Return value: ' + json);
 
 			if (json[KEY_STATUS] === STATUS_OK) {
@@ -1250,16 +1263,16 @@ function fill_mgmnt() {
 }
 
 function get_user_unpaid_fills(uid, parent_element) {
-	var request_data = {
+	const request_data = {
 		'object': 'user',
 		'action': 'get',
 		'target': ['unpaid_fills'],
 		'uid': uid
 	};
 
-	var callback = function (xhr) {
+	const callback = function (xhr) {
 		if (xhr.readyState === 4 && xhr.status === 200) {
-			var json = JSON.parse(xhr.responseText);
+			const json = JSON.parse(xhr.responseText);
 			add_info('Return value: ' + json);
 
 			if (json[KEY_STATUS] === STATUS_OK) {
@@ -1301,15 +1314,15 @@ function get_show_fill_ref(type) {
  */
 
 function add_gas_fill_row(type) {
-	var id = get_next_fill_id();
-	var my_filllist_elem = document.querySelector('#' + DATAAREATABLEID);
-	var gas_tr = document.createElement('tr');
+	const id = get_next_fill_id();
+	const my_filllist_elem = document.querySelector('#' + DATAAREATABLEID);
+	const gas_tr = document.createElement('tr');
 	gas_tr.id = FILLROWPREFIX + id;
 
-	var gas_td_type = document.createElement('td');
+	const gas_td_type = document.createElement('td');
 	gas_td_type.innerHTML = id + ': ' + type + ' fill';
 
-	var gas_level = document.createElement('input');
+	const gas_level = document.createElement('input');
 	gas_level.setAttribute('type', 'hidden');
 	gas_level.setAttribute('value', type);
 	gas_level.id = GASLEVELPREFIX + id;
@@ -1317,49 +1330,49 @@ function add_gas_fill_row(type) {
 	gas_td_type.id = 'td_' + GASLEVELPREFIX + id;
 	gas_tr.appendChild(gas_td_type);
 
-	var gas_td_level = document.createElement('td');
+	const gas_td_level = document.createElement('td');
 	gas_td_level.appendChild(get_fill_type_select(id, type));
 	gas_td_level.id = 'td_' + FILLTYPEPREFIX + id;
 	gas_tr.appendChild(gas_td_level);
 
-	var gas_td_cyl = document.createElement('td');
+	const gas_td_cyl = document.createElement('td');
 	gas_td_cyl.appendChild(get_cylinder_select(id));
 	gas_td_cyl.id = 'td_' + FILLCYLIDPREFIX + id;
 	gas_tr.appendChild(gas_td_cyl);
 
-	var n = 6;
+	let n = 6;
 
 	if (type !== 'air') {
-		var gas_td_bar_start = document.createElement('td');
+		const gas_td_bar_start = document.createElement('td');
 		gas_td_bar_start.appendChild(get_amount_select(0, 350, 'Pressure before fill', FILLCYLPRESSSTARTPREFIX + id));
 		gas_td_bar_start.id = 'td_' + FILLCYLPRESSSTARTPREFIX + id;
 		gas_tr.appendChild(gas_td_bar_start);
 
-		var gas_td_bar_end = document.createElement('td');
+		const gas_td_bar_end = document.createElement('td');
 		gas_td_bar_end.appendChild(get_amount_select(1, 350, 'Pressure after fill', FILLCYLPRESSENDPREFIX + id));
 		gas_td_bar_end.id = 'td_' + FILLCYLPRESSENDPREFIX + id;
 		gas_tr.appendChild(gas_td_bar_end);
 		n = 4;
 
 		if (type !== 'o2') {
-			var gas_td_o2_start = document.createElement('td');
+			const gas_td_o2_start = document.createElement('td');
 			gas_td_o2_start.appendChild(get_amount_select(0, 100, 'O2 percentage before fill', FILLCYLO2PCNTSTARTPREFIX + id));
 			gas_td_o2_start.id = 'td_' + FILLCYLO2PCNTSTARTPREFIX + id;
 			gas_tr.appendChild(gas_td_o2_start);
 
-			var gas_td_o2_end = document.createElement('td');
+			const gas_td_o2_end = document.createElement('td');
 			gas_td_o2_end.appendChild(get_amount_select(1, 100, 'O2 percentage after fill', FILLCYLO2PCNTENDPREFIX + id));
 			gas_td_o2_end.id = 'td_' + FILLCYLO2PCNTENDPREFIX + id;
 			gas_tr.appendChild(gas_td_o2_end);
 			n = 2;
 
 			if (type !== 'nx') {
-				var gas_td_he_start = document.createElement('td');
+				const gas_td_he_start = document.createElement('td');
 				gas_td_he_start.appendChild(get_amount_select(0, 100, 'He percentage before fill', FILLCYLHEPCNTSTARTPREFIX + id));
 				gas_td_he_start.id = 'td_' + FILLCYLHEPCNTSTARTPREFIX + id;
 				gas_tr.appendChild(gas_td_he_start);
 
-				var gas_td_he_end = document.createElement('td');
+				const gas_td_he_end = document.createElement('td');
 				gas_td_he_end.appendChild(get_amount_select(1, 100, 'He percentage after fill', FILLCYLHEPCNTENDPREFIX + id));
 				gas_td_he_end.id = 'td_' + FILLCYLHEPCNTENDPREFIX + id;
 				gas_tr.appendChild(gas_td_he_end);
@@ -1369,7 +1382,7 @@ function add_gas_fill_row(type) {
 	}
 
 	/* Add empty cells */
-	for (var i = 0; i < n; i++) {
+	for (let i = 0; i < n; i++) {
 		gas_tr.appendChild(document.createElement('td'));
 	}
 
@@ -1381,10 +1394,10 @@ function add_gas_fill_row(type) {
 
 function get_fill_type_select(id, type) {
 	"use strict";
-	var fill_type_select = document.createElement('select');
+	const fill_type_select = document.createElement('select');
 	fill_type_select.id = FILLTYPEPREFIX + id;
 	fill_type_select.title = 'Select type of fill';
-	var preferred = '';
+	let preferred = '';
 
 	/* Try to figure out which is the preferred fill type for the given gas type
 	 * TODO: May be something else but VID */
@@ -1397,8 +1410,8 @@ function get_fill_type_select(id, type) {
 			break;
 	}
 
-	for (var key in FILLTYPELIST) {
-		var op = new Option(FILLTYPELIST[key][0], key);
+	for (let key in FILLTYPELIST) {
+		const op = new Option(FILLTYPELIST[key][0], key);
 		op.defaultSelected = (key === preferred);
 		fill_type_select.options.add(op);
 	}
@@ -1412,13 +1425,13 @@ function get_fill_type_select(id, type) {
  */
 
 function get_cylinder_select(id) {
-	var cylinder_select = document.createElement('select');
+	const cylinder_select = document.createElement('select');
 	cylinder_select.id = FILLCYLIDPREFIX + id;
 	cylinder_select.title = 'Select cylinder';
 
-	var cylinder_list = JSON.parse(sessionStorage.getItem('kontti_cylinder_list'))
+	const cylinder_list = JSON.parse(sessionStorage.getItem('kontti_cylinder_list'));
 
-	for (var i = 0; i < cylinder_list.length; i++) {
+	for (let i = 0; i < cylinder_list.length; i++) {
 		cylinder_select.options.add(new Option(cylinder_list[i]['name'] + ' ' + cylinder_list[i]['type_name'] + ' ' + cylinder_list[i]['identifier'], cylinder_list[i]['cylinder_id']));
 	}
 
@@ -1435,7 +1448,7 @@ function get_cylinder_select(id) {
  */
 
 function get_amount_select(from, to, title, id) {
-	var amount_select = document.createElement('input');
+	const amount_select = document.createElement('input');
 	amount_select.type = 'number';
 	amount_select.id = id;
 	amount_select.title = title;
@@ -1450,7 +1463,7 @@ function get_amount_select(from, to, title, id) {
  */
 
 function get_check_button() {
-	var add_button = document.createElement('button');
+	const add_button = document.createElement('button');
 	add_button.innerHTML = 'Check fill(s)';
 	add_button.style.backgroundColor = '#99CC99';
 	add_button.onclick = get_check_data_function();
@@ -1464,7 +1477,7 @@ function get_check_button() {
  */
 
 function get_save_data_button(button_id) {
-	var clear_button = document.createElement('button');
+	const clear_button = document.createElement('button');
 	clear_button.innerHTML = 'Save fill(s)';
 	clear_button.id = button_id;
 	clear_button.onclick = get_save_data_function();
@@ -1484,7 +1497,7 @@ function get_save_data_function() {
  */
 
 function get_next_fill_id() {
-	var my_id = next_id;
+	const my_id = next_id;
 	next_id++;
 	return (my_id);
 }
@@ -1496,8 +1509,8 @@ function get_next_fill_id() {
  */
 
 function get_removal_cell(id) {
-	var td_cell = document.createElement('td');
-	var removal_button = document.createElement('button');
+	const td_cell = document.createElement('td');
+	const removal_button = document.createElement('button');
 	removal_button.backgroundColor = '#CC6060';
 	removal_button.innerHTML = 'Remove fill';
 	removal_button.onclick = get_remove_fill_row_function(id);
@@ -1518,7 +1531,7 @@ function get_remove_fill_row_function(id) {
  * @return {void}
  */
 function remove_fill_row(id) {
-	var row_elem = document.querySelector('#' + FILLROWPREFIX + id);
+	const row_elem = document.querySelector('#' + FILLROWPREFIX + id);
 	row_elem.parentNode.removeChild(row_elem);
 }
 
@@ -1534,10 +1547,10 @@ function get_check_data_function() {
  */
 
 function save_data() {
-	var request_data = [];
+	const request_data = [];
 
-	var table = document.querySelector('#' + DATAAREATABLEID);
-	var num_rows = table.childElementCount;
+	const table = document.querySelector('#' + DATAAREATABLEID);
+	const num_rows = table.childElementCount;
 
 	/* There is the header row*/
 	if (num_rows < 2) {
@@ -1546,16 +1559,16 @@ function save_data() {
 	}
 
 	/* Try to fetch any id from 0 to max value */
-	for (var i = 0; i < next_id; i++) {
-		var row = document.querySelector('#' + FILLROWPREFIX + i);
+	for (let i = 0; i < next_id; i++) {
+		const row = document.querySelector('#' + FILLROWPREFIX + i);
 		if (row !== null) {
 			request_data.push(get_fill_data(i));
 		}
 	}
 
-	var callback = function (xhr) {
+	const callback = function (xhr) {
 		if (xhr.readyState === 4 && xhr.status === 200) {
-			var json = JSON.parse(xhr.responseText);
+			const json = JSON.parse(xhr.responseText);
 
 			if (json[KEY_STATUS] === STATUS_OK) {
 				empty_info();
@@ -1578,7 +1591,7 @@ function save_data() {
  */
 
 function get_fill_data(id) {
-	var data_array = [null, null, null, null, null, null, null, null, null, null, null, null, null];
+	const data_array = [null, null, null, null, null, null, null, null, null, null, null, null, null];
 
 	data_array[0] = get_gas_level(id);
 	data_array[1] = get_fill_type(id);
@@ -1656,12 +1669,12 @@ function get_password() {
  */
 function check_data() {
 	/* Try to fetch any id from 0 to max value */
-	var ret_val = true;
+	let ret_val = true;
 
-	for (var i = 0; i < next_id; i++) {
-		var selector = '#' + FILLROWPREFIX + i;
+	for (let i = 0; i < next_id; i++) {
+		const selector = '#' + FILLROWPREFIX + i;
 
-		var row = document.querySelector(selector);
+		const row = document.querySelector(selector);
 		if (row !== null) {
 			if (!verify_row_data(i)) {
 				ret_val = false;
@@ -1679,8 +1692,8 @@ function check_data() {
  */
 
 function verify_row_data(id) {
-	var type = get_gas_level(id);
-	var ret_val = true;
+	const type = get_gas_level(id);
+	let ret_val = true;
 
 	if (type !== 'air') {
 		// Make sure the end pressure is not lower than the start pressure
@@ -1750,10 +1763,10 @@ function verify_row_data(id) {
  */
 
 function is_overfill_gas(press_start, press_end, fraction_start, fraction_end) {
-	var fraction_press_start = fraction_start * press_start / 100.0;
-	var fraction_press_end = fraction_end * press_end / 100.0;
-	var total_gas_diff = press_end - press_start;
-	var fraction_gas_diff = fraction_press_end - fraction_press_start;
+	const fraction_press_start = fraction_start * press_start / 100.0;
+	const fraction_press_end = fraction_end * press_end / 100.0;
+	const total_gas_diff = press_end - press_start;
+	const fraction_gas_diff = fraction_press_end - fraction_press_start;
 	return (total_gas_diff < fraction_gas_diff);
 }
 
@@ -1767,8 +1780,8 @@ function is_overfill_gas(press_start, press_end, fraction_start, fraction_end) {
  */
 
 function is_negative_gas(press_start, press_end, fraction_start, fraction_end) {
-	var fraction_press_start = fraction_start * press_start / 100.0;
-	var fraction_press_end = fraction_end * press_end / 100.0;
+	const fraction_press_start = fraction_start * press_start / 100.0;
+	const fraction_press_end = fraction_end * press_end / 100.0;
 	return (fraction_press_end < fraction_press_start);
 }
 
@@ -1779,7 +1792,7 @@ function is_negative_gas(press_start, press_end, fraction_start, fraction_end) {
  */
 
 function mark_red(id) {
-	var entity = document.querySelector('#' + id);
+	const entity = document.querySelector('#' + id);
 	entity.style.backgroundColor = '#FF3030';
 }
 
@@ -1788,7 +1801,7 @@ function mark_red(id) {
  */
 
 function empty_info() {
-	var info_div = document.querySelector('#' + INFOID);
+	const info_div = document.querySelector('#' + INFOID);
 	info_div.innerHTML = '';
 }
 
@@ -1797,7 +1810,7 @@ function empty_info() {
  */
 
 function empty_data() {
-	var info_div = document.querySelector('#' + DATAAREAID);
+	const info_div = document.querySelector('#' + DATAAREAID);
 	info_div.innerHTML = '';
 }
 
@@ -1807,8 +1820,8 @@ function empty_data() {
  */
 
 function add_info(message) {
-	var info_div = document.querySelector('#' + INFOID);
-	var new_par = document.createElement('p');
+	const info_div = document.querySelector('#' + INFOID);
+	const new_par = document.createElement('p');
 	new_par.innerHTML = message;
 	info_div.appendChild(new_par);
 }
@@ -1819,13 +1832,13 @@ function add_info(message) {
 
 function show_login() {
 	/* Clear the action div */
-	var action_div = document.querySelector('#' + MAINDATAACTIONID);
+	const action_div = document.querySelector('#' + MAINDATAACTIONID);
 	action_div.innerHTML = '';
 	/* Clear the data div */
-	var data_div = document.querySelector('#' + DATAAREAID);
+	const data_div = document.querySelector('#' + DATAAREAID);
 	data_div.innerHTML = '';
 	/* Clear the info div */
-	var info_div = document.querySelector('#' + INFOID);
+	const info_div = document.querySelector('#' + INFOID);
 	info_div.innerHTML = '';
 	/* Create the login form */
 	action_div.appendChild(get_login_form());
@@ -1837,16 +1850,16 @@ function show_login() {
  */
 
 function get_login_form() {
-	var login_form = document.createElement('form');
+	const login_form = document.createElement('form');
 	login_form.id = 'login_form';
 	login_form.setAttribute('onsubmit', 'return false');
-	var login_username = document.createElement('input');
+	const login_username = document.createElement('input');
 	login_username.setAttribute('placeholder', 'Username');
 	login_username.id = 'login';
-	var login_password = document.createElement('input');
+	const login_password = document.createElement('input');
 	login_password.setAttribute('placeholder', 'Password');
 	login_password.id = 'password';
-	var login_button = document.createElement('button');
+	const login_button = document.createElement('button');
 	login_button.innerHTML = 'Login';
 	login_button.onclick = get_verify_login_function();
 	login_password.setAttribute('type', 'password');
@@ -1874,15 +1887,15 @@ function get_verify_login_function() {
 
 function verify_login() {
 	/* Connect to server and verify the login credentials */
-	var request_data = {
+	const request_data = {
 		'type': 'login',
 		'login': get_login(),
 		'password': get_password()
 	};
 
-	var callback = function (xhr) {
+	const callback = function (xhr) {
 		if (xhr.readyState === 4 && xhr.status === 200) {
-			var json = JSON.parse(xhr.responseText);
+			const json = JSON.parse(xhr.responseText);
 			add_info('Return value: ' + json);
 
 			if (json[KEY_STATUS] === STATUS_OK) {
@@ -1922,11 +1935,11 @@ function get_logout_function() {
 
 function logout() {
 	/* TODO: Connect to server and verify the login credentials */
-	var request_data = {'type': 'logout'};
+	const request_data = {'type': 'logout'};
 
-	var callback = function (xhr) {
+	const callback = function (xhr) {
 		if (xhr.readyState === 4 && xhr.status === 200) {
-			var json = JSON.parse(xhr.responseText);
+			const json = JSON.parse(xhr.responseText);
 			add_info('Return value: ' + json);
 
 			if (json[KEY_STATUS] === STATUS_OK) {
@@ -1970,26 +1983,26 @@ function stats() {
 
 function show_stats() {
 	/* TODO: Populate the action div */
-	var data_action_elem = document.querySelector('#' + MAINDATAACTIONID);
-	var button_div = document.createElement('div');
+	const data_action_elem = document.querySelector('#' + MAINDATAACTIONID);
+	const button_div = document.createElement('div');
 	button_div.id = 'stats_action';
 
 	/* List users */
-	var own_button = document.createElement('button');
+	const own_button = document.createElement('button');
 	own_button.innerHTML = 'Show your own stats';
 	own_button.id = 'own_stats';
 	own_button.addEventListener('click', get_own_stats_function());
 	button_div.appendChild(own_button);
 
 	/* List general stats */
-	var general_stats_button = document.createElement('button');
+	const general_stats_button = document.createElement('button');
 	general_stats_button.innerHTML = 'Show general stats';
 	general_stats_button.id = 'general_stats';
 	general_stats_button.addEventListener('click', get_general_stats_function());
 	button_div.appendChild(general_stats_button);
 
 	if (sessionStorage.getItem('kontti_level') > 40) {
-		var users_button = document.createElement('button');
+		const users_button = document.createElement('button');
 		users_button.innerHTML = 'Show user statistics';
 		users_button.id = 'users_stats';
 		users_button.addEventListener('click', get_user_stats_function());
@@ -2012,14 +2025,14 @@ function get_own_stats_function() {
 }
 
 function get_own_stats() {
-	var request_data = {
+	const request_data = {
 		'object': 'self',
 		'action': 'get'
 	};
 
-	var callback = function (xhr) {
+	const callback = function (xhr) {
 		if (xhr.readyState === 4 && xhr.status === 200) {
-			var response = JSON.parse(xhr.responseText);
+			const response = JSON.parse(xhr.responseText);
 
 			if (response[KEY_STATUS] === STATUS_OK) {
 				// empty_info();
@@ -2048,34 +2061,34 @@ function show_basic_stats(response) {
 
 function print_gas_consumption(arr, header) {
 	"use strict";
-	var data_elem = document.querySelector('#' + DATAAREAID);
+	const data_elem = document.querySelector('#' + DATAAREAID);
 
-	var header_elem = document.createElement('h2');
+	const header_elem = document.createElement('h2');
 	header_elem.innerHTML = header;
 	data_elem.appendChild(header_elem);
 
-	var gas_table = document.createElement('table');
+	const gas_table = document.createElement('table');
 	gas_table.setAttribute('border', '1');
 
-	var header_row = document.createElement('tr');
+	const header_row = document.createElement('tr');
 
-	var cell1 = document.createElement('td');
+	const cell1 = document.createElement('td');
 	cell1.innerHTML = "Oxygen (l)";
 	header_row.appendChild(cell1);
 
-	var cell2 = document.createElement('td');
+	const cell2 = document.createElement('td');
 	cell2.innerHTML = "Helium (l)";
 	header_row.appendChild(cell2);
 	gas_table.appendChild(header_row);
 
-	var gas_row = document.createElement('tr');
+	const gas_row = document.createElement('tr');
 
-	var cell3 = document.createElement('td');
+	const cell3 = document.createElement('td');
 	cell3.innerHTML = arr[0]['o2'];
 	cell3.style.textAlign = 'right';
 	gas_row.appendChild(cell3);
 
-	var cell4 = document.createElement('td');
+	const cell4 = document.createElement('td');
 	cell4.innerHTML = arr[0]['he'];
 	cell4.style.textAlign = 'right';
 	gas_row.appendChild(cell4);
@@ -2085,32 +2098,32 @@ function print_gas_consumption(arr, header) {
 }
 
 function print_stat_table(arr, header) {
-	var data_elem = document.querySelector('#' + DATAAREAID);
+	const data_elem = document.querySelector('#' + DATAAREAID);
 
-	var users_table = document.createElement('table');
+	const users_table = document.createElement('table');
 	users_table.setAttribute('border', '1');
 
-	var header_row = document.createElement('tr');
+	const header_row = document.createElement('tr');
 
-	var cell1 = document.createElement('td');
+	const cell1 = document.createElement('td');
 	cell1.innerHTML = "Type";
 	header_row.appendChild(cell1);
 
-	var cell2 = document.createElement('td');
+	const cell2 = document.createElement('td');
 	cell2.innerHTML = "Count";
 	header_row.appendChild(cell2);
 
 
 	users_table.appendChild(header_row);
 
-	for (var i = 0; i < arr.length; i++) {
-		var data_row = document.createElement('tr');
+	for (let i = 0; i < arr.length; i++) {
+		const data_row = document.createElement('tr');
 
-		var key_cell = document.createElement('td');
+		const key_cell = document.createElement('td');
 		key_cell.innerHTML = arr[i]['stat_key'];
 		data_row.appendChild(key_cell);
 
-		var value_cell = document.createElement('td');
+		const value_cell = document.createElement('td');
 		value_cell.style.textAlign = 'right';
 		value_cell.innerHTML = arr[i]['stat_value'];
 		data_row.appendChild(value_cell);
@@ -2118,7 +2131,7 @@ function print_stat_table(arr, header) {
 		users_table.appendChild(data_row);
 	}
 
-	var header_elem = document.createElement('h2');
+	const header_elem = document.createElement('h2');
 	header_elem.innerHTML = header;
 	data_elem.appendChild(header_elem);
 	data_elem.appendChild(users_table);
@@ -2134,15 +2147,15 @@ function get_general_stats_function() {
 }
 
 function get_general_stats() {
-	var request_data = {
+	const request_data = {
 		'object': 'generic',
 		'action': 'get'
 	};
 
-	var callback = function (xhr) {
+	const callback = function (xhr) {
 		"use strict";
 		if (xhr.readyState === 4 && xhr.status === 200) {
-			var response = JSON.parse(xhr.responseText);
+			const response = JSON.parse(xhr.responseText);
 
 			if (response[KEY_STATUS] === STATUS_OK) {
 				empty_info();
@@ -2178,9 +2191,9 @@ function get_user_stats() {
 /****************************************************** GENERIC ******************************************************/
 
 function send_json_request(request_data, URI, callback) {
-	var json_data = JSON.stringify(request_data);
+	const json_data = JSON.stringify(request_data);
 	/* Send the JSON to the server */
-	var xhr = new XMLHttpRequest();
+	const xhr = new XMLHttpRequest();
 	xhr.open("POST", baseUrl + URI, true);
 	xhr.setRequestHeader("Content-type", "application/json");
 
@@ -2194,16 +2207,16 @@ function send_json_request(request_data, URI, callback) {
 //////////////////// Handle cylinder list
 
 function fetch_cylinder_list() {
-	var request_data = {
+	const request_data = {
 		'object': 'user',
 		'action': 'get',
 		'filter': 'cylinders'
 	};
 
-	var callback = function (xhr) {
+	const callback = function (xhr) {
 		"use strict";
 		if (xhr.readyState === 4 && xhr.status === 200) {
-			var response = JSON.parse(xhr.responseText);
+			const response = JSON.parse(xhr.responseText);
 
 			if (response[KEY_STATUS] === STATUS_OK) {
 				update_user_cylinder_list(response);
@@ -2221,9 +2234,9 @@ function fetch_cylinder_list() {
 }
 
 function update_user_cylinder_list(response) {
-	var cylinder_list = [];
+	const cylinder_list = [];
 
-	for (var i = 0; i < response['data']['cylinders'].length; i++) {
+	for (let i = 0; i < response['data']['cylinders'].length; i++) {
 		cylinder_list.push(response['data']['cylinders'][i]);
 	}
 
@@ -2231,15 +2244,15 @@ function update_user_cylinder_list(response) {
 }
 
 function update_cylinder_types() {
-	var request_data = {
+	const request_data = {
 		'object': 'cylinder',
 		'action': 'get'
 	};
 
-	var callback = function (xhr) {
+	const callback = function (xhr) {
 		"use strict";
 		if (xhr.readyState === 4 && xhr.status === 200) {
-			var response = JSON.parse(xhr.responseText);
+			const response = JSON.parse(xhr.responseText);
 
 			if (response[KEY_STATUS] === STATUS_OK) {
 				store_cylinder_types(response);
@@ -2260,7 +2273,7 @@ function store_cylinder_types(response) {
 	if (response['data']['cylinder_types'].length > 0) {
 		sessionStorage.setItem('kontti_cylinder_type_list', JSON.stringify(response['data']['cylinder_types']));
 	} else {
-		sessionStorage.setItem('kontti_cylinder_type_list', false);
+		sessionStorage.setItem('kontti_cylinder_type_list', "false");
 	}
 }
 
@@ -2268,9 +2281,9 @@ function store_cylinder_types(response) {
 //////////////////// Handle certificate list
 
 function update_user_certificate_list(response) {
-	var certificate_list = [];
+	const certificate_list = [];
 
-	for (var i = 0; i < response['data']['certificates'].length; i++) {
+	for (let i = 0; i < response['data']['certificates'].length; i++) {
 		certificate_list.push(response['data']['certificates'][i]);
 	}
 
@@ -2278,9 +2291,9 @@ function update_user_certificate_list(response) {
 }
 
 function update_certificate_org_list(response) {
-	var cert_org_list = [];
+	const cert_org_list = [];
 
-	for (var i = 0; i < response['data']['certificate_org'].length; i++) {
+	for (let i = 0; i < response['data']['certificate_org'].length; i++) {
 		cert_org_list.push(response['data']['certificate_org'][i]);
 	}
 

@@ -14,9 +14,9 @@
  */
 
 namespace Kontti;
-include_once('/usr/share/php/PHPUnit6/autoload.php');
+include_once('PHPUnit6/autoload.php');
 include_once('db_init.php');
-include_once('../src/lib/Kontti/Audit.php');
+include_once('Kontti/Audit.php');
 
 class AuditTest extends \PHPUnit\Framework\TestCase {
 	/**

@@ -14,9 +14,9 @@
  */
 
 namespace Kontti;
-include_once('/usr/share/php/PHPUnit6/autoload.php');
+include_once('PHPUnit6/autoload.php');
 include_once('db_init.php');
-include_once('../src/lib/Kontti/Session.php');
+include_once('Kontti/Session.php');
 
 class SessionTest extends \PHPUnit\Framework\TestCase {
 	/**

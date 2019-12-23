@@ -14,7 +14,7 @@
  */
 
 namespace Kontti;
-include_once('/usr/share/php/PHPUnit6/autoload.php');
+include_once('PHPUnit6/autoload.php');
 include_once('db_init.php');
 
 class AdminTest extends \PHPUnit\Framework\TestCase {

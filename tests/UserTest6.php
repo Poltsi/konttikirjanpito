@@ -24,7 +24,7 @@ namespace Kontti;
 
 use PHPUnit\Framework\TestCase;
 
-class UserTest extends TestCase {
+class UserTest6 extends TestCase {
 
 	public function test() {
 	}

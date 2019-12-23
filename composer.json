@@ -4,5 +4,9 @@
       "Kontti\\": "src/lib/Kontti",
       "phpunit/phpunit": "^6.0"
     }
+  },
+  "require": {
+    "ext-json": "*",
+    "ext-pgsql": "*"
   }
 }
